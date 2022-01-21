@@ -1,0 +1,1398 @@
+{
+  "version": "0.8.0-alpha.3",
+  "pan": {
+    "X": -9.510417,
+    "Y": 315.1726
+  },
+  "zoom": 0.9932913184165955,
+  "root": {
+    "pagecontenttype": "PageContentFolder",
+    "name": "New Folder",
+    "contents": [
+      {
+        "pagecontenttype": "PageContentPage",
+        "name": "New Page",
+        "cards": [
+          {
+            "id": 75,
+            "rect": {
+              "X": 960,
+              "Y": -1088,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Empreza matriz",
+              "filepath": ""
+            },
+            "links": [
+              {
+                "start": 75,
+                "end": 6,
+                "joints": []
+              },
+              {
+                "start": 75,
+                "end": 35,
+                "joints": []
+              },
+              {
+                "start": 75,
+                "end": 88,
+                "joints": []
+              }
+            ]
+          },
+          {
+            "id": 88,
+            "rect": {
+              "X": 2816,
+              "Y": -928,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Documentacion",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 89,
+            "rect": {
+              "X": 2848,
+              "Y": -896,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "CRM",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 90,
+            "rect": {
+              "X": 2848,
+              "Y": -864,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Tienda",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 91,
+            "rect": {
+              "X": 2848,
+              "Y": -832,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Red",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 92,
+            "rect": {
+              "X": 2848,
+              "Y": -800,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Presentacion",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 93,
+            "rect": {
+              "X": 2848,
+              "Y": -768,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Actividades",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 35,
+            "rect": {
+              "X": -1088,
+              "Y": -544,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Despliegue",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 36,
+            "rect": {
+              "X": -1056,
+              "Y": -512,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Dual Stack",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 50,
+            "rect": {
+              "X": -1024,
+              "Y": -480,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "HTTPS",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 51,
+            "rect": {
+              "X": -1024,
+              "Y": -448,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "SMTP",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 52,
+            "rect": {
+              "X": -1024,
+              "Y": -416,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "POP3",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 6,
+            "rect": {
+              "X": 1568,
+              "Y": -416,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Aplicaciones",
+              "filepath": ""
+            },
+            "links": [
+              {
+                "start": 6,
+                "end": 4,
+                "joints": []
+              },
+              {
+                "start": 6,
+                "end": 5,
+                "joints": []
+              }
+            ]
+          },
+          {
+            "id": 53,
+            "rect": {
+              "X": -1024,
+              "Y": -384,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "FTPS",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 54,
+            "rect": {
+              "X": -1024,
+              "Y": -352,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "VoIP",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 55,
+            "rect": {
+              "X": -1056,
+              "Y": -320,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "NAT",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 56,
+            "rect": {
+              "X": -1056,
+              "Y": -288,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "DHCP",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 57,
+            "rect": {
+              "X": -1056,
+              "Y": -256,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Maquinas",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 58,
+            "rect": {
+              "X": -1024,
+              "Y": -224,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "15 Windows Desktop Empleados",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 62,
+            "rect": {
+              "X": -1024,
+              "Y": -160,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "1 Windows Desktop Recepcion",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 4,
+            "rect": {
+              "X": 512,
+              "Y": -160,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "CRM",
+              "filepath": ""
+            },
+            "links": [
+              {
+                "start": 4,
+                "end": 77,
+                "joints": []
+              },
+              {
+                "start": 4,
+                "end": 76,
+                "joints": []
+              },
+              {
+                "start": 4,
+                "end": 85,
+                "joints": []
+              }
+            ]
+          },
+          {
+            "id": 59,
+            "rect": {
+              "X": -1024,
+              "Y": -96,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "1 Windows Server (Active directory)",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 5,
+            "rect": {
+              "X": 2976,
+              "Y": -64,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Tienda",
+              "filepath": ""
+            },
+            "links": [
+              {
+                "start": 5,
+                "end": 37,
+                "joints": []
+              },
+              {
+                "start": 5,
+                "end": 38,
+                "joints": []
+              },
+              {
+                "start": 5,
+                "end": 45,
+                "joints": []
+              }
+            ]
+          },
+          {
+            "id": 60,
+            "rect": {
+              "X": -1024,
+              "Y": -32,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "4 Linux server",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 45,
+            "rect": {
+              "X": 4032,
+              "Y": -32,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Aplicacion",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 61,
+            "rect": {
+              "X": -992,
+              "Y": 0,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Aplicacion web",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 72,
+            "rect": {
+              "X": 4064,
+              "Y": 0,
+              "W": 288,
+              "H": 96
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Avisar a los talleres autorizados la compra del vehiculo",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 63,
+            "rect": {
+              "X": -992,
+              "Y": 32,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Email",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 64,
+            "rect": {
+              "X": -992,
+              "Y": 64,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "FTPS",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 65,
+            "rect": {
+              "X": -992,
+              "Y": 96,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "VoIP",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 85,
+            "rect": {
+              "X": -576,
+              "Y": 96,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Global",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 70,
+            "rect": {
+              "X": -992,
+              "Y": 128,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "DNS?",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 86,
+            "rect": {
+              "X": -544,
+              "Y": 128,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Login",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 77,
+            "rect": {
+              "X": -64,
+              "Y": 128,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Administrador",
+              "filepath": ""
+            },
+            "links": [
+              {
+                "start": 77,
+                "end": 24,
+                "joints": []
+              },
+              {
+                "start": 77,
+                "end": 7,
+                "joints": []
+              },
+              {
+                "start": 77,
+                "end": 30,
+                "joints": []
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "rect": {
+              "X": 512,
+              "Y": 128,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Administracion del inventario",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 20,
+            "rect": {
+              "X": 1248,
+              "Y": 128,
+              "W": 256,
+              "H": 224
+            },
+            "contents": "Note",
+            "properties": {
+              "description": "Detalles minimos\nIdentificador\nNombre\nDescripcion\nStock\nPrecio de venta\n"
+            },
+            "links": [
+              {
+                "start": 20,
+                "end": 10,
+                "joints": []
+              },
+              {
+                "start": 20,
+                "end": 8,
+                "joints": []
+              }
+            ]
+          },
+          {
+            "id": 76,
+            "rect": {
+              "X": 1920,
+              "Y": 128,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Empleado",
+              "filepath": ""
+            },
+            "links": [
+              {
+                "start": 76,
+                "end": 80,
+                "joints": []
+              }
+            ]
+          },
+          {
+            "id": 37,
+            "rect": {
+              "X": 2624,
+              "Y": 128,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Global",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 38,
+            "rect": {
+              "X": 3232,
+              "Y": 128,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Clientes",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 66,
+            "rect": {
+              "X": -1056,
+              "Y": 160,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Red",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 83,
+            "rect": {
+              "X": -544,
+              "Y": 160,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Cambiar contrasena"
+            }
+          },
+          {
+            "id": 40,
+            "rect": {
+              "X": 2656,
+              "Y": 160,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Login",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 43,
+            "rect": {
+              "X": 3264,
+              "Y": 160,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Editar informacion personal",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 69,
+            "rect": {
+              "X": -1024,
+              "Y": 192,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Servidores",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 87,
+            "rect": {
+              "X": -544,
+              "Y": 192,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Recuperar contrasena",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 8,
+            "rect": {
+              "X": 544,
+              "Y": 192,
+              "W": 288,
+              "H": 96
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Registro, actualizacion y  baja de items",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 41,
+            "rect": {
+              "X": 2656,
+              "Y": 192,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Register",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 67,
+            "rect": {
+              "X": -1024,
+              "Y": 224,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Empleados",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 42,
+            "rect": {
+              "X": 2656,
+              "Y": 224,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Recuperar contrasena",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 44,
+            "rect": {
+              "X": 3264,
+              "Y": 224,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Comprar automovil",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 78,
+            "rect": {
+              "X": 3712,
+              "Y": 224,
+              "W": 256,
+              "H": 128
+            },
+            "contents": "Note",
+            "properties": {
+              "description": "Nota\nDebe cumplir con las normas que rigen en Colombia"
+            },
+            "links": [
+              {
+                "start": 78,
+                "end": 71,
+                "joints": []
+              }
+            ]
+          },
+          {
+            "id": 68,
+            "rect": {
+              "X": -1024,
+              "Y": 256,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Invitados",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 71,
+            "rect": {
+              "X": 3264,
+              "Y": 256,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Generar factura",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 9,
+            "rect": {
+              "X": 544,
+              "Y": 288,
+              "W": 288,
+              "H": 96
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Buscar un item por nombre y mortrar la  lista resultante",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 39,
+            "rect": {
+              "X": 2656,
+              "Y": 288,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Listar productos",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 46,
+            "rect": {
+              "X": 3264,
+              "Y": 288,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Listar ordenes",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 73,
+            "rect": {
+              "X": 2656,
+              "Y": 320,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Buscar productos",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 47,
+            "rect": {
+              "X": 3264,
+              "Y": 320,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Mostrar detalles de la orden",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 74,
+            "rect": {
+              "X": 2656,
+              "Y": 352,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Contacto",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 10,
+            "rect": {
+              "X": 544,
+              "Y": 384,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Mostrar el detalle de los items",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 48,
+            "rect": {
+              "X": 3264,
+              "Y": 384,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Cancelar orden",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 80,
+            "rect": {
+              "X": 1696,
+              "Y": 416,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Ordenes",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 11,
+            "rect": {
+              "X": 544,
+              "Y": 448,
+              "W": 288,
+              "H": 96
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Hacer ordenes de compra y expedir factura de venta",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 81,
+            "rect": {
+              "X": 1728,
+              "Y": 448,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Cambiar estado de la orden",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 83,
+            "rect": {
+              "X": 1728,
+              "Y": 512,
+              "W": 288,
+              "H": 32
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Buscar ordenes",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 12,
+            "rect": {
+              "X": 544,
+              "Y": 544,
+              "W": 288,
+              "H": 96
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Registrar e ingreso de items del inventario",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 84,
+            "rect": {
+              "X": 1728,
+              "Y": 544,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Mostrar informacion de la orden",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 24,
+            "rect": {
+              "X": 64,
+              "Y": 640,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Administracion de usuarios",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 13,
+            "rect": {
+              "X": 544,
+              "Y": 640,
+              "W": 288,
+              "H": 128
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Registrar movimiento de los items entre dependencias",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 28,
+            "rect": {
+              "X": -416,
+              "Y": 672,
+              "W": 384,
+              "H": 256
+            },
+            "contents": "Note",
+            "properties": {
+              "description": "Detalles minimos\nIdentificador\nNombre de usuario\nNombres y apellidos\nCedula\nDireccion\nTelefono\n"
+            },
+            "links": [
+              {
+                "start": 28,
+                "end": 26,
+                "joints": []
+              },
+              {
+                "start": 28,
+                "end": 25,
+                "joints": []
+              }
+            ]
+          },
+          {
+            "id": 21,
+            "rect": {
+              "X": 1152,
+              "Y": 672,
+              "W": 256,
+              "H": 352
+            },
+            "contents": "Note",
+            "properties": {
+              "description": "Detalles  minimos\nIdentificador\nVendedor\nCliente\nResponsable\nFecha\nItems\nSubtotal\nDescuentos\nImpuestos\nTotal"
+            }
+          },
+          {
+            "id": 33,
+            "rect": {
+              "X": -1568,
+              "Y": 704,
+              "W": 416,
+              "H": 224
+            },
+            "contents": "Note",
+            "properties": {
+              "description": "Detalles minimos\nIdentificador\nNombres y apellidos\nRazon juridica\nCedula o NIT\nDireccion\nTelefono"
+            },
+            "links": [
+              {
+                "start": 33,
+                "end": 31,
+                "joints": []
+              },
+              {
+                "start": 33,
+                "end": 32,
+                "joints": []
+              }
+            ]
+          },
+          {
+            "id": 30,
+            "rect": {
+              "X": -896,
+              "Y": 704,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Administracion de clientes",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 25,
+            "rect": {
+              "X": 96,
+              "Y": 704,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Registro de usuarios, actualizacion y baja",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 31,
+            "rect": {
+              "X": -864,
+              "Y": 768,
+              "W": 288,
+              "H": 64
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Registro de clientes, actualizacion y baja",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 26,
+            "rect": {
+              "X": 96,
+              "Y": 768,
+              "W": 288,
+              "H": 96
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Buscar un usuario por nombre e identificador",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 14,
+            "rect": {
+              "X": 544,
+              "Y": 768,
+              "W": 288,
+              "H": 128
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Realizar un informe de inventario, nombre del item y disponibilidad",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 32,
+            "rect": {
+              "X": -864,
+              "Y": 832,
+              "W": 288,
+              "H": 96
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Buscar clientes por nombre o identificador",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 27,
+            "rect": {
+              "X": 96,
+              "Y": 864,
+              "W": 288,
+              "H": 128
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Gestionar estados de usuario, activo, inactivo y fuera de servicio",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 15,
+            "rect": {
+              "X": 544,
+              "Y": 896,
+              "W": 288,
+              "H": 256
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Controlar con cada evento, los documentos asociados como es el caso de la venta o compra y las facturas que rigen por regimen del pais",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 16,
+            "rect": {
+              "X": 544,
+              "Y": 1152,
+              "W": 288,
+              "H": 96
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Gestionar devoluciones y garantias al cliente",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 22,
+            "rect": {
+              "X": 1152,
+              "Y": 1152,
+              "W": 352,
+              "H": 384
+            },
+            "contents": "Note",
+            "properties": {
+              "description": "Detalles minimos\nIdentificador\nDatos de la empresa\nFecha\nInformacion del cliente\nItems\nSubtotal\nDescuentos\nImpuestos\nTotal"
+            }
+          },
+          {
+            "id": 17,
+            "rect": {
+              "X": 544,
+              "Y": 1248,
+              "W": 288,
+              "H": 96
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Gestionar informe sobre el historico de precios",
+              "filepath": ""
+            }
+          },
+          {
+            "id": 18,
+            "rect": {
+              "X": 544,
+              "Y": 1344,
+              "W": 288,
+              "H": 160
+            },
+            "contents": "Checkbox",
+            "properties": {
+              "checked": false,
+              "description": "Generar reportes de perdidas y ganancias, cuentas por pagar, por cobrar, entre otros",
+              "filepath": ""
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "savedimages": {}
+}
