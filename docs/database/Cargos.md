@@ -10,9 +10,7 @@ Equivalente a tener todos los otros cargos administrativos en la empresa.
 
 ## Inventario
 
-## Empleados
-
-## Usuarios
+## Usuarios (Empleados)
 
 ## Concesionaria
 
