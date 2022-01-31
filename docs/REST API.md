@@ -208,7 +208,7 @@ Utilizando el ticket recibido en el correo de reinicio de contraseña, el usuari
 }
 ```
 
-##### Respuesta
+##### Respuestas
 
 - `200`: La contraseña fue actualizada con éxito.
 
@@ -248,7 +248,7 @@ payload = {
 response = requests.put("http://URL:PORT/api/auth/recover", headers=headers, json=payload)
 ```
 
-#### `POST /api/session/query`
+#### `POST /api/auth/whoami`
 
 ##### Descripción
 
@@ -267,7 +267,7 @@ Solicita información del usuario actual.
 }
 ```
 
-##### Respuesta
+##### Respuestas
 
 - `200`: La contraseña fue actualizada con éxito.
 
@@ -316,7 +316,7 @@ payload = {
     "cookie": cookie,
 }
 
-response = requests.put("http://URL:PORT/api/auth/query", headers=headers, json=payload)
+response = requests.put("http://URL:PORT/api/auth/whoami", headers=headers, json=payload)
 if response.status_code != 200:
     raise Exception("failed to update password")
 
@@ -327,9 +327,202 @@ user_information = response.json()
 
 Con este conjunto de funcionalidades las empresas pueden realizar operaciones administrativas sobre el personal, inventario, ventas y clientes registrados por ellas mismas. La empresa matriz será la única con un administrador especial capaz de operar en cualquiera de los registros de las otras entidades.
 
-## Inventario
+### Clientes
 
-## Ventas
+#### `POST /api/admin/client`
 
-## Clientes
+##### Descripcion
 
+Registrar un nuevo cliente.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+#### `PUT /api/admin/client/{field}`
+
+##### Descripcion
+
+Modificar informacion del cliente.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+#### `DELETE /api/admin/client`
+
+##### Descripcion
+
+Eliminar cliente.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+### Inventario
+
+#### `POST /api/admin/stock`
+
+##### Descripcion
+
+Agregar nuevo producto al inventario.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+#### `PUT /api/admin/stock/{field}`
+
+##### Descripcion
+
+Actualizar entrada del inventario.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+#### `DELETE /api/admin/stock`
+
+##### Descripcion
+
+Eliminar entrada del inventario.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+### Usuarios (empleados)
+
+#### `POST /api/admin/user`
+
+##### Descripcion
+
+Agregar nuevo empleado.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+#### `PUT /api/admin/user/{field}`
+
+##### Descripcion
+
+Actualizar informacion del empleado.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+#### `DELETE /api/admin/user`
+
+##### Descripcion
+
+Eliminar informacion del empleado.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+## Consulta
+
+### Clientes
+
+#### `POST /api/query/clients/{field}`
+
+##### Descripcion
+
+Buscar clientes por nombre o identificador.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+#### `GET /api/query/clients/{id}`
+
+##### Descripcion
+
+Mostrar informacion del cliente.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+### Inventario
+
+#### `POST /api/query/stock`
+
+##### Descripcion
+
+Buscar items por nombre.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+#### `GET /api/query/stock/{id}`
+
+##### Descripcion
+
+Mostrar los detalles del item.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+### Usuarios (empleados)
+
+#### `POST /api/query/users/{field}`
+
+##### Descripcion
+
+Buscar usuario por nombre o identificador.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+#### `GET /api/query/users/{id}`
+
+##### Descripcion
+
+Mostrar detalles del usuario.
+
+##### Argumentos
+
+##### Respuestas
+
+##### Ejemplo
+
+## Notificacion
+
+Estas funciones son especificas para cada entidad y corresponden a las especificadas en el documento planteado por el profesor.
+
+La comunicacion con estas rutas debe ser repetitiva, cada **minuto** los servidores de la empresa asignada deben hacer un pedido a las rutas para confirmar si an recibido nuevas notificaciones.
