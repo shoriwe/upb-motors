@@ -1,19 +1,24 @@
 # REST API consorcio
 
-## Funciones
+## FAQ
 
-### Sesión
 
-#### `POST /api/login`
+
+## Autenticación
+
+Los usuarios del consorcio deben estar disponibles entre todas las empresas, eso si, empleados de alto rango en la empresa X no necesariamente deben tener altos privilegios en la empresa Y, por lo que se recomienda discreción y correcto uso de los permisos otorgados confirmando además el origen del empleado, mas no solo su cargo.
+
+#### `POST /api/auth/login`
 
 ##### Descripción
 
-Iniciar sesión y recibir el ticket para poder utilizar el API.
+Iniciar sesión como un usuario del consorcio.
 
 ##### Argumentos
 
 - **HEADERS**:
   - `Content-Type: application/json`
+  - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
 
 - **BODY**:
 
@@ -30,7 +35,7 @@ Iniciar sesión y recibir el ticket para poder utilizar el API.
 
 ```json
 {
-    "key": "CREDENCIALES PARA PODER USAR EL API"
+    "cookie": "COOKIE DEL USUARIO"
 }
 ```
 
@@ -49,30 +54,26 @@ Iniciar sesión y recibir el ticket para poder utilizar el API.
 ```python
 import requests
 
-def get_api_key(username: str, password: str) -> str:
-    headers = {'Content-type': 'application/json'}
+api_key = "COLOCA TU API KEY AQUI"
 
-    credenciales = {
-        "username": username,
-        "password": password
-    }
+headers = {
+    "Content-Type": "application/json",
+    "API-Key": api_key,
+}
 
-    response = requests.post(
-        "http://URL_SERVER/api/login",
-        json=credenciales,
-        headers=headers
-    )
-    response_json = response.json()
+credentials = {
+    "username": "antonio@mail.com",
+    "password": "contrasena",
+}
 
-    if response.status_code == 403: # Credenciales invalidas
-        raise Exception(response_json["error"])
+response = requests.post("http://URL:PORT/api/auth/login", headers=headers, json=credentials)
+if response.status_code != 200:
+    raise Exception("failed to login")
 
-    return response_json["key"]
-
-api_key = get_api_key("auto-upb", "contraseña")
+cookie = response.json()["cookie"]
 ```
 
-#### `PUT /api/password`
+#### `PUT /api/auth/password`
 
 ##### Descripción
 
@@ -82,11 +83,12 @@ Actualiza la contraseña de la cuenta asociada con la llave.
 
 - **HEADERS**:
   - `Content-Type: application/json`
+  - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
 - **BODY**:
 
 ```json
 {
-    "key": "COLOCA AQUI LA KEY QUE RETORNO LOGIN",
+    "cookie": "COOKIE",
     "old": "CONTRASENA ACTUAL",
     "new": "NUEVA CONTRASENA",
 }
@@ -117,161 +119,217 @@ Actualiza la contraseña de la cuenta asociada con la llave.
 ```python
 import requests
 
-api_key = get_api_key(username, password)
+api_key = "COLOCA TU API KEY AQUI"
 
-headers = {'Content-type': 'application/json'}
-
-payload = {
-    "key": api_key,
-    "old": "contraseña",
-    "new": "otra-contraseña",
+cookie = "USER COOKIE"
+headers = {
+    "Content-Type": "application/json",
+    "API-Key": api_key,
 }
 
-response = requests.put(
-    "http://URL_SERVER/api/password",
-    json=payload,
-    headers=headers
-)
-response_json = response.json()
+payload = {
+    "cookie": cookie,
+    "old": "contrasena",
+    "new": "nueva contrasena",
+}
 
-if response.status_code == 403: # Error
-    raise Exception(response_json["error"])
+response = requests.put("http://URL:PORT/api/auth/password", headers=headers, json=payload)
+if response.status_code != 200:
+    raise Exception("failed to update password")
 ```
 
-### Clientes
-
-#### `GET /api/client`
+#### `POST /api/auth/recover`
 
 ##### Descripción
 
-Buscar clientes de acuerdo a filtro.
+Solicita por correo una llave para actualización de contraseña.
 
 ##### Argumentos
-
-##### Respuestas
-
-##### Ejemplo
-
-#### `GET /api/client/list/{page}` 
-
-##### Descripción
-
-Listar los clientes ordenados por el identificador único en la pagina especificada.
-
-##### Argumentos
-
-- **Argumentos de URL**:
-  - `page`: Valor numérico entero
 
 - **HEADERS**:
   - `Content-Type: application/json`
+  - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
 - **BODY**:
 
 ```json
 {
-    "key": "COLOCA AQUI LA KEY QUE RETORNO LOGIN",
+    "username": "USUARIO DE LA CUENTA A RECUPERAR",
 }
 ```
 
 ##### Respuestas
 
-- `200`: La consulta fue un éxito. 
+- `200`: Se envió (o se intento enviar una llave de recuperación al correo del usuario especificado)
 
 ```json
 {
-    "results": [client_objects...]
+    "succeed": true,
 }
 ```
 
-Los elementos en resultados tienen la siguiente estructura:
+##### Ejemplo
 
+- Python
+
+```python
+import requests
+
+api_key = "COLOCA TU API KEY AQUI"
+
+headers = {
+    "Content-Type": "application/json",
+    "API-Key": api_key,
+}
+
+payload = {
+    "username": "antonio@mail.com",
+}
+
+response = requests.post("http://URL:PORT/api/auth/recover", headers=headers, json=payload)
 ```
+
+#### `PUT /api/auth/recover`
+
+##### Descripción
+
+Utilizando el ticket recibido en el correo de reinicio de contraseña, el usuario puede actualizar su contraseña.
+
+##### Argumentos
+
+- **HEADERS**:
+  - `Content-Type: application/json`
+  - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
+- **BODY**:
+
+```json
 {
-	"id": 0000000,
-	
+    "ticket": "COLOCA AQUI EL TICKET RECIVIDO",
+    "new": "NUEVA CONTRASENA",
 }
 ```
 
+##### Respuesta
 
+- `200`: La contraseña fue actualizada con éxito.
 
-- `403`: La llave utilizada es invalida.
-- `400`: El numero de la pagina es invalido.
+```json
+{
+    "succeed": true,
+}
+```
 
+- `403`: Operación no permitida.
 
+```json
+{
+    "error": "MENSAJE DE ERROR RETORNADO POR EL API"
+}
+```
 
 ##### Ejemplo
 
-#### `POST /api/client`
+- Python
+
+```python
+import requests
+
+api_key = "COLOCA TU API KEY AQUI"
+
+headers = {
+    "Content-Type": "application/json",
+    "API-Key": api_key,
+}
+
+payload = {
+    "ticket": "TICKET DE RECUPERACION",
+    "new": "nueva contrasena",
+}
+
+response = requests.put("http://URL:PORT/api/auth/recover", headers=headers, json=payload)
+```
+
+#### `POST /api/session/query`
 
 ##### Descripción
 
-Añade un nuevo cliente en la base de datos.
+Solicita información del usuario actual.
 
 ##### Argumentos
 
-##### Respuestas
+- **HEADERS**:
+  - `Content-Type: application/json`
+  - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
+- **BODY**:
+
+```json
+{
+    "cookie": "COLOCA AQUI EL TICKET RECIVIDO",
+}
+```
+
+##### Respuesta
+
+- `200`: La contraseña fue actualizada con éxito.
+
+```json
+{
+    "id": 0,
+    "name": "NOMBRE DEL EMPLEADO",
+    "document_id": "CEDULA DEL EMPLEADO",
+    "address": "DOMICILIO DEL EMPLEADO",
+    "phone": "NUMERO DE TELEFONO DEL EMPLEADO",
+    "email": "CORREO DEL EMPLEADO",
+    "positions": [
+        {
+            "company": "NOMBRE DE LA COMPANIA",
+            "position": "CARGO DEL EMPLEADO EN LA COMPANIA",
+        },
+        ...
+    ],
+}
+```
+
+- `403`: Operación no permitida.
+
+```json
+{
+    "error": "MENSAJE DE ERROR RETORNADO POR EL API"
+}
+```
 
 ##### Ejemplo
 
-#### `PUT /api/client`
+- Python
 
-##### Descripción
+```python
+import requests
 
-Actualiza la información de un cliente.
+api_key = "COLOCA TU API KEY AQUI"
 
-##### Argumentos
+cookie = "USER COOKIE"
+headers = {
+    "Content-Type": "application/json",
+    "API-Key": api_key,
+}
 
-##### Respuestas
+payload = {
+    "cookie": cookie,
+}
 
-##### Ejemplo
+response = requests.put("http://URL:PORT/api/auth/query", headers=headers, json=payload)
+if response.status_code != 200:
+    raise Exception("failed to update password")
 
-### Productos
+user_information = response.json()
+```
 
-#### `GET /api/product`
+## Administrativo
 
-##### Descripción
+Con este conjunto de funcionalidades las empresas pueden realizar operaciones administrativas sobre el personal, inventario, ventas y clientes registrados por ellas mismas. La empresa matriz será la única con un administrador especial capaz de operar en cualquiera de los registros de las otras entidades.
 
+## Inventario
 
+## Ventas
 
-##### Argumentos
-
-##### Respuestas
-
-##### Ejemplo
-
-#### `GET /api/product/list/{page}`
-
-##### Descripción
-
-##### Argumentos
-
-##### Respuestas
-
-##### Ejemplo
-
-#### `POST /api/product`
-
-##### Descripción
-
-Añadir nuevo producto a los disponibles.
-
-##### Argumentos
-
-##### Respuestas
-
-##### Ejemplo
-
-#### `PUT /api/product`
-
-##### Descripción
-
-Actualizar la información de un producto.
-
-##### Argumentos
-
-##### Respuestas
-
-##### Ejemplo
-
-
+## Clientes
 
