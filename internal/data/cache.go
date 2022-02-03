@@ -41,6 +41,18 @@ func (cache *Cache) DeleteUserSession(cookie string) bool {
 	return found
 }
 
+func (cache *Cache) GetUserSession(cookie string) (*objects.User, bool) {
+	cache.sessionsMutex.Lock()
+	defer cache.sessionsMutex.Unlock()
+	user, found := cache.sessions[cookie]
+	return user, found
+}
+
 func NewCache() *Cache {
-	return &Cache{}
+	return &Cache{
+		sessions:            map[string]*objects.User{},
+		sessionsMutex:       new(sync.Mutex),
+		passwordResets:      map[string]*objects.User{},
+		passwordResetsMutex: new(sync.Mutex),
+	}
 }
