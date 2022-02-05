@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button class="blue-button" type="submit" style="margin-top: 5%; width: 75%;">Ingresar</button>
         </form>
         <br>
-        <a href="/request-reset.php" class="blue-text" style="font-size: 15px;">dwjfvlwerhfkchjjhewchkkhwjceiegchjweb</a>
+        <a href="/request-reset.php" class="blue-text" style="font-size: 15px;">¿Olvidaste tu contraseña?</a>
     </div>
 </div>
 </body>
