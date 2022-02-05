@@ -1,0 +1,92 @@
+.blue-button {
+    justify-self: center;
+    text-decoration: none;
+    padding: 1vh 1.5vw;
+    cursor: pointer;
+    border-width: 0;
+    border-radius: 2px;
+    font-family: "Helvetica", serif;
+    background: #547EE3;
+    color: white;
+}
+
+.blue-button:hover {
+    background: #4A6FC7;
+}
+
+.purple-button {
+    justify-self: center;
+    text-decoration: none;
+    padding: 1vh 1.5vw;
+    cursor: pointer;
+    border-radius: 2px;
+    font-family: "Helvetica", serif;
+    background: #C26AFA;
+    color: white;
+}
+
+.purple-button:hover {
+    background: #9B54C7;
+}
+
+.green-button {
+    cursor: pointer;
+    font-family: Arial, serif;
+    text-decoration: none;
+    padding: 1vh 1vw;
+    background: #5EAB5E;
+    color: white;
+    border-width: 0;
+    border-radius: 2px;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+.green-button:hover {
+    background: #6DC76D;
+}
+
+.red-button {
+    cursor: pointer;
+    font-family: Arial, serif;
+    text-decoration: none;
+    padding: 1vh 1vw;
+    background: #E35456;
+    color: white;
+    border-width: 0;
+    border-radius: 2px;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+.red-button:hover {
+    background: #C74A4C;
+}
+
+.unchecked-checkbox {
+    font-family: Arial, serif;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 1vh 1vw;
+    background: #e74c3c;
+    color: white;
+    box-shadow: 1px 1px 1px 1px #c0392b;
+    border: 1px solid #c0392b;
+    border-radius: 2px;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+.checked-checkbox {
+    font-family: Arial, serif;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 1vh 1vw;
+    background: #3498db;
+    color: white;
+    box-shadow: 1px 1px 1px 1px #2980b9;
+    border: 1px solid #2980b9;
+    border-radius: 2px;
+    margin-left: 1%;
+    margin-right: 1%;
+}
