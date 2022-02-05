@@ -1,48 +1,81 @@
 <?php
 
-  session_start();
+require 'connection.php';
 
-  require 'database.php';
+session_start();
 
-  if (!empty($_POST['email']) && !empty($_POST['password'])) {
-    $records = $conn->prepare('SELECT id, email, password FROM users WHERE email = :email');
-    $records->bindParam(':email', $_POST['email']);
-    $records->execute();
-    $results = $records->fetch(PDO::FETCH_ASSOC);
+if (isset($_SESSION["logged-in"]) && $_SESSION["logged-in"] === true) {
+    header('Location: /dashboard.php', true, 307);
+    exit;
+}
 
-    $message = '';
-
-    if (count($results) > 0 && password_verify($_POST['password'], $results['password'])) {
-      $_SESSION['user_id'] = $results['id'];
-      header("Location:index.html");
-    } 
-    else {
-      ?>
-          <h1 class="bad">Lo sentimos, las credenciales no coinciden</h1>
-      <?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $user = connect()->login($_POST["email"], $_POST["password"]);
+    if ($user !== null) {
+        $_SESSION["logged-in"] = true;
+        $_SESSION['user'] = $user;
+        header('Location: /dashboard.php', true, 307);
+        exit;
+    } else {
+        ?>
+        <h1 class="bad">Credenciales invalidas</h1>
+        <?php
     }
-  }
+}
 ?>
 
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="html5">
+<head>
     <title>Inicio de sesion</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="login.css">
-    <link rel="stylesheet" href="cabecera.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css">
-  </head>
-  <body>
-    <form action="login.php" method="post">
-    <h1 class="animate__animated animate__backInLeft">Iniciar sesion</h1>
-    <p>Usuario <input type="text" placeholder="ingrese su nombre" name="email"></p>
-    <p>Contraseña <input type="password" placeholder="ingrese su contraseña" name="password"></p>
-    <input type="submit" value="Ingresar">
-    <br>
-    <a href="signup.php">Registrarse</a>
-    <span>o <a href="">¿Olvidaste tu contraseña?</a></span>
-   </form> 
-  </body>
+    <link rel="stylesheet" href="css/containers.css">
+    <link rel="stylesheet" href="css/text.css">
+    <link rel="stylesheet" href="css/buttons.css">
+</head>
+<style>
+    body {
+        background: linear-gradient(-45deg, #5EAB5E, #5C8CFA);
+        background-size: 400% 400%;
+        animation: gradient 60s ease infinite;
+    }
+
+    @keyframes gradient {
+        0% {
+            background-position: 0 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0 50%;
+        }
+    }
+
+    img {
+        width: 50%;
+        height: auto;
+    }
+</style>
+<body>
+<div class="centered-container">
+    <div class="login-container">
+        <h1 class="purple-text" style="margin-top: 10%;">Iniciar sesion</h1>
+        <form action="login.php" method="post">
+            <label>
+                <input class="basic-text-input" type="email" placeholder="Correo electronico" name="email"
+                       style="width: 75%;">
+            </label>
+            <br>
+            <label>
+                <input class="basic-text-input" type="password" placeholder="Contraseña" name="password"
+                       style="margin-top: 5%; width: 75%;">
+            </label>
+            <br>
+            <button class="blue-button" type="submit" style="margin-top: 5%; width: 75%;">Ingresar</button>
+        </form>
+        <br>
+        <a href="/request-reset.php" class="blue-text" style="font-size: 15px;">dwjfvlwerhfkchjjhewchkkhwjceiegchjweb</a>
+    </div>
+</div>
+</body>
 </html>
