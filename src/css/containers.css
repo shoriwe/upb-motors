@@ -19,15 +19,12 @@
     margin-top: 10%;
 }
 
-.login-container {
+.centered-container-for-input {
     background: white;
-    margin-top: 10vh;
     text-align: center;
     justify-content: center;
     align-items: center;
     padding: 2.5vh 2.5vw;
-    width: 70vw;
-    height: 50vh;
     border: 0 solid gray;
     border-radius: 2px;
 }

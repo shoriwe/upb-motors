@@ -1,16 +1,25 @@
 <?php
 
 require 'database.php';
+require 'email.php';
 
-function &connect(): MySQL|Test
+class Connection
 {
-    static $connection = null;
-    if ($connection === null) {
+    public iDatabase $database;
+    public iEmail $email;
+}
+
+function connect(): Connection
+{
+    if (!isset($_SERVER["connection"])) {
+        $_SERVER["connection"] = new Connection();
         if (getenv("TEST") !== false) {
-            $connection = new Test();
+            $_SERVER["connection"]->database = new TestDatabase();
+            $_SERVER["connection"]->email = new TestEmail();
         } else {
-            $connection = new MySQL($_ENV["HOST"], $_ENV["USERNAME"], $_ENV["PASSWORD"], $_ENV["DATABASE"]);
+            $_SERVER["connection"]->database = new MySQL($_ENV["DB_HOST"], $_ENV["DB_USERNAME"], $_ENV["DB_PASSWORD"], $_ENV["DB_DATABASE"]);
+            $_SERVER["connection"]->email = new SMTP($_ENV["EMAIL_HOST"], $_ENV["EMAIL_USERNAME"], $_ENV["EMAIL_PASSWORD"]);
         }
     }
-    return $connection;
+    return $_SERVER["connection"];
 }

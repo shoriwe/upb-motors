@@ -2,9 +2,9 @@
 
 class User
 {
-    public $id = null;
-    public $email = null;
-    public $password = null;
+    public ?int $id = null;
+    public ?string $email = null;
+    public ?string $password = null;
 
     public function __construct($id, $email, $password)
     {
