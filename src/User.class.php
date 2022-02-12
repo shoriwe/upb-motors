@@ -1,29 +1,6 @@
 <?php 
 
 class User{ 
-    private $dbHost     = "localhost:3307"; 
-    private $dbUsername = "root"; 
-    private $dbPassword = "upb2021"; 
-    private $dbName     = "login3"; 
-    private $userTbl    = "users"; 
-     
-    public function __construct(){ 
-        if(!isset($this->db)){ 
-            // Connect to the database 
-            $conn = new mysqli($this->dbHost, $this->dbUsername, $this->dbPassword, $this->dbName); 
-            if($conn->connect_error){ 
-                die("Failed to connect with MySQL: " . $conn->connect_error); 
-            }else{ 
-                $this->db = $conn; 
-            } 
-        } 
-    } 
-     
-    /* 
-     * Returns rows from the database based on the conditions 
-     * @param string name of the table 
-     * @param array select, where, order_by, limit and return_type conditions 
-     */ 
     public function getRows($conditions = array()){ 
         $sql = 'SELECT '; 
         $sql .= array_key_exists("select",$conditions)?$conditions['select']:'*'; 
@@ -71,43 +48,8 @@ class User{
         return !empty($data)?$data:false; 
     } 
      
-    /* 
-     * Insert data into the database 
-     * @param string name of the table 
-     * @param array the data for inserting into the table 
-     */ 
-    public function insert($data){ 
-        if(!empty($data) && is_array($data)){ 
-            $columns = ''; 
-            $values  = ''; 
-            $i = 0; 
-            if(!array_key_exists('created',$data)){ 
-                $data['created'] = date("Y-m-d H:i:s"); 
-            } 
-            if(!array_key_exists('modified',$data)){ 
-                $data['modified'] = date("Y-m-d H:i:s"); 
-            } 
-            foreach($data as $key=>$val){ 
-                $pre = ($i > 0)?', ':''; 
-                $columns .= $pre.$key; 
-                $values  .= $pre."'".$val."'"; 
-                $i++; 
-            } 
-            $query = "INSERT INTO ".$this->userTbl." (".$columns.") VALUES (".$values.")"; 
-            $insert = $this->db->query($query); 
-            return $insert?$this->db->insert_id:false; 
-        }else{ 
-            return false; 
-        } 
-    } 
-    /*
-     * Update data into the database
-     * @param string name of the table
-     * @param array the data for inserting into the table
-     */
     public function update($data, $conditions){
         if(!empty($data) && is_array($data) && !empty($conditions)){
-            //prepare columns and values sql
             $cols_vals = '';
             $i = 0;
             if(!array_key_exists('modified',$data)){
@@ -118,8 +60,6 @@ class User{
                 $cols_vals .= $pre.$key." = '".$val."'";
                 $i++;
             }
-            
-            //prepare where conditions
             $whereSql = '';
             $ci = 0;
             foreach($conditions as $key => $value){
@@ -127,11 +67,7 @@ class User{
                 $whereSql .= $pre.$key." = '".$value."'";
                 $ci++;
             }
-            
-            //prepare sql query
             $query = "UPDATE ".$this->userTbl." SET ".$cols_vals." WHERE ".$whereSql;
-
-            //update data
             $update = $this->db->query($query);
             return $update?true:false;
         }else{
