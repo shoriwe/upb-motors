@@ -21,7 +21,8 @@ class Cache
         fclose($this->file_handle);
     }
 
-    public function delete(int|string $key) {
+    public function delete(int|string $key)
+    {
         flock($this->file_handle, LOCK_EX);
         $o = $this->load_file();
         if (array_key_exists($key, $o)) {
@@ -29,17 +30,6 @@ class Cache
         }
         $this->write_to_file($o);
         flock($this->file_handle, LOCK_UN);
-    }
-
-    public function get(int|string $key)
-    {
-        flock($this->file_handle, LOCK_EX);
-        $o = $this->load_file();
-        flock($this->file_handle, LOCK_UN);
-        if (array_key_exists($key, $o)) {
-            return $o[$key];
-        }
-        return null;
     }
 
     public function load_file(): ?array
@@ -56,6 +46,24 @@ class Cache
         return null;
     }
 
+    public function write_to_file(array $contents)
+    {
+        fseek($this->file_handle, 0);
+        fwrite($this->file_handle, serialize($contents));
+        fseek($this->file_handle, 0);
+    }
+
+    public function get(int|string $key)
+    {
+        flock($this->file_handle, LOCK_EX);
+        $o = $this->load_file();
+        flock($this->file_handle, LOCK_UN);
+        if (array_key_exists($key, $o)) {
+            return $o[$key];
+        }
+        return null;
+    }
+
     public function set(int|string $key, $value)
     {
         flock($this->file_handle, LOCK_EX);
@@ -63,12 +71,5 @@ class Cache
         $o[$key] = $value;
         $this->write_to_file($o);
         flock($this->file_handle, LOCK_UN);
-    }
-
-    public function write_to_file(array $contents)
-    {
-        fseek($this->file_handle, 0);
-        fwrite($this->file_handle, serialize($contents));
-        fseek($this->file_handle, 0);
     }
 }

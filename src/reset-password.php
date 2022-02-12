@@ -8,7 +8,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         <!DOCTYPE html>
         <html lang="html5">
         <head>
-            <title>Inicio de sesion</title>
+            <title>Resetear contraseña</title>
             <link rel="stylesheet" href="css/containers.css">
             <link rel="stylesheet" href="css/text.css">
             <link rel="stylesheet" href="css/buttons.css">
@@ -40,7 +40,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             <!DOCTYPE html>
             <html lang="html5">
             <head>
-                <title>Inicio de sesion</title>
+                <title>Resetear contraseña</title>
                 <link rel="stylesheet" href="css/containers.css">
                 <link rel="stylesheet" href="css/text.css">
                 <link rel="stylesheet" href="css/buttons.css">
@@ -62,7 +62,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             <!DOCTYPE html>
             <html lang="html5">
             <head>
-                <title>Inicio de sesion</title>
+                <title>Resetear contraseña</title>
                 <link rel="stylesheet" href="css/containers.css">
                 <link rel="stylesheet" href="css/text.css">
                 <link rel="stylesheet" href="css/buttons.css">

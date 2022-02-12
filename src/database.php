@@ -1,7 +1,5 @@
 <?php
 
-use JetBrains\PhpStorm\Pure;
-
 require 'tables.php';
 require 'cache.php';
 
@@ -31,7 +29,7 @@ class TestDatabase implements iDatabase
     public ?Cache $users = null;
     public ?Cache $cache = null;
 
-    #[Pure] public function __construct()
+    public function __construct()
     {
         $this->users = new Cache("test-users.dump");
         $this->cache = new Cache("cache.dump");
@@ -47,7 +45,7 @@ class TestDatabase implements iDatabase
         }
     }
 
-    #[Pure] public function login(string $email, string $password): ?User
+    public function login(string $email, string $password): ?User
     {
         $user = $this->users->get($email);
         if ($user !== null) {
