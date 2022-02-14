@@ -34,6 +34,19 @@ class SMTPEmail implements iEmail
         $this->password = $password;
     }
 
+    /**
+     * @throws \PHPMailer\PHPMailer\Exception
+     */
+    public function send_reset_code(string $email, string $code)
+    {
+        $host = $_SERVER['HTTP_HOST'];
+        $url = "http://$host/reset-password.php?code=$code";
+        $mail = $this->new_mail();
+        $mail->addAddress($email);
+        $mail->Body = "Hola, puedes recuperar tu cuenta con desde el siguiente URL: $url";
+        $mail->send();
+    }
+
     public function new_mail(): PHPMailer
     {
         $mail = new PHPMailer(true);
@@ -46,18 +59,5 @@ class SMTPEmail implements iEmail
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port = $this->port;
         return $mail;
-    }
-
-    /**
-     * @throws \PHPMailer\PHPMailer\Exception
-     */
-    public function send_reset_code(string $email, string $code)
-    {
-        $host = $_SERVER['HTTP_HOST'];
-        $url = "http://$host/reset-password.php?code=$code";
-        $mail = $this->new_mail();
-        $mail->addAddress($email);
-        $mail->Body = "Hola, puedes recuperar tu cuenta con desde el siguiente URL: $url";
-        $mail->send();
     }
 }
