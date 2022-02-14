@@ -17,8 +17,17 @@ function connect(): Connection
             $_SERVER["connection"]->database = new TestDatabase();
             $_SERVER["connection"]->email = new TestEmail();
         } else {
-            $_SERVER["connection"]->database = new MySQL($_ENV["DB_HOST"], $_ENV["DB_USERNAME"], $_ENV["DB_PASSWORD"], $_ENV["DB_DATABASE"]);
-            $_SERVER["connection"]->email = new SMTP($_ENV["EMAIL_HOST"], $_ENV["EMAIL_USERNAME"], $_ENV["EMAIL_PASSWORD"]);
+            $_SERVER["connection"]->database = new MySQL(
+                $_ENV["DB_HOST"],
+                $_ENV["DB_USERNAME"],
+                $_ENV["DB_PASSWORD"],
+                $_ENV["DB_DATABASE"]);
+            $_SERVER["connection"]->email = new SMTPEmail(
+                $_ENV["EMAIL_HOST"],
+                intval($_ENV["EMAIL_PORT"]),
+                $_ENV["EMAIL_USERNAME"],
+                $_ENV["EMAIL_PASSWORD"]
+            );
         }
     }
     return $_SERVER["connection"];
