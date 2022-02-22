@@ -101,7 +101,7 @@ class MySQL implements iDatabase
 
     public function login($email, $password): ?User
     {
-        $records = $this->connection->prepare('SELECT id, email, password FROM users WHERE email = :email');
+        $records = $this->connection->prepare('SELECT id, email, password FROM empleados WHERE email = :email');
         $records->bindParam(':email', $email);
         $records->execute();
         $results = $records->fetch(PDO::FETCH_ASSOC);
@@ -115,7 +115,7 @@ class MySQL implements iDatabase
 
     public function request_password_reset(string $email): ?string
     {
-        $records = $this->connection->prepare('SELECT id FROM users WHERE email = :email');
+        $records = $this->connection->prepare('SELECT id FROM empleados WHERE email = :email');
         $records->bindParam(':email', $email);
         $records->execute();
         $results = $records->fetch(PDO::FETCH_ASSOC);
@@ -131,6 +131,16 @@ class MySQL implements iDatabase
 
     public function reset_password(string $code, string $new_password): bool
     {
-        // TODO: Implement reset_password() method.
+        $id = $this->cache->get($code);
+        if ($id === null) {
+            return false;
+        }
+        $this->cache->delete($code);
+        $newPasswordHash = password_hash($new_password, PASSWORD_DEFAULT);
+        $records = $this->connection->prepare('UPDATE empleados SET password = :newPassword WHERE id = :id');
+        $records->bindParam(':newPassword', $newPasswordHash);
+        $records->bindParam(':id', $id);
+        $records->execute();
+        return true;
     }
 }
