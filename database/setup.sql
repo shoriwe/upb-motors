@@ -36,6 +36,24 @@ CREATE TABLE IF NOT EXISTS logs
     CONSTRAINT fk_logs_niveles_log_nivel FOREIGN KEY (nivel) REFERENCES niveles_log (id)
 );
 
+CREATE PROCEDURE
+    log_login_failed(IN correo VARCHAR(500))
+BEGIN
+    INSERT INTO logs (fecha,
+                      nivel,
+                      mensaje)
+    VALUES (NOW(), get_log_level('AUTH'), CONCAT('COULD NOT LOGIN AS ', correo));
+END;
+
+CREATE PROCEDURE
+    log_login_succeed(IN correo VARCHAR(500))
+BEGIN
+    INSERT INTO logs (fecha,
+                      nivel,
+                      mensaje)
+    VALUES (NOW(), get_log_level('LOG'), CONCAT('LOGIN SUCCEED ', correo));
+END;
+
 -- -- Tablas -- --
 CREATE TABLE IF NOT EXISTS permisos
 (
@@ -58,20 +76,10 @@ CREATE TABLE IF NOT EXISTS empleados
 );
 
 -- -- Procesos -- --
-CREATE PROCEDURE
-    log_login_failed(IN correo VARCHAR(500))
+CREATE PROCEDURE actualizar_contrasena(IN v_id INT, IN hash_nueva_contrasena VARCHAR(500))
 BEGIN
-    INSERT INTO logs (fecha,
-                      nivel,
-                      mensaje)
-    VALUES (NOW(), get_log_level('AUTH'), CONCAT('COULD NOT LOGIN AS ', correo));
-END;
-
-CREATE PROCEDURE
-    log_login_succeed(IN correo VARCHAR(500))
-BEGIN
-    INSERT INTO logs (fecha,
-                      nivel,
-                      mensaje)
-    VALUES (NOW(), get_log_level('LOG'), CONCAT('LOGIN SUCCEED ', correo));
+    UPDATE
+        empleados
+    SET empleados.hash_contrasena = hash_nueva_contrasena
+    WHERE empleados.id = v_id;
 END;

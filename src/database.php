@@ -17,8 +17,12 @@ function generateRandomString(int $length = 10): string
 
 interface iDatabase
 {
+    public function update_password(int $user_id, string $old_password, string $new_password): ?string;
+
     public function log_login_succeed(string $email);
+
     public function log_login_failed(string $email);
+
     public function login(string $email, string $password): ?User;
 
     public function request_password_reset(string $email): ?string;
@@ -87,12 +91,18 @@ class TestDatabase implements iDatabase
 
     public function log_login_succeed(string $email)
     {
-        print_r("Login succeed for " . $email );
+        print_r("Login succeed for " . $email);
     }
 
     public function log_login_failed(string $email)
     {
-        print_r("Login failed for " . $email );
+        print_r("Login failed for " . $email);
+    }
+
+    public function update_password(int $user_id, string $old_password, string $new_password): ?string
+    {
+        // TODO: Implement update_password() method.
+        return "IMPLEMENT ME";
     }
 }
 
@@ -113,7 +123,7 @@ class MySQL implements iDatabase
 
     public function login($email, $password): ?User
     {
-        $records = $this->database->prepare('SELECT id, correo, hash_contrasena FROM empleados WHERE correo = :email');
+        $records = $this->database->prepare('SELECT id, correo, hash_contrasena FROM empleados WHERE correo = :email LIMIT 1;');
         $records->bindParam(':email', $email);
         $records->execute();
         $results = $records->fetch(PDO::FETCH_ASSOC);
@@ -127,7 +137,7 @@ class MySQL implements iDatabase
 
     public function request_password_reset(string $email): ?string
     {
-        $records = $this->database->prepare('SELECT id FROM empleados WHERE correo = :email');
+        $records = $this->database->prepare('SELECT id FROM empleados WHERE correo = :email LIMIT 1;');
         $records->bindParam(':email', $email);
         $records->execute();
         $results = $records->fetch(PDO::FETCH_ASSOC);
@@ -149,7 +159,7 @@ class MySQL implements iDatabase
         }
         $this->cache->delete($code);
         $newPasswordHash = password_hash($new_password, PASSWORD_DEFAULT);
-        $records = $this->database->prepare('UPDATE empleados SET hash_contrasena = :newPassword WHERE id = :id');
+        $records = $this->database->prepare('UPDATE empleados SET hash_contrasena = :newPassword WHERE id = :id;');
         $records->bindParam(':newPassword', $newPasswordHash);
         $records->bindParam(':id', $id);
         $records->execute();
@@ -158,15 +168,38 @@ class MySQL implements iDatabase
 
     public function log_login_succeed(string $email)
     {
-        $records = $this->database->prepare('CALL log_login_succeed(:email)');
+        $records = $this->database->prepare('CALL log_login_succeed(:email);');
         $records->bindParam(':email', $email);
         $records->execute();
     }
 
     public function log_login_failed(string $email)
     {
-        $records = $this->database->prepare('CALL log_login_failed(:email)');
+        $records = $this->database->prepare('CALL log_login_failed(:email);');
         $records->bindParam(':email', $email);
         $records->execute();
+    }
+
+    public function update_password(int $user_id, string $old_password, string $new_password): ?string
+    {
+        $records = $this->database->prepare('SELECT hash_contrasena FROM empleados WHERE id = :id LIMIT 1;');
+        $records->bindParam(':id', $user_id);
+        $records->execute();
+        $results = $records->fetch(PDO::FETCH_ASSOC);
+        if ($results) {
+            if (count($results) > 0) {
+                if (password_verify($old_password, $results["hash_contrasena"])) {
+                    $new_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
+                    $records = $this->database->prepare('CALL actualizar_contrasena(:id, :new_password_hash);');
+                    $records->bindParam(':id', $user_id);
+                    $records->bindParam(':new_password_hash', $new_password_hash);
+                    $records->execute();
+                    return null;
+                } else {
+                    return "contrasena antigua es incorrecta";
+                }
+            }
+        }
+        return "COMO LLEGASTE AQUI LADRON?";
     }
 }

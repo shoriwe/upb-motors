@@ -6,14 +6,14 @@
 
 ## Que compartimos todos
 
-- Clientes siguiendo **Actividad sujeta a  la ley 1581 de 2021 y al Decreto 1081 de 2015 en Colombia**.
-  - Por lo tanto, los miembros del consorcio deben ser capaces de:
-    - Buscar entre todos los clientes
+- Clientes siguiendo **Actividad sujeta a la ley 1581 de 2021 y al Decreto 1081 de 2015 en Colombia**.
+    - Por lo tanto, los miembros del consorcio deben ser capaces de:
+        - Buscar entre todos los clientes
 - Inventario de productos de la misma marca.
-  - Consorcio me pide automóviles.
-  - Taller me pide repuestos.
-  - Yo le pido repuestos a partes
-  - Yo le pido accesorios a accesorios.
+    - Consorcio me pide automóviles.
+    - Taller me pide repuestos.
+    - Yo le pido repuestos a partes
+    - Yo le pido accesorios a accesorios.
 - Información de ventas
 
 ## Concesionaria

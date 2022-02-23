@@ -9,9 +9,14 @@ require 'middleware/ensure_login.php';
     <link rel="stylesheet" href="css/containers.css">
     <link rel="stylesheet" href="css/text.css">
     <link rel="stylesheet" href="css/buttons.css">
-    <link rel="stylesheet" href="css/background.css">
+    
 </head>
 <body>
+<div class="centered-flex-container" style="background-color: white; padding: 1vh 1vw;">
+    <div class="centered-flex-container">
+        <a href="update-password.php" class="green-button">Actualizar contrasena</a>
+    </div>
+</div>
 <div class="centered-container">
     <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 30vh;">
         <h1 class="purple-text" style="margin-top: 10%;">Dashboard</h1>

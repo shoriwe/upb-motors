@@ -1,6 +1,8 @@
 # Administrativo
 
-Con este conjunto de funcionalidades las empresas pueden realizar operaciones administrativas sobre el personal, inventario, ventas y clientes registrados por ellas mismas. La empresa matriz será la única con un administrador especial capaz de operar en cualquiera de los registros de las otras entidades.
+Con este conjunto de funcionalidades las empresas pueden realizar operaciones administrativas sobre el personal,
+inventario, ventas y clientes registrados por ellas mismas. La empresa matriz será la única con un administrador
+especial capaz de operar en cualquiera de los registros de las otras entidades.
 
 ### Clientes
 
@@ -116,4 +118,4 @@ Deshabilita al empleado.
 
 ##### Ejemplo
 
-## 
+##     

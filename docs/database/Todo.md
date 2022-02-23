@@ -46,13 +46,14 @@
 
 - [ ] Realizar un informe de inventario, nombre del ítem y disponibilidad.
 
-- [ ] Controlar con cada evento, los documentos asociados como es el caso de la venta o compra y las  facturas que rigen por régimen tributario del país.
+- [ ] Controlar con cada evento, los documentos asociados como es el caso de la venta o compra y las facturas que rigen
+  por régimen tributario del país.
 
 - [ ] Gestionar devoluciones y garantías al cliente.
 
 - [ ] Generar informe sobre el histórico de precios.
 
-- [ ] Generar reportes de Pérdidas y Ganancias, Cuentas por pagar, por cobrar, entre otros. 
+- [ ] Generar reportes de Pérdidas y Ganancias, Cuentas por pagar, por cobrar, entre otros.
 
 ## Administración de usuarios
 
@@ -66,5 +67,5 @@
 ## Administración de clientes
 
 - [x] Registro de clientes, actualización y baja.
-- [x] Buscar un cliente por nombre o identificador. 
+- [x] Buscar un cliente por nombre o identificador.
 - [x] Mostrar detalles del cliente.

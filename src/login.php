@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <link rel="stylesheet" href="css/containers.css">
             <link rel="stylesheet" href="css/text.css">
             <link rel="stylesheet" href="css/buttons.css">
-            <link rel="stylesheet" href="css/background.css">
+
         </head>
         <body>
         <div class="centered-container">
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <link rel="stylesheet" href="css/containers.css">
         <link rel="stylesheet" href="css/text.css">
         <link rel="stylesheet" href="css/buttons.css">
-        <link rel="stylesheet" href="css/background.css">
+
     </head>
     <body>
     <div class="centered-container">

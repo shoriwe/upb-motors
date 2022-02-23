@@ -49,8 +49,8 @@ Mostrar los detalles del ítem.
 ##### Argumentos
 
 - **HEADERS**:
-  - `Content-Type: application/json`
-  - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
+    - `Content-Type: application/json`
+    - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
 
 - **BODY**:
 
@@ -134,11 +134,11 @@ Buscar usuario por nombre o identificador.
 ##### Argumentos
 
 - **URL**:
-  - `field`: Buscar por `name` o `id`
+    - `field`: Buscar por `name` o `id`
 
 - **HEADERS**:
-  - `Content-Type: application/json`
-  - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
+    - `Content-Type: application/json`
+    - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
 - **BODY**:
 
 ```json
@@ -233,8 +233,8 @@ Mostrar detalles del usuario.
 ##### Argumentos
 
 - **HEADERS**:
-  - `Content-Type: application/json`
-  - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
+    - `Content-Type: application/json`
+    - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
 
 - **BODY**:
 

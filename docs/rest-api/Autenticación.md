@@ -1,6 +1,8 @@
 # Autenticación
 
-Los usuarios del consorcio deben estar disponibles entre todas las empresas, eso si, empleados de alto rango en la empresa X no necesariamente deben tener altos privilegios en la empresa Y, por lo que se recomienda discreción y correcto uso de los permisos otorgados confirmando además el origen del empleado, mas no solo su cargo.
+Los usuarios del consorcio deben estar disponibles entre todas las empresas, eso si, empleados de alto rango en la
+empresa X no necesariamente deben tener altos privilegios en la empresa Y, por lo que se recomienda discreción y
+correcto uso de los permisos otorgados confirmando además el origen del empleado, mas no solo su cargo.
 
 #### `POST /api/auth/login`
 
@@ -11,8 +13,8 @@ Iniciar sesión como un usuario del consorcio.
 ##### Argumentos
 
 - **HEADERS**:
-  - `Content-Type: application/json`
-  - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
+    - `Content-Type: application/json`
+    - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
 
 - **BODY**:
 
@@ -33,7 +35,7 @@ Iniciar sesión como un usuario del consorcio.
 }
 ```
 
-- `403`: Inicio de sesión fallido: 
+- `403`: Inicio de sesión fallido:
 
 ```json
 {
@@ -76,8 +78,8 @@ Actualiza la contraseña de la cuenta asociada con la llave.
 ##### Argumentos
 
 - **HEADERS**:
-  - `Content-Type: application/json`
-  - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
+    - `Content-Type: application/json`
+    - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
 - **BODY**:
 
 ```json
@@ -141,8 +143,8 @@ Solicita por correo una llave para actualización de contraseña.
 ##### Argumentos
 
 - **HEADERS**:
-  - `Content-Type: application/json`
-  - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
+    - `Content-Type: application/json`
+    - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
 - **BODY**:
 
 ```json
@@ -191,8 +193,8 @@ Utilizando el ticket recibido en el correo de reinicio de contraseña, el usuari
 ##### Argumentos
 
 - **HEADERS**:
-  - `Content-Type: application/json`
-  - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
+    - `Content-Type: application/json`
+    - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
 - **BODY**:
 
 ```json
@@ -251,8 +253,8 @@ Solicita información del usuario actual.
 ##### Argumentos
 
 - **HEADERS**:
-  - `Content-Type: application/json`
-  - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
+    - `Content-Type: application/json`
+    - `API-Key: API_KEY_ENTREGADA_A_LOS_DESARROLLADORES`
 - **BODY**:
 
 ```json

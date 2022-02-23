@@ -1,6 +1,7 @@
 # Cargos
 
-A cada empresa se le entregara una cuenta con permisos administrativos sobre las entradas de la base de datos registradas por ellos mismos. Es decir, pueden modificar solo aquellas entradas que ellos mismos recibieron.
+A cada empresa se le entregara una cuenta con permisos administrativos sobre las entradas de la base de datos
+registradas por ellos mismos. Es decir, pueden modificar solo aquellas entradas que ellos mismos recibieron.
 
 ## Admin
 
