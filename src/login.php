@@ -12,11 +12,13 @@ if (isset($_SESSION["logged-in"]) && $_SESSION["logged-in"] === true) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = connect()->database->login($_POST["email"], $_POST["password"]);
     if ($user !== null) {
+        connect()->database->log_login_succeed($_POST["email"]);
         $_SESSION["logged-in"] = true;
         $_SESSION['user'] = $user;
         header('Location: /dashboard.php', true, 307);
         exit;
     } else {
+        connect()->database->log_login_failed($_POST["email"]);
         ?>
         <!DOCTYPE html>
         <html lang="html5">

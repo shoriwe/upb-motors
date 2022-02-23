@@ -17,6 +17,8 @@ function generateRandomString(int $length = 10): string
 
 interface iDatabase
 {
+    public function log_login_succeed(string $email);
+    public function log_login_failed(string $email);
     public function login(string $email, string $password): ?User;
 
     public function request_password_reset(string $email): ?string;
@@ -82,18 +84,28 @@ class TestDatabase implements iDatabase
         $this->cache->delete($code);
         return true;
     }
+
+    public function log_login_succeed(string $email)
+    {
+        print_r("Login succeed for " . $email );
+    }
+
+    public function log_login_failed(string $email)
+    {
+        print_r("Login failed for " . $email );
+    }
 }
 
 class MySQL implements iDatabase
 {
-    public ?PDO $connection = null;
+    public ?PDO $database = null;
     public ?Cache $cache = null;
 
     public function __construct($host, $username, $password, $database)
     {
         $this->cache = new Cache("cache.dump");
         try {
-            $this->connection = new PDO("mysql:host=$host;dbname=$database;", $username, $password);
+            $this->database = new PDO("mysql:host=$host;dbname=$database;", $username, $password);
         } catch (PDOException $e) {
             // Do not log the error to the client
         }
@@ -101,13 +113,13 @@ class MySQL implements iDatabase
 
     public function login($email, $password): ?User
     {
-        $records = $this->connection->prepare('SELECT id, email, password FROM empleados WHERE email = :email');
+        $records = $this->database->prepare('SELECT id, correo, hash_contrasena FROM empleados WHERE correo = :email');
         $records->bindParam(':email', $email);
         $records->execute();
         $results = $records->fetch(PDO::FETCH_ASSOC);
         if ($results) {
-            if (count($results) > 0 && password_verify($password, $results['password'])) {
-                return new User($results["id"], $results["email"], $results["password"]);
+            if (count($results) > 0 && password_verify($password, $results['hash_contrasena'])) {
+                return new User($results["id"], $results["correo"], $results["hash_contrasena"]);
             }
         }
         return null;
@@ -115,7 +127,7 @@ class MySQL implements iDatabase
 
     public function request_password_reset(string $email): ?string
     {
-        $records = $this->connection->prepare('SELECT id FROM empleados WHERE email = :email');
+        $records = $this->database->prepare('SELECT id FROM empleados WHERE correo = :email');
         $records->bindParam(':email', $email);
         $records->execute();
         $results = $records->fetch(PDO::FETCH_ASSOC);
@@ -137,10 +149,24 @@ class MySQL implements iDatabase
         }
         $this->cache->delete($code);
         $newPasswordHash = password_hash($new_password, PASSWORD_DEFAULT);
-        $records = $this->connection->prepare('UPDATE empleados SET password = :newPassword WHERE id = :id');
+        $records = $this->database->prepare('UPDATE empleados SET hash_contrasena = :newPassword WHERE id = :id');
         $records->bindParam(':newPassword', $newPasswordHash);
         $records->bindParam(':id', $id);
         $records->execute();
         return true;
+    }
+
+    public function log_login_succeed(string $email)
+    {
+        $records = $this->database->prepare('CALL log_login_succeed(:email)');
+        $records->bindParam(':email', $email);
+        $records->execute();
+    }
+
+    public function log_login_failed(string $email)
+    {
+        $records = $this->database->prepare('CALL log_login_failed(:email)');
+        $records->bindParam(':email', $email);
+        $records->execute();
     }
 }

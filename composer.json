@@ -1,5 +1,8 @@
 {
   "name": "upb-motors/src",
+  "config": {
+    "vendor-dir": "src/vendor"
+  },
   "description": "University project",
   "minimum-stability": "stable",
   "license": "MIT",
