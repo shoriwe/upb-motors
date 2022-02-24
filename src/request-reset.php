@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="centered-container">
         <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 30vh;">
             <h1 class="purple-text" style="margin-top: 10%;">Recuperar contraseña</h1>
-            <form action="request-reset.php" method="post">
+            <form method="post">
                 <label>
                     <input required class="basic-text-input" type="email" placeholder="Correo electronico" name="email"
                            style="width: 75%;">

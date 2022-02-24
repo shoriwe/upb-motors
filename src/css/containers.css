@@ -28,3 +28,27 @@
     border: 0 solid gray;
     border-radius: 2px;
 }
+
+.list-container {
+    box-shadow: 1px 1px 5px 1px gray;
+    border: 0 solid gray;
+    padding: 1%;
+
+    margin-top: 1%;
+}
+
+.list-entry {
+    width: 90%;
+    margin: 0.25% auto;
+    padding: 1%;
+    box-shadow: 1px 1px 5px 1px gray;
+    border: 0 solid gray;
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.list-entry:hover {
+    background: #f5f6fa;
+}

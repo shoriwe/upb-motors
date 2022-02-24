@@ -2,9 +2,11 @@
 
 require 'connection.php';
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-if (isset($_SESSION["logged-in"]) && $_SESSION["logged-in"] === true) {
+if (isset($_SESSION["user-id"])) {
     header('Location: /dashboard.php', true, 307);
     exit;
 }
@@ -13,7 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = connect()->database->login($_POST["email"], $_POST["password"]);
     if ($user_id !== null) {
         connect()->database->log_login_succeed($_POST["email"]);
-        $_SESSION["logged-in"] = true;
         $_SESSION['user-id'] = $user_id;
         header('Location: /dashboard.php', true, 307);
         exit;
@@ -34,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 50vh;">
                 <h1 class="purple-text" style="margin-top: 10%;">Iniciar sesion</h1>
                 <h3 class="error-block">Credenciales invalidas</h3>
-                <form action="login.php" method="post">
+                <form method="post">
                     <label>
                         <input required class="basic-text-input" type="email" placeholder="Correo electronico"
                                name="email"
@@ -72,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="centered-container">
         <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 50vh;">
             <h1 class="purple-text" style="margin-top: 10%;">Iniciar sesion</h1>
-            <form action="login.php" method="post">
+            <form method="post">
                 <label>
                     <input required class="basic-text-input" type="email" placeholder="Correo electronico" name="email"
                            style="width: 75%;">

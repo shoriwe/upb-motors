@@ -22,6 +22,12 @@ function generateRandomString(int $length = 10): string
 
 interface iDatabase
 {
+    /**
+     * @param string $product_name
+     * @return array|null
+     */
+    public function search_products(string $product_name): array;
+
     public function is_gerente(int $user_id): bool;
 
     public function is_recursos_humanos(int $user_id): bool;
@@ -132,6 +138,12 @@ class TestDatabase implements iDatabase
     {
         // TODO: Implement is_inventario() method.
         return false;
+    }
+
+    public function search_products(string $product_name): array
+    {
+        // TODO: Implement search_products() method.
+        return array();
     }
 }
 
@@ -264,5 +276,21 @@ class MySQL implements iDatabase
     public function is_inventario(int $user_id): bool
     {
         return $this->get_user_permissions($user_id) === Inventario;
+    }
+
+    public function search_products(string $product_name): array
+    {
+        $product_name = "%" . $product_name . "%";
+        $records = $this->database->prepare('SELECT id, cantidad, nombre, descripcion, precio FROM inventario WHERE LOWER(nombre) LIKE :name;');
+        $records->bindParam(':name', $product_name);
+        $records->execute();
+        $products = array();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $products[] = new Product($row["id"], $row["cantidad"], $row["nombre"], $row["descripcion"], $row["precio"]);
+        }
+        return $products;
     }
 }

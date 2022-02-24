@@ -1,6 +1,7 @@
 <?php
 require "connection.php";
 require "middleware/ensure_login.php";
+require 'navbar.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($_POST["new-password"] === $_POST["new-confirm-password"]) {
@@ -21,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 70vh;">
                     <h1 class="purple-text" style="margin-top: 10%;">Actualizar contrasena</h1>
                     <h3 class="green-text">Contrasena actualizada con exito</h3>
-                    <form action="update-password.php" method="post">
+                    <form method="post">
                         <label>
                             <input required class="basic-text-input" type="password" placeholder="Contrasena antigua"
                                    name="old-password"
@@ -65,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 70vh;">
                     <h1 class="purple-text" style="margin-top: 10%;">Actualizar contrasena</h1>
                     <h3 class="error-block"><?php echo $updatePasswordResult; ?></h3>
-                    <form action="update-password.php" method="post">
+                    <form method="post">
                         <label>
                             <input required class="basic-text-input" type="password" placeholder="Contrasena antigua"
                                    name="old-password"
@@ -110,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 70vh;">
                 <h1 class="purple-text" style="margin-top: 10%;">Actualizar contrasena</h1>
                 <h3 class="error-block">Las confirmacion de la nueva contrasena no coincide</h3>
-                <form action="update-password.php" method="post">
+                <form method="post">
                     <label>
                         <input required class="basic-text-input" type="password" placeholder="Contrasena antigua"
                                name="old-password"
@@ -153,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="centered-container">
         <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 70vh;">
             <h1 class="purple-text" style="margin-top: 10%;">Actualizar contrasena</h1>
-            <form action="update-password.php" method="post">
+            <form method="post">
                 <label>
                     <input required class="basic-text-input" type="password" placeholder="Contrasena antigua"
                            name="old-password"
