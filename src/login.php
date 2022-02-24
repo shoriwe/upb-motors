@@ -10,11 +10,11 @@ if (isset($_SESSION["logged-in"]) && $_SESSION["logged-in"] === true) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user = connect()->database->login($_POST["email"], $_POST["password"]);
-    if ($user !== null) {
+    $user_id = connect()->database->login($_POST["email"], $_POST["password"]);
+    if ($user_id !== null) {
         connect()->database->log_login_succeed($_POST["email"]);
         $_SESSION["logged-in"] = true;
-        $_SESSION['user'] = $user;
+        $_SESSION['user-id'] = $user_id;
         header('Location: /dashboard.php', true, 307);
         exit;
     } else {

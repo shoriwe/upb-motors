@@ -54,7 +54,7 @@ BEGIN
     VALUES (NOW(), get_log_level('LOG'), CONCAT('LOGIN SUCCEED ', correo));
 END;
 
--- -- Tablas -- --
+-- -- permisos -- --
 CREATE TABLE IF NOT EXISTS permisos
 (
     id     INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -62,9 +62,22 @@ CREATE TABLE IF NOT EXISTS permisos
     CONSTRAINT permisos_nombre_unico UNIQUE (nombre)
 );
 
+INSERT INTO permisos (nombre)
+VALUES ('GERENTE'),
+       ('RECURSOS HUMANOS'),
+       ('VENTAS'),
+       ('INVENTARIO');
+
+CREATE FUNCTION get_permisos_id(nombre_permiso VARCHAR(45)) RETURNS INT
+BEGIN
+    SELECT id INTO @resultado FROM permisos WHERE nombre = nombre_permiso LIMIT 1;
+    RETURN @resultado;
+END;
+-- -- empleados -- --
 CREATE TABLE IF NOT EXISTS empleados
 (
     id              INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    permisos_id     INT          NOT NULL,
     nombre_completo VARCHAR(100) NOT NULL,
     cedula          VARCHAR(10)  NOT NULL,
     direccion       VARCHAR(500) NOT NULL,
@@ -72,7 +85,19 @@ CREATE TABLE IF NOT EXISTS empleados
     correo          VARCHAR(500) NOT NULL,
     hash_contrasena VARCHAR(500) NOT NULL,
     habilitado      BOOLEAN DEFAULT true,
-    CONSTRAINT empleados_cedula_unique UNIQUE (cedula)
+    CONSTRAINT empleados_cedula_unique UNIQUE (cedula),
+    CONSTRAINT fk_permisos_empleados_permisos_id FOREIGN KEY (permisos_id) REFERENCES permisos (id)
+);
+
+-- -- Inventario -- --
+CREATE TABLE IF NOT EXISTS inventario
+(
+    id          INT            NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    cantidad    INT            NOT NULL DEFAULT 0,
+    nombre      VARCHAR(255)   NOT NULL,
+    descripcion VARCHAR(10000) NOT NULL,
+    precio      DOUBLE         NOT NULL,
+    imagen      BLOB
 );
 
 -- -- Procesos -- --

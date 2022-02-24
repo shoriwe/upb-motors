@@ -9,7 +9,7 @@ require 'middleware/ensure_login.php';
     <link rel="stylesheet" href="css/containers.css">
     <link rel="stylesheet" href="css/text.css">
     <link rel="stylesheet" href="css/buttons.css">
-    
+
 </head>
 <body>
 <div class="centered-flex-container" style="background-color: white; padding: 1vh 1vw;">

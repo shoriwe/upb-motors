@@ -3,6 +3,11 @@
 require 'tables.php';
 require 'cache.php';
 
+const Gerente = 1;
+const RecursosHumanos = 2;
+const Ventas = 3;
+const Inventario = 4;
+
 // Taken from https://stackoverflow.com/questions/4356289/php-random-string-generator
 function generateRandomString(int $length = 10): string
 {
@@ -17,18 +22,27 @@ function generateRandomString(int $length = 10): string
 
 interface iDatabase
 {
+    public function is_gerente(int $user_id): bool;
+
+    public function is_recursos_humanos(int $user_id): bool;
+
+    public function is_ventas(int $user_id): bool;
+
+    public function is_inventario(int $user_id): bool;
+
     public function update_password(int $user_id, string $old_password, string $new_password): ?string;
 
     public function log_login_succeed(string $email);
 
     public function log_login_failed(string $email);
 
-    public function login(string $email, string $password): ?User;
+    public function login(string $email, string $password): ?int;
 
     public function request_password_reset(string $email): ?string;
 
     public function reset_password(string $code, string $new_password): bool;
 }
+
 
 class TestDatabase implements iDatabase
 {
@@ -39,24 +53,15 @@ class TestDatabase implements iDatabase
     {
         $this->users = new Cache("test-users.dump");
         $this->cache = new Cache("cache.dump");
-        if ($this->users->get("admin@upb.motors.co") === null) {
-            $this->users->set(
-                "admin@upb.motors.co",
-                new User(
-                    1,
-                    "admin@upb.motors.co",
-                    password_hash("admin", PASSWORD_DEFAULT)
-                )
-            );
-        }
+        // TODO: FIX ME
     }
 
-    public function login(string $email, string $password): ?User
+    public function login(string $email, string $password): ?int
     {
         $user = $this->users->get($email);
         if ($user !== null) {
             if (password_verify($password, $user->password)) {
-                return $user;
+                return $user->id;
             }
         }
         return null;
@@ -104,6 +109,30 @@ class TestDatabase implements iDatabase
         // TODO: Implement update_password() method.
         return "IMPLEMENT ME";
     }
+
+    public function is_gerente(int $user_id): bool
+    {
+        // TODO: Implement is_gerente() method.
+        return false;
+    }
+
+    public function is_recursos_humanos(int $user_id): bool
+    {
+        // TODO: Implement is_recursos_humanos() method.
+        return false;
+    }
+
+    public function is_ventas(int $user_id): bool
+    {
+        // TODO: Implement is_ventas() method.
+        return false;
+    }
+
+    public function is_inventario(int $user_id): bool
+    {
+        // TODO: Implement is_inventario() method.
+        return false;
+    }
 }
 
 class MySQL implements iDatabase
@@ -121,15 +150,15 @@ class MySQL implements iDatabase
         }
     }
 
-    public function login($email, $password): ?User
+    public function login($email, $password): ?int
     {
-        $records = $this->database->prepare('SELECT id, correo, hash_contrasena FROM empleados WHERE correo = :email LIMIT 1;');
+        $records = $this->database->prepare('SELECT id, hash_contrasena FROM empleados WHERE correo = :email LIMIT 1;');
         $records->bindParam(':email', $email);
         $records->execute();
         $results = $records->fetch(PDO::FETCH_ASSOC);
         if ($results) {
             if (count($results) > 0 && password_verify($password, $results['hash_contrasena'])) {
-                return new User($results["id"], $results["correo"], $results["hash_contrasena"]);
+                return $results["id"];
             }
         }
         return null;
@@ -201,5 +230,39 @@ class MySQL implements iDatabase
             }
         }
         return "COMO LLEGASTE AQUI LADRON?";
+    }
+
+    public function is_gerente(int $user_id): bool
+    {
+        return $this->get_user_permissions($user_id) === Gerente;
+    }
+
+    public function get_user_permissions(int $user_id): int
+    {
+        $records = $this->database->prepare('SELECT permisos_id FROM empleados WHERE id = :id LIMIT 1;');
+        $records->bindParam(':id', $user_id);
+        $records->execute();
+        $results = $records->fetch(PDO::FETCH_ASSOC);
+        if ($results) {
+            if (count($results) > 0) {
+                return $results["permisos_id"];
+            }
+        }
+        return 0;
+    }
+
+    public function is_recursos_humanos(int $user_id): bool
+    {
+        return $this->get_user_permissions($user_id) === RecursosHumanos;
+    }
+
+    public function is_ventas(int $user_id): bool
+    {
+        return $this->get_user_permissions($user_id) === Ventas;
+    }
+
+    public function is_inventario(int $user_id): bool
+    {
+        return $this->get_user_permissions($user_id) === Inventario;
     }
 }
