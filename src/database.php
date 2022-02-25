@@ -28,6 +28,8 @@ interface iDatabase
      */
     public function search_products(string $product_name): array;
 
+    public function add_inventory(int $product_id, string $product_name,int $product_amount,string $product_description,int $product_price): array;
+
     public function is_gerente(int $user_id): bool;
 
     public function is_recursos_humanos(int $user_id): bool;
@@ -145,6 +147,12 @@ class TestDatabase implements iDatabase
         // TODO: Implement search_products() method.
         return array();
     }
+
+    public function add_inventory(int $product_id, string $product_name, int $product_amount, string $product_description, int $product_price): array
+    {
+        // TODO: Implement add_inventory() method.
+        return array();
+    }
 }
 
 class MySQL implements iDatabase
@@ -158,6 +166,7 @@ class MySQL implements iDatabase
         try {
             $this->database = new PDO("mysql:host=$host;dbname=$database;", $username, $password);
         } catch (PDOException $e) {
+            echo $e;
             // Do not log the error to the client
         }
     }
@@ -292,5 +301,23 @@ class MySQL implements iDatabase
             $products[] = new Product($row["id"], $row["cantidad"], $row["nombre"], $row["descripcion"], $row["precio"]);
         }
         return $products;
+    }
+    public function add_inventory(int $product_id, string $product_name,int $product_amount,string $product_description,int $product_price): array
+    {
+        if(!empty($POST['product_id']) && !empty($POST['product_name']) && !empty($POST['product_amount']) && !empty($POST['product_description']) && !empty($POST['product_price'])){
+            $records = $this->database->prepare('INSERT INTO inventario (product_id, product_name, product_amunt, product_description, product_price) VALUES ($product_id,$product_name, $product_amount, $product_description, $product_price)');
+            $records->bindParam(':product_id', $product_id);
+            $records->execute();
+            $results = $records->fetch(PDO::FETCH_ASSOC);
+            if ($results) {
+                if (count($results) > 0) {
+                    return $results;
+                }
+            }
+        }
+        else{
+            echo 'Debe llenar todos los datos';
+        }
+        return "";
     }
 }

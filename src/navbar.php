@@ -11,9 +11,16 @@ if (session_status() === PHP_SESSION_NONE) {
 <link rel="stylesheet" href="css/text.css">
 <link rel="stylesheet" href="css/buttons.css">
 <div class="centered-flex-container">
-    <a class="green-button" href="dashboard.php">Dashboard</a>
+
+    <li><a class="green-button" href="dashboard.php">Dashboard</a></li>
+
     <pre style="width: 1vw;"></pre>
-    <a class="blue-button" href="search-inventory.php">Inventario</a>
+
+    <li><a class="blue-button" href="#inventario">Inventario</a>
+        <a class="blue-button" href="search-inventory.php">Buscar</a>
+        <a class="blue-button" href="add-inventory.php">Añadir</a>
+    </li>
+
     <pre style="width: 1vw;"></pre>
     <a class="blue-button" href="#empleados">Empleados</a>
     <pre style="width: 1vw;"></pre>
