@@ -11,7 +11,7 @@ if (!connect()->database->is_inventario($_SESSION["user-id"])) {
 <body>
 <div class="centered-container">
     <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 70vh;">
-        <h1 class="purple-text" style="margin-top: 1%;">Añadir al inventario</h1>
+        <h1 class="purple-text" style="margin-top: 0.5%;">Añadir al inventario</h1>
         <?php
         if (isset($_POST['add_inventory'])) {
             $succeed = connect()->database->add_inventory(
@@ -50,10 +50,9 @@ if (!connect()->database->is_inventario($_SESSION["user-id"])) {
                 </label>
             </label>
             <br>
-            <button class="blue-button" type="submit" name="add_inventory" style="margin-top: 1%; width: 75%;">Añadir
+            <button class="blue-button" type="submit" name="add_inventory" style="margin-top: 0.5%; width: 75%;">Añadir
             </button>
         </form>
     </div>
 </div>
 </body>
-}

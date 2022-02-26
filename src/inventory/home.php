@@ -15,8 +15,6 @@ require '../navbar.php';
             <a class="blue-button" href="/inventory/search-inventory.php">Buscar</a>
             <pre style="width: 1vw;"></pre>
             <a class="blue-button" href="/inventory/add-inventory.php">Añadir</a>
-            <pre style="width: 1vw;"></pre>
-            <a class="blue-button" href="/inventory/add-inventory.php">Eliminar</a>
         </div>
     </div>
 </div>

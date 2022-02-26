@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <body>
         <div class="centered-container">
             <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 50vh;">
-                <h1 class="purple-text" style="margin-top: 1%;">Iniciar sesion</h1>
+                <h1 class="purple-text" style="margin-top: 0.5%;">Iniciar sesion</h1>
                 <h3 class="error-block">Credenciales invalidas</h3>
                 <form method="post">
                     <label>
@@ -45,10 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label>
                         <input required class="basic-text-input" type="password" placeholder="Contraseña"
                                name="password"
-                               style="margin-top: 1%; width: 75%;">
+                               style="margin-top: 0.5%; width: 75%;">
                     </label>
                     <br>
-                    <button class="blue-button" type="submit" style="margin-top: 1%; width: 75%;">Ingresar</button>
+                    <button class="blue-button" type="submit" style="margin-top: 0.5%; width: 75%;">Ingresar</button>
                 </form>
                 <br>
                 <a href="/request-reset.php" class="blue-text" style="font-size: 15px;">¿Olvidaste tu contraseña?</a>
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <body>
     <div class="centered-container">
         <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 50vh;">
-            <h1 class="purple-text" style="margin-top: 1%;">Iniciar sesion</h1>
+            <h1 class="purple-text" style="margin-top: 0.5%;">Iniciar sesion</h1>
             <form method="post">
                 <label>
                     <input required class="basic-text-input" type="email" placeholder="Correo electronico" name="email"
@@ -81,10 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <br>
                 <label>
                     <input required class="basic-text-input" type="password" placeholder="Contraseña" name="password"
-                           style="margin-top: 1%; width: 75%;">
+                           style="margin-top: 0.5%; width: 75%;">
                 </label>
                 <br>
-                <button class="blue-button" type="submit" style="margin-top: 1%; width: 75%;">Ingresar</button>
+                <button class="blue-button" type="submit" style="margin-top: 0.5%; width: 75%;">Ingresar</button>
             </form>
             <br>
             <a href="/request-reset.php" class="blue-text" style="font-size: 15px;">¿Olvidaste tu contraseña?</a>

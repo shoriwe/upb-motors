@@ -27,6 +27,8 @@ interface iDatabase
      */
     public function search_products(string $product_name): array;
 
+    public function view_product(int $id): ?Product;
+
     public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file): bool;
 
     public function is_gerente(int $user_id): bool;
@@ -151,6 +153,12 @@ class TestDatabase implements iDatabase
     {
         // TODO: Implement add_inventory() method.
         return false;
+    }
+
+    public function view_product(int $id): ?Product
+    {
+        // TODO: Implement view_product() method.
+        return null;
     }
 }
 
@@ -289,7 +297,7 @@ class MySQL implements iDatabase
     public function search_products(string $product_name): array
     {
         $product_name = "%" . $product_name . "%";
-        $records = $this->database->prepare('SELECT id, cantidad, nombre, descripcion, precio FROM inventario WHERE LOWER(nombre) LIKE :name;');
+        $records = $this->database->prepare('SELECT id, cantidad, nombre, descripcion, precio, activo FROM inventario WHERE LOWER(nombre) LIKE :name;');
         $records->bindParam(':name', $product_name);
         $records->execute();
         $products = array();
@@ -297,7 +305,7 @@ class MySQL implements iDatabase
             if (count($row) === 0) {
                 break;
             }
-            $products[] = new Product($row["id"], $row["cantidad"], $row["nombre"], $row["descripcion"], $row["precio"]);
+            $products[] = new Product($row["id"], $row["cantidad"], $row["nombre"], $row["descripcion"], $row["precio"], $row["activo"], null);
         }
         return $products;
     }
@@ -319,5 +327,18 @@ class MySQL implements iDatabase
             }
         }
         return false;
+    }
+
+    public function view_product(int $id): ?Product
+    {
+        $records = $this->database->prepare('SELECT cantidad, nombre, descripcion, precio, activo, imagen FROM inventario WHERE id = :v_id;');
+        $records->bindParam(':v_id', $id);
+        // $records->bindColumn(6, $lob, PDO::PARAM_STR);
+        $records->execute();
+        $result = $records->fetch(PDO::FETCH_ASSOC);
+        if (count($result) !== 0) {
+            return new Product($id, $result["cantidad"], $result["nombre"], $result["descripcion"], $result["precio"], $result["activo"], $result["imagen"]);
+        }
+        return null;
     }
 }

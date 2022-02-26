@@ -1,8 +1,18 @@
 <?php
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once '../connection.php';
 require '../middleware/ensure_login.php';
 require 'menu.php';
+
+if (!connect()->database->is_ventas($_SESSION["user-id"]) &&
+    !connect()->database->is_inventario($_SESSION["user-id"])) {
+    header('Location: /dashboard.php', true, 307);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $products = connect()->database->search_products($_POST["product"]);
@@ -31,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ?>
     <div class="centered-container">
         <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 70vh;">
-            <h1 class="purple-text" style="margin-top: 1%;">Buscar en el inventario</h1>
+            <h1 class="purple-text" style="margin-top: 0.5%;">Buscar en el inventario</h1>
             <form method="post">
                 <label>
                     <input required class="basic-text-input" type="text" placeholder="Nombre del producto"
@@ -39,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                            style="width: 75%;">
                 </label>
                 <br>
-                <button class="blue-button" type="submit" style="margin-top: 1%; width: 75%;">Buscar</button>
+                <button class="blue-button" type="submit" style="margin-top: 0.5%; width: 75%;">Buscar</button>
             </form>
         </div>
     </div>

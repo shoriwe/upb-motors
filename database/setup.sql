@@ -97,7 +97,8 @@ CREATE TABLE IF NOT EXISTS inventario
     nombre      VARCHAR(255)   NOT NULL,
     descripcion VARCHAR(10000) NOT NULL,
     precio      DOUBLE         NOT NULL,
-    imagen      BLOB,
+    activo      BOOLEAN        NOT NULL DEFAULT false,
+    imagen      LONGBLOB,
     CONSTRAINT unique_producto UNIQUE (nombre)
 );
 
@@ -115,7 +116,7 @@ CREATE FUNCTION registrar_producto(
     v_nombre VARCHAR(255),
     v_descripcion VARCHAR(10000),
     v_precio FLOAT,
-    v_imagen BLOB
+    v_imagen LONGBLOB
 )
     RETURNS BOOLEAN
     LANGUAGE SQL
