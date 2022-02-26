@@ -1,6 +1,6 @@
 <?php
 
-require 'connection.php';
+require_once 'connection.php';
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case "GET":
@@ -9,9 +9,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
         <html lang="html5">
         <head>
             <title>Resetear contraseña</title>
-            <link rel="stylesheet" href="css/containers.css">
-            <link rel="stylesheet" href="css/text.css">
-            <link rel="stylesheet" href="css/buttons.css">
+            <link rel="stylesheet" href="/css/containers.css">
+            <link rel="stylesheet" href="/css/text.css">
+            <link rel="stylesheet" href="/css/buttons.css">
 
         </head>
         <body>
@@ -41,9 +41,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
             <html lang="html5">
             <head>
                 <title>Resetear contraseña</title>
-                <link rel="stylesheet" href="css/containers.css">
-                <link rel="stylesheet" href="css/text.css">
-                <link rel="stylesheet" href="css/buttons.css">
+                <link rel="stylesheet" href="/css/containers.css">
+                <link rel="stylesheet" href="/css/text.css">
+                <link rel="stylesheet" href="/css/buttons.css">
 
             </head>
             <body>
@@ -51,7 +51,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 40vh;">
                     <h1 class="purple-text" style="margin-top: 10%;">Recuperar contraseña</h1>
                     <p class="black-text">Contraseña actualizada</p>
-                    <a class="blue-text" href="login.php">Ir al inicio de sesion</a>
+                    <a class="blue-text" href="/login.php">Ir al inicio de sesion</a>
                 </div>
             </div>
             </body>
@@ -63,9 +63,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
             <html lang="html5">
             <head>
                 <title>Resetear contraseña</title>
-                <link rel="stylesheet" href="css/containers.css">
-                <link rel="stylesheet" href="css/text.css">
-                <link rel="stylesheet" href="css/buttons.css">
+                <link rel="stylesheet" href="/css/containers.css">
+                <link rel="stylesheet" href="/css/text.css">
+                <link rel="stylesheet" href="/css/buttons.css">
 
             </head>
             <body>
@@ -73,7 +73,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 40vh;">
                     <h1 class="purple-text" style="margin-top: 10%;">Recuperar contraseña</h1>
                     <p class="error-block">Invalid reset code</p>
-                    <a class="blue-text" href="login.php">Ir al inicio de sesion</a>
+                    <a class="blue-text" href="/login.php">Ir al inicio de sesion</a>
                 </div>
             </div>
             </body>

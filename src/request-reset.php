@@ -1,6 +1,6 @@
 <?php
 
-require 'connection.php';
+require_once 'connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST["email"];
@@ -13,9 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <html lang="html5">
     <head>
         <title>Resetear contraseña</title>
-        <link rel="stylesheet" href="css/containers.css">
-        <link rel="stylesheet" href="css/text.css">
-        <link rel="stylesheet" href="css/buttons.css">
+        <link rel="stylesheet" href="/css/containers.css">
+        <link rel="stylesheet" href="/css/text.css">
+        <link rel="stylesheet" href="/css/buttons.css">
 
     </head>
     <body>
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 30vh;">
             <h1 class="purple-text" style="margin-top: 10%;">Recuperar contraseña</h1>
             <p class="black-text">Un correo con las instrucciones de cambio de contraseña fue enviado a la cuenta</p>
-            <a class="blue-text" href="login.php">Ir al inicio de sesion</a>
+            <a class="blue-text" href="/login.php">Ir al inicio de sesion</a>
         </div>
     </div>
     </body>
@@ -35,9 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <html lang="html5">
     <head>
         <title>Resetear contraseña</title>
-        <link rel="stylesheet" href="css/containers.css">
-        <link rel="stylesheet" href="css/text.css">
-        <link rel="stylesheet" href="css/buttons.css">
+        <link rel="stylesheet" href="/css/containers.css">
+        <link rel="stylesheet" href="/css/text.css">
+        <link rel="stylesheet" href="/css/buttons.css">
 
     </head>
     <body>

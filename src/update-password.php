@@ -12,9 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <html lang="html5">
             <head>
                 <title>Actualizar contrasena</title>
-                <link rel="stylesheet" href="css/containers.css">
-                <link rel="stylesheet" href="css/text.css">
-                <link rel="stylesheet" href="css/buttons.css">
+                <link rel="stylesheet" href="/css/containers.css">
+                <link rel="stylesheet" href="/css/text.css">
+                <link rel="stylesheet" href="/css/buttons.css">
 
             </head>
             <body>
@@ -56,9 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <html lang="html5">
             <head>
                 <title>Actualizar contrasena</title>
-                <link rel="stylesheet" href="css/containers.css">
-                <link rel="stylesheet" href="css/text.css">
-                <link rel="stylesheet" href="css/buttons.css">
+                <link rel="stylesheet" href="/css/containers.css">
+                <link rel="stylesheet" href="/css/text.css">
+                <link rel="stylesheet" href="/css/buttons.css">
 
             </head>
             <body>
@@ -101,9 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <html lang="html5">
         <head>
             <title>Inicio de sesion</title>
-            <link rel="stylesheet" href="css/containers.css">
-            <link rel="stylesheet" href="css/text.css">
-            <link rel="stylesheet" href="css/buttons.css">
+            <link rel="stylesheet" href="/css/containers.css">
+            <link rel="stylesheet" href="/css/text.css">
+            <link rel="stylesheet" href="/css/buttons.css">
 
         </head>
         <body>
@@ -145,9 +145,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <html lang="html5">
     <head>
         <title>Inicio de sesion</title>
-        <link rel="stylesheet" href="css/containers.css">
-        <link rel="stylesheet" href="css/text.css">
-        <link rel="stylesheet" href="css/buttons.css">
+        <link rel="stylesheet" href="/css/containers.css">
+        <link rel="stylesheet" href="/css/text.css">
+        <link rel="stylesheet" href="/css/buttons.css">
 
     </head>
     <body>

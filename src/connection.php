@@ -1,7 +1,7 @@
 <?php
 
-require 'database.php';
-require 'email.php';
+require_once 'database.php';
+require_once 'email.php';
 
 class Connection
 {
