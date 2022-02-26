@@ -17,14 +17,14 @@ switch ($_SERVER['REQUEST_METHOD']) {
         <body>
         <div class="centered-container">
             <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 40vh;">
-                <h1 class="purple-text" style="margin-top: 10%;">Recuperar contraseña</h1>
+                <h1 class="purple-text" style="margin-top: 1%;">Recuperar contraseña</h1>
                 <form method="post">
                     <label>
                         <input class="basic-text-input" type="password" placeholder="Nueva contraseña" name="password"
                                style="width: 75%;">
                     </label>
                     <br>
-                    <button class="blue-button" type="submit" style="margin-top: 5%; width: 75%;">Reset</button>
+                    <button class="blue-button" type="submit" style="margin-top: 1%; width: 75%;">Reset</button>
                 </form>
             </div>
         </div>
@@ -49,7 +49,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             <body>
             <div class="centered-container">
                 <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 40vh;">
-                    <h1 class="purple-text" style="margin-top: 10%;">Recuperar contraseña</h1>
+                    <h1 class="purple-text" style="margin-top: 1%;">Recuperar contraseña</h1>
                     <p class="black-text">Contraseña actualizada</p>
                     <a class="blue-text" href="/login.php">Ir al inicio de sesion</a>
                 </div>
@@ -71,7 +71,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             <body>
             <div class="centered-container">
                 <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 40vh;">
-                    <h1 class="purple-text" style="margin-top: 10%;">Recuperar contraseña</h1>
+                    <h1 class="purple-text" style="margin-top: 1%;">Recuperar contraseña</h1>
                     <p class="error-block">Invalid reset code</p>
                     <a class="blue-text" href="/login.php">Ir al inicio de sesion</a>
                 </div>

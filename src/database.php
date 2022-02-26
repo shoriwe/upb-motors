@@ -27,7 +27,7 @@ interface iDatabase
      */
     public function search_products(string $product_name): array;
 
-    public function add_inventory(int $product_id, string $product_name, int $product_amount, string $product_description, int $product_price): array;
+    public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file): bool;
 
     public function is_gerente(int $user_id): bool;
 
@@ -147,10 +147,10 @@ class TestDatabase implements iDatabase
         return array();
     }
 
-    public function add_inventory(int $product_id, string $product_name, int $product_amount, string $product_description, int $product_price): array
+    public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file): bool
     {
         // TODO: Implement add_inventory() method.
-        return array();
+        return false;
     }
 }
 
@@ -302,21 +302,22 @@ class MySQL implements iDatabase
         return $products;
     }
 
-    public function add_inventory(int $product_id, string $product_name, int $product_amount, string $product_description, int $product_price): array
+    public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file): bool
     {
-        if (!empty($POST['product_id']) && !empty($POST['product_name']) && !empty($POST['product_amount']) && !empty($POST['product_description']) && !empty($POST['product_price'])) {
-            $records = $this->database->prepare('INSERT INTO inventario (product_id, product_name, product_amunt, product_description, product_price) VALUES ($product_id, $product_name, $product_amount, $product_description, $product_price)');
-            $records->bindParam(':product_id', $product_id);
-            $records->execute();
-            $results = $records->fetch(PDO::FETCH_ASSOC);
-            if ($results) {
-                if (count($results) > 0) {
-                    return $results;
-                }
+        $file = fopen($image_file, 'rb');
+        $records = $this->database->prepare('SELECT registrar_producto(:amount, :name, :description, :price, :image) AS exito;');
+        $records->bindParam(':amount', $product_amount);
+        $records->bindParam(':name', $product_name);
+        $records->bindParam(':description', $product_description);
+        $records->bindParam(':price', $product_price);
+        $records->bindParam(':image', $file, PDO::PARAM_LOB);
+        $records->execute();
+        $results = $records->fetch(PDO::FETCH_ASSOC);
+        if ($results) {
+            if (count($results) > 0) {
+                return $results["exito"];
             }
-        } else {
-            echo 'Debe llenar todos los datos';
         }
-        return "";
+        return false;
     }
 }

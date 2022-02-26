@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <body>
             <div class="centered-container">
                 <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 70vh;">
-                    <h1 class="purple-text" style="margin-top: 10%;">Actualizar contrasena</h1>
+                    <h1 class="purple-text" style="margin-top: 1%;">Actualizar contrasena</h1>
                     <h3 class="green-text">Contrasena actualizada con exito</h3>
                     <form method="post">
                         <label>
@@ -32,17 +32,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label>
                             <input required class="basic-text-input" type="password" placeholder="Nueva contrasena"
                                    name="new-password"
-                                   style="margin-top: 5%; width: 75%;">
+                                   style="margin-top: 1%; width: 75%;">
                         </label>
                         <br>
                         <label>
                             <input required class="basic-text-input" type="password"
                                    placeholder="Confirmacion de nueva contrasena"
                                    name="new-confirm-password"
-                                   style="margin-top: 5%; width: 75%;">
+                                   style="margin-top: 1%; width: 75%;">
                         </label>
                         <br>
-                        <button class="blue-button" type="submit" style="margin-top: 5%; width: 75%;">Actualizar
+                        <button class="blue-button" type="submit" style="margin-top: 1%; width: 75%;">Actualizar
                         </button>
                     </form>
                 </div>
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <body>
             <div class="centered-container">
                 <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 70vh;">
-                    <h1 class="purple-text" style="margin-top: 10%;">Actualizar contrasena</h1>
+                    <h1 class="purple-text" style="margin-top: 1%;">Actualizar contrasena</h1>
                     <h3 class="error-block"><?php echo $updatePasswordResult; ?></h3>
                     <form method="post">
                         <label>
@@ -76,17 +76,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label>
                             <input required class="basic-text-input" type="password" placeholder="Nueva contrasena"
                                    name="new-password"
-                                   style="margin-top: 5%; width: 75%;">
+                                   style="margin-top: 1%; width: 75%;">
                         </label>
                         <br>
                         <label>
                             <input required class="basic-text-input" type="password"
                                    placeholder="Confirmacion de nueva contrasena"
                                    name="new-confirm-password"
-                                   style="margin-top: 5%; width: 75%;">
+                                   style="margin-top: 1%; width: 75%;">
                         </label>
                         <br>
-                        <button class="blue-button" type="submit" style="margin-top: 5%; width: 75%;">Actualizar
+                        <button class="blue-button" type="submit" style="margin-top: 1%; width: 75%;">Actualizar
                         </button>
                     </form>
                 </div>
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <body>
         <div class="centered-container">
             <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 70vh;">
-                <h1 class="purple-text" style="margin-top: 10%;">Actualizar contrasena</h1>
+                <h1 class="purple-text" style="margin-top: 1%;">Actualizar contrasena</h1>
                 <h3 class="error-block">Las confirmacion de la nueva contrasena no coincide</h3>
                 <form method="post">
                     <label>
@@ -121,17 +121,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label>
                         <input required class="basic-text-input" type="password" placeholder="Nueva contrasena"
                                name="new-password"
-                               style="margin-top: 5%; width: 75%;">
+                               style="margin-top: 1%; width: 75%;">
                     </label>
                     <br>
                     <label>
                         <input required class="basic-text-input" type="password"
                                placeholder="Confirmacion de nueva contrasena"
                                name="new-confirm-password"
-                               style="margin-top: 5%; width: 75%;">
+                               style="margin-top: 1%; width: 75%;">
                     </label>
                     <br>
-                    <button class="blue-button" type="submit" style="margin-top: 5%; width: 75%;">Actualizar</button>
+                    <button class="blue-button" type="submit" style="margin-top: 1%; width: 75%;">Actualizar</button>
                 </form>
             </div>
         </div>
@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <body>
     <div class="centered-container">
         <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 70vh;">
-            <h1 class="purple-text" style="margin-top: 10%;">Actualizar contrasena</h1>
+            <h1 class="purple-text" style="margin-top: 1%;">Actualizar contrasena</h1>
             <form method="post">
                 <label>
                     <input required class="basic-text-input" type="password" placeholder="Contrasena antigua"
@@ -164,17 +164,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label>
                     <input required class="basic-text-input" type="password" placeholder="Nueva contrasena"
                            name="new-password"
-                           style="margin-top: 5%; width: 75%;">
+                           style="margin-top: 1%; width: 75%;">
                 </label>
                 <br>
                 <label>
                     <input required class="basic-text-input" type="password"
                            placeholder="Confirmacion de nueva contrasena"
                            name="new-confirm-password"
-                           style="margin-top: 5%; width: 75%;">
+                           style="margin-top: 1%; width: 75%;">
                 </label>
                 <br>
-                <button class="blue-button" type="submit" style="margin-top: 5%; width: 75%;">Actualizar</button>
+                <button class="blue-button" type="submit" style="margin-top: 1%; width: 75%;">Actualizar</button>
             </form>
         </div>
     </div>

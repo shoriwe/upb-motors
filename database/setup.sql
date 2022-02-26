@@ -97,7 +97,8 @@ CREATE TABLE IF NOT EXISTS inventario
     nombre      VARCHAR(255)   NOT NULL,
     descripcion VARCHAR(10000) NOT NULL,
     precio      DOUBLE         NOT NULL,
-    imagen      BLOB
+    imagen      BLOB,
+    CONSTRAINT unique_producto UNIQUE (nombre)
 );
 
 -- -- Procesos -- --
@@ -107,4 +108,62 @@ BEGIN
         empleados
     SET empleados.hash_contrasena = hash_nueva_contrasena
     WHERE empleados.id = v_id;
+END;
+
+CREATE FUNCTION registrar_producto(
+    v_cantidad INT,
+    v_nombre VARCHAR(255),
+    v_descripcion VARCHAR(10000),
+    v_precio FLOAT,
+    v_imagen BLOB
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    SELECT id,
+           cantidad,
+           descripcion,
+           precio,
+           imagen
+    INTO @id_producto, @cantidad_producto, @descripcion_producto, @precio_producto, @imagen_producto
+    FROM inventario
+    WHERE nombre = v_nombre
+    LIMIT 1;
+    IF @id_producto > 0 THEN
+        UPDATE
+            inventario
+        SET cantidad = cantidad + v_cantidad
+        WHERE id = @id_producto;
+        IF (@descripcion_producto != v_descripcion) AND (v_descripcion IS NOT NULL) THEN
+            UPDATE
+                inventario
+            SET descripcion = v_descripcion
+            WHERE id = @id_producto;
+        END IF;
+        IF @precio_producto != v_precio THEN
+            UPDATE
+                inventario
+            SET precio = v_precio
+            WHERE id = @id_producto;
+        END IF;
+        IF @imagen_producto != v_imagen THEN
+            UPDATE
+                inventario
+            SET imagen = v_imagen
+            WHERE id = @id_producto;
+        END IF;
+    ELSE
+        INSERT INTO inventario (cantidad,
+                                nombre,
+                                descripcion,
+                                precio,
+                                imagen)
+        VALUES (v_cantidad,
+                v_nombre,
+                v_descripcion,
+                v_precio,
+                v_imagen);
+    END IF;
+    RETURN true;
 END;

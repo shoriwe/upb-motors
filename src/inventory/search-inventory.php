@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ?>
     <div class="centered-container">
         <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 70vh;">
-            <h1 class="purple-text" style="margin-top: 10%;">Buscar en el inventario</h1>
+            <h1 class="purple-text" style="margin-top: 1%;">Buscar en el inventario</h1>
             <form method="post">
                 <label>
                     <input required class="basic-text-input" type="text" placeholder="Nombre del producto"
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                            style="width: 75%;">
                 </label>
                 <br>
-                <button class="blue-button" type="submit" style="margin-top: 5%; width: 75%;">Buscar</button>
+                <button class="blue-button" type="submit" style="margin-top: 1%; width: 75%;">Buscar</button>
             </form>
         </div>
     </div>
