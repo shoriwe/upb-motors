@@ -238,7 +238,7 @@ class MySQL implements iDatabase
 
     public function login($email, $password): ?int
     {
-        $records = $this->database->prepare('SELECT id, hash_contrasena FROM empleados WHERE correo = :email LIMIT 1;');
+        $records = $this->database->prepare('SELECT id, hash_contrasena FROM empleados WHERE correo = :email AND habilitado = true LIMIT 1;');
         $records->bindParam(':email', $email);
         $records->execute();
         $results = $records->fetch(PDO::FETCH_ASSOC);
