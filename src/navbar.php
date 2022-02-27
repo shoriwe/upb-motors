@@ -18,7 +18,7 @@ if (session_status() === PHP_SESSION_NONE) {
         echo '<a class="blue-button" href="/inventory/home.php">Inventario</a><pre style="width: 1vw;"></pre>';
         echo '<a class="blue-button" href="/sales/home.php">Ventas</a><pre style="width: 1vw;"></pre>';
     } else if (connect()->database->is_recursos_humanos($_SESSION["user-id"])) {
-        echo '<a class="blue-button" href="/human-resources/home.php">Clientes</a><pre style="width: 1vw;"></pre>';
+        echo '<a class="blue-button" href="/human-resources/home.php">Empleados</a><pre style="width: 1vw;"></pre>';
     } else if (connect()->database->is_ventas($_SESSION["user-id"])) {
         echo '<a class="blue-button" href="/inventory/home.php">Inventario</a><pre style="width: 1vw;"></pre>';
         echo '<a class="blue-button" href="/sales/home.php">Ventas</a><pre style="width: 1vw;"></pre>';
