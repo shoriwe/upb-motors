@@ -1,9 +1,9 @@
 <?php
-require '../navbar.php';
+require_once '../navbar.php';
 ?>
 
 <head>
-    <title>Inventario</title>
+    <title>Admin</title>
     <link rel="stylesheet" href="/css/containers.css">
     <link rel="stylesheet" href="/css/text.css">
     <link rel="stylesheet" href="/css/buttons.css">
@@ -15,10 +15,6 @@ require '../navbar.php';
             <a class="blue-button" href="#">Buscar</a>
             <pre style="width: 1vw;"></pre>
             <a class="blue-button" href="#">Añadir</a>
-            <pre style="width: 1vw;"></pre>
-            <a class="blue-button" href="#">Eliminar</a>
-            <pre style="width: 1vw;"></pre>
-            <a class="blue-button" href="#">Generar CDP</a>
         </div>
     </div>
 </div>

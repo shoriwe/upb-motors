@@ -1,7 +1,7 @@
 <?php
 
 require_once '../connection.php';
-require '../navbar.php';
+require_once '../navbar.php';
 
 ?>
 <head>

@@ -1,7 +1,7 @@
 <?php
 require "connection.php";
 require "middleware/ensure_login.php";
-require 'navbar.php';
+require_once 'navbar.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($_POST["new-password"] === $_POST["new-confirm-password"]) {

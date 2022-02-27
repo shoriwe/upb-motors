@@ -3,18 +3,18 @@ require_once '../navbar.php';
 ?>
 
 <head>
-    <title>Inventario</title>
+    <title>Admin</title>
     <link rel="stylesheet" href="/css/containers.css">
     <link rel="stylesheet" href="/css/text.css">
     <link rel="stylesheet" href="/css/buttons.css">
 </head>
 <div class="centered-container" style="margin-top: 10vh">
     <div class="centered-container-for-input">
-        <h1 class="purple-text">Inventario</h1>
+        <h1 class="purple-text">Recursos humanos</h1>
         <div class="centered-flex-container">
-            <a class="blue-button" href="/inventory/search-inventory.php">Buscar</a>
+            <a class="blue-button" href="#">Buscar empleados</a>
             <pre style="width: 1vw;"></pre>
-            <a class="blue-button" href="/inventory/add-inventory.php">Añadir</a>
+            <a class="blue-button" href="#">Generar CDP</a>
         </div>
     </div>
 </div>

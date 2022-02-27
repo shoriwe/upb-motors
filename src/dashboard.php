@@ -1,7 +1,7 @@
 <?php
 
 require 'middleware/ensure_login.php';
-require 'navbar.php';
+require_once 'navbar.php';
 ?>
 <!DOCTYPE html>
 <html lang="html5">

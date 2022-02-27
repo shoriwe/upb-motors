@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once '../connection.php';
-require '../navbar.php';
+require_once '../navbar.php';
 
 if (!connect()->database->is_recursos_humanos($_SESSION["user-id"])) {
     header('Location: /dashboard.php', true, 307);
@@ -19,11 +19,7 @@ if (!connect()->database->is_recursos_humanos($_SESSION["user-id"])) {
 </head>
 <br>
 <div class="centered-flex-container">
-    <a class="blue-button" href="#">Buscar</a>
+    <a class="blue-button" href="#">Buscar usuarios</a>
     <pre style="width: 1vw;"></pre>
-    <a class="blue-button" href="#">Añadir</a>
-    <pre style="width: 1vw;"></pre>
-    <a class="blue-button" href="#">Eliminar</a>
-    <pre style="width: 1vw;"></pre>
-    <a class="blue-button" href="#">Generar CDP</a>
+    <a class="blue-button" href="#">Crear usuarios</a>
 </div>

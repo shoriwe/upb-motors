@@ -66,7 +66,8 @@ INSERT INTO permisos (nombre)
 VALUES ('GERENTE'),
        ('RECURSOS HUMANOS'),
        ('VENTAS'),
-       ('INVENTARIO');
+       ('INVENTARIO'),
+       ('ADMIN');
 
 CREATE FUNCTION get_permisos_id(nombre_permiso VARCHAR(45)) RETURNS INT
 BEGIN

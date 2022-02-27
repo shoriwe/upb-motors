@@ -6,6 +6,7 @@ const Gerente = 1;
 const RecursosHumanos = 2;
 const Ventas = 3;
 const Inventario = 4;
+const Admin = 5;
 
 // Taken from https://stackoverflow.com/questions/4356289/php-random-string-generator
 function generateRandomString(int $length = 10): string
@@ -38,6 +39,8 @@ interface iDatabase
     public function is_ventas(int $user_id): bool;
 
     public function is_inventario(int $user_id): bool;
+
+    public function is_admin(int $user_id): bool;
 
     public function update_password(int $user_id, string $old_password, string $new_password): ?string;
 
@@ -159,6 +162,12 @@ class TestDatabase implements iDatabase
     {
         // TODO: Implement view_product() method.
         return null;
+    }
+
+    public function is_admin(int $user_id): bool
+    {
+        // TODO: Implement is_admin() method.
+        return false;
     }
 }
 
@@ -292,6 +301,11 @@ class MySQL implements iDatabase
     public function is_inventario(int $user_id): bool
     {
         return $this->get_user_permissions($user_id) === Inventario;
+    }
+
+    public function is_admin(int $user_id): bool
+    {
+        return $this->get_user_permissions($user_id) === Admin;
     }
 
     public function search_products(string $product_name): array

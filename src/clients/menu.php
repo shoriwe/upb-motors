@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once '../connection.php';
-require '../navbar.php';
+require_once '../navbar.php';
 
 if (!connect()->database->is_recursos_humanos($_SESSION["user-id"])) {
     header('Location: /dashboard.php', true, 307);
@@ -22,6 +22,4 @@ if (!connect()->database->is_recursos_humanos($_SESSION["user-id"])) {
     <a class="blue-button" href="#">Buscar cliente</a>
     <pre style="width: 1vw;"></pre>
     <a class="blue-button" href="#">Añadir cliente</a>
-    <pre style="width: 1vw;"></pre>
-    <a class="blue-button" href="#">Desactivar cliente</a>
 </div>

@@ -1,5 +1,5 @@
 <?php
-require '../navbar.php';
+require_once '../navbar.php';
 ?>
 
 <head>

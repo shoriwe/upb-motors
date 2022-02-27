@@ -1,5 +1,5 @@
 <?php
-require '../navbar.php';
+require_once '../navbar.php';
 ?>
 <head>
     <title>Clientes</title>
@@ -14,8 +14,6 @@ require '../navbar.php';
             <a class="blue-button" href="#">Buscar cliente</a>
             <pre style="width: 1vw;"></pre>
             <a class="blue-button" href="#">Añadir cliente</a>
-            <pre style="width: 1vw;"></pre>
-            <a class="blue-button" href="#">Desactivar cliente</a>
         </div>
     </div>
 </div>
