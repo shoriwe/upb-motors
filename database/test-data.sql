@@ -12,12 +12,14 @@ SET @_ = registrar_producto(
         10,
         'Versa 2016',
         'Un carro',
-        10000000
+        10000000,
+        NULL
     );
 
 SET @_ = registrar_producto(
         10,
         'Versa 2020',
         'Otro carro',
-        25000000
+        25000000,
+        NULL
     );

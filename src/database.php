@@ -47,6 +47,8 @@ interface iDatabase
 
     public function search_employees(string $employee_name, string $employee_personal_id): array;
 
+    public function view_user(int $user_id): ?Employee;
+
     public function view_product(int $id): ?Product;
 
     public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file): bool;
@@ -201,6 +203,12 @@ class TestDatabase implements iDatabase
     {
         // TODO: Implement search_employees() method.
         return array();
+    }
+
+    public function view_user(int $user_id): ?Employee
+    {
+        // TODO: Implement view_user() method.
+        return null;
     }
 }
 
@@ -460,5 +468,29 @@ class MySQL implements iDatabase
             }
         }
         return $employees;
+    }
+
+    public function view_user(int $user_id): ?Employee
+    {
+        $records = $this->database->prepare('SELECT permisos_id, nombre_completo, cedula, direccion, telefono, correo, hash_contrasena, habilitado FROM empleados WHERE id = :v_id;');
+        $records->bindParam(':v_id', $user_id);
+        $records->execute();
+        $result = $records->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            if (count($result) !== 0) {
+                return new Employee(
+                    $user_id,
+                    $result["permisos_id"],
+                    $result["nombre_completo"],
+                    $result["cedula"],
+                    $result["direccion"],
+                    $result["telefono"],
+                    $result["correo"],
+                    $result["hash_contrasena"],
+                    $result["habilitado"]
+                );
+            }
+        }
+        return null;
     }
 }

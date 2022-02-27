@@ -14,7 +14,7 @@ if (!connect()->database->is_ventas($_SESSION["user-id"]) &&
 
 $product = connect()->database->view_product($_GET["id"]);
 if ($product === null) {
-    js_redirect("/inventory.php");
+    js_redirect("/inventory/home.php");
 }
 ?>
 <body>
