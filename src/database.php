@@ -53,6 +53,8 @@ interface iDatabase
 
     public function view_product(int $id): ?Product;
 
+    public function update_product(int $id, int $amount, string $name, string $description, float $price, bool $active): bool;
+
     public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file): bool;
 
     public function is_gerente(int $user_id): bool;
@@ -216,6 +218,12 @@ class TestDatabase implements iDatabase
     public function update_user(int $id, int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password, bool $enabled): bool
     {
         // TODO: Implement update_user() method.
+        return false;
+    }
+
+    public function update_product(int $id, int $amount, string $name, string $description, float $price, bool $active): bool
+    {
+        // TODO: Implement update_product() method.
         return false;
     }
 }
@@ -516,6 +524,25 @@ class MySQL implements iDatabase
         $records->bindParam(':email', $email);
         $records->bindParam(':password', $hash_of_password);
         $records->bindParam(':enabled', $enabled, PDO::PARAM_BOOL);
+        $records->execute();
+        $result = $records->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            if (count($result) !== 0) {
+                return $result["result"];
+            }
+        }
+        return false;
+    }
+
+    public function update_product(int $id, int $amount, string $name, string $description, float $price, bool $active): bool
+    {
+        $records = $this->database->prepare('SELECT update_product(:id, :amount, :name, :description, :price, :active) AS result;');
+        $records->bindParam(':id', $id);
+        $records->bindParam(':amount', $amount);
+        $records->bindParam(':name', $name);
+        $records->bindParam(':description', $description);
+        $records->bindParam(':price', $price);
+        $records->bindParam(':active', $active, PDO::PARAM_BOOL);
         $records->execute();
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if ($result) {

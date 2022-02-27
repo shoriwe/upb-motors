@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS empleados
     telefono        VARCHAR(20)  NOT NULL,
     correo          VARCHAR(200) NOT NULL,
     hash_contrasena VARCHAR(500) NOT NULL,
-    habilitado      BOOLEAN NOT NULL DEFAULT true,
+    habilitado      BOOLEAN      NOT NULL DEFAULT true,
     CONSTRAINT empleados_cedula_unique UNIQUE (cedula),
     CONSTRAINT empleados_correo_unique UNIQUE (correo),
     CONSTRAINT fk_permisos_empleados_permisos_id FOREIGN KEY (permisos_id) REFERENCES permisos (id)
@@ -281,4 +281,61 @@ BEGIN
     SET habilitado = v_enabled
     WHERE id = v_id;
     return true;
+END;
+
+CREATE FUNCTION update_product(
+    v_id INT,
+    v_cantidad INT,
+    v_nombre VARCHAR(45),
+    v_descripcion VARCHAR(10000),
+    v_precio FLOAT,
+    v_activo BOOLEAN
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    SELECT id,
+           cantidad,
+           nombre,
+           descripcion,
+           precio,
+           activo
+    INTO @id_producto, @cantidad_producto, @nombre_producto, @descripcion_producto, @precio_producto, @activo_producto
+    FROM inventario
+    WHERE id = v_id;
+    IF @id_producto IS NULL THEN
+        RETURN false;
+    END IF;
+    IF @cantidad_producto != v_cantidad THEN
+        UPDATE
+            inventario
+        SET cantidad = v_cantidad
+        WHERE id = v_id;
+    END IF;
+    IF @nombre_producto != v_nombre THEN
+        UPDATE
+            inventario
+        SET nombre = v_nombre
+        WHERE id = v_id;
+    END IF;
+    IF @descripcion_producto != v_descripcion THEN
+        UPDATE
+            inventario
+        SET descripcion = v_descripcion
+        WHERE id = v_id;
+    END IF;
+    IF @precio_producto != v_precio THEN
+        UPDATE
+            inventario
+        SET precio = v_precio
+        WHERE id = v_id;
+    END IF;
+    IF @activo_producto != v_activo THEN
+        UPDATE
+            inventario
+        SET activo = v_activo
+        WHERE id = v_id;
+    END IF;
+    RETURN true;
 END;
