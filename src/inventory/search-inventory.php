@@ -5,13 +5,12 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once '../connection.php';
-require '../middleware/ensure_login.php';
+require_once '../ensure_login.php';
 require 'menu.php';
 
 if (!connect()->database->is_ventas($_SESSION["user-id"]) &&
     !connect()->database->is_inventario($_SESSION["user-id"])) {
-    header('Location: /dashboard.php', true, 307);
-    exit;
+    js_redirect("/dashboard.php");
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

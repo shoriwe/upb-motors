@@ -1,6 +1,5 @@
 <?php
 
-require 'middleware/ensure_login.php';
+require_once 'ensure_login.php';
 
-header('Location: /dashboard.php', true, 307);
-exit;
+js_redirect("/dashboard.php");

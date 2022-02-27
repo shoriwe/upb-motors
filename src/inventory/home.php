@@ -1,4 +1,5 @@
 <?php
+require_once '../ensure_login.php';
 require_once '../navbar.php';
 ?>
 

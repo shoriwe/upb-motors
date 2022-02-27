@@ -1,6 +1,6 @@
 <?php
 require "connection.php";
-require "middleware/ensure_login.php";
+require_once "ensure_login.php";
 require_once 'navbar.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

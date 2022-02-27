@@ -53,6 +53,8 @@ interface iDatabase
     public function request_password_reset(string $email): ?string;
 
     public function reset_password(string $code, string $new_password): bool;
+
+    public function register_user(int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password): bool;
 }
 
 
@@ -167,6 +169,12 @@ class TestDatabase implements iDatabase
     public function is_admin(int $user_id): bool
     {
         // TODO: Implement is_admin() method.
+        return false;
+    }
+
+    public function register_user(int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password): bool
+    {
+        // TODO: Implement register_user() method.
         return false;
     }
 }
@@ -347,12 +355,35 @@ class MySQL implements iDatabase
     {
         $records = $this->database->prepare('SELECT cantidad, nombre, descripcion, precio, activo, imagen FROM inventario WHERE id = :v_id;');
         $records->bindParam(':v_id', $id);
-        // $records->bindColumn(6, $lob, PDO::PARAM_STR);
         $records->execute();
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if (count($result) !== 0) {
             return new Product($id, $result["cantidad"], $result["nombre"], $result["descripcion"], $result["precio"], $result["activo"], $result["imagen"]);
         }
         return null;
+    }
+
+    public function register_user(int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password): bool
+    {
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+        $records = $this->database->prepare('SELECT registrar_empleado(:permission, :name, :personal_id, :address, :phone, :email, :password_hash) AS result');
+        $records->bindParam(':permission', $permission);
+        $records->bindParam(':name', $name);
+        $records->bindParam(':personal_id', $personal_id);
+        $records->bindParam(':address', $address);
+        $records->bindParam(':phone', $phone);
+        $records->bindParam(':email', $email);
+        $records->bindParam(':password_hash', $password_hash);
+        try {
+            $records->execute();
+            $result = $records->fetch(PDO::FETCH_ASSOC);
+            if (count($result) !== 0) {
+                return $result["result"];
+            }
+            return false;
+        } catch (Exception $e) {
+            echo $e;
+            return false;
+        }
     }
 }

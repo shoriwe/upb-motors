@@ -3,7 +3,7 @@ require_once '../navbar.php';
 ?>
 
 <head>
-    <title>Admin</title>
+    <title>Recursos humanos</title>
     <link rel="stylesheet" href="/css/containers.css">
     <link rel="stylesheet" href="/css/text.css">
     <link rel="stylesheet" href="/css/buttons.css">

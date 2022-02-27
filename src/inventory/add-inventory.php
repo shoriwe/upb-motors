@@ -3,8 +3,7 @@
 require 'menu.php';
 
 if (!connect()->database->is_inventario($_SESSION["user-id"])) {
-    header('Location: /dashboard.php', true, 307);
-    exit;
+    js_redirect("/dashboard.php");
 }
 
 ?>

@@ -10,11 +10,11 @@ require_once '../navbar.php';
 </head>
 <div class="centered-container" style="margin-top: 10vh">
     <div class="centered-container-for-input">
-        <h1 class="purple-text">Empleados</h1>
+        <h1 class="purple-text">Admin</h1>
         <div class="centered-flex-container">
-            <a class="blue-button" href="#">Buscar</a>
+            <a class="blue-button" href="/admin/search-users.php">Buscar usuarios</a>
             <pre style="width: 1vw;"></pre>
-            <a class="blue-button" href="#">Añadir</a>
+            <a class="blue-button" href="/admin/create-user.php">Crear usuarios</a>
         </div>
     </div>
 </div>

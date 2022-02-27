@@ -5,11 +5,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once '../connection.php';
 require_once '../navbar.php';
-
-if (!connect()->database->is_ventas($_SESSION["user-id"])) {
-    header('Location: /dashboard.php', true, 307);
-    exit;
-}
 ?>
 <head>
     <title>Ventas</title>

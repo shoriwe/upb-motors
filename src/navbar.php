@@ -1,6 +1,6 @@
 <?php
 require_once 'connection.php';
-require 'middleware/ensure_login.php';
+require_once 'ensure_login.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();

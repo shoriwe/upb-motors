@@ -5,14 +5,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once '../connection.php';
 require_once '../navbar.php';
-
-if (!connect()->database->is_recursos_humanos($_SESSION["user-id"])) {
-    header('Location: /dashboard.php', true, 307);
-    exit;
-}
 ?>
 <head>
-    <title>Empleados</title>
+    <title>Clientes</title>
     <link rel="stylesheet" href="/css/containers.css">
     <link rel="stylesheet" href="/css/text.css">
     <link rel="stylesheet" href="/css/buttons.css">

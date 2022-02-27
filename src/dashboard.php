@@ -1,6 +1,6 @@
 <?php
 
-require 'middleware/ensure_login.php';
+require_once 'ensure_login.php';
 require_once 'navbar.php';
 ?>
 <!DOCTYPE html>

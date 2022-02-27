@@ -3,6 +3,12 @@
 require_once 'database.php';
 require_once 'email.php';
 
+function js_redirect(string $target_url)
+{
+    echo "<script>window.location.href = '$target_url'</script>";
+    exit;
+}
+
 class Connection
 {
     public iDatabase $database;

@@ -80,13 +80,14 @@ CREATE TABLE IF NOT EXISTS empleados
     id              INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
     permisos_id     INT          NOT NULL,
     nombre_completo VARCHAR(100) NOT NULL,
-    cedula          VARCHAR(10)  NOT NULL,
+    cedula          VARCHAR(45)  NOT NULL,
     direccion       VARCHAR(500) NOT NULL,
     telefono        VARCHAR(20)  NOT NULL,
-    correo          VARCHAR(500) NOT NULL,
+    correo          VARCHAR(200) NOT NULL,
     hash_contrasena VARCHAR(500) NOT NULL,
     habilitado      BOOLEAN DEFAULT true,
     CONSTRAINT empleados_cedula_unique UNIQUE (cedula),
+    CONSTRAINT empleados_correo_unique UNIQUE (correo),
     CONSTRAINT fk_permisos_empleados_permisos_id FOREIGN KEY (permisos_id) REFERENCES permisos (id)
 );
 
@@ -98,7 +99,7 @@ CREATE TABLE IF NOT EXISTS inventario
     nombre      VARCHAR(255)   NOT NULL,
     descripcion VARCHAR(10000) NOT NULL,
     precio      DOUBLE         NOT NULL,
-    activo      BOOLEAN        NOT NULL DEFAULT false,
+    activo      BOOLEAN        NOT NULL DEFAULT true,
     imagen      LONGBLOB,
     CONSTRAINT unique_producto UNIQUE (nombre)
 );
@@ -168,4 +169,38 @@ BEGIN
                 v_imagen);
     END IF;
     RETURN true;
+END;
+
+CREATE FUNCTION registrar_empleado(
+    v_permiso_id int,
+    v_nombre_completo VARCHAR(100),
+    v_cedula VARCHAR(45),
+    v_direccion VARCHAR(500),
+    v_telefono VARCHAR(20),
+    v_correo VARCHAR(200),
+    v_hash_contrasena VARCHAR(500)
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    INSERT INTO empleados (permisos_id,
+                           nombre_completo,
+                           cedula,
+                           direccion,
+                           telefono,
+                           correo,
+                           hash_contrasena)
+    VALUES (v_permiso_id,
+            v_nombre_completo,
+            v_cedula,
+            v_direccion,
+            v_telefono,
+            v_correo,
+            v_hash_contrasena);
+    SELECT id
+    INTO @result
+    FROM empleados
+    WHERE cedula = v_cedula;
+    RETURN @result > 0;
 END;
