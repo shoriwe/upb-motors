@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class='list-entry'>
     <h3 class='black-text'>$employee->name</h3>
     <pre style='min-width: 10vw;'></pre>
-    <h3 class='black-text'>$$employee->email</h3>
+    <h3 class='black-text'>$employee->email</h3>
     <pre style='min-width: 10vw;'></pre>
     <h3 class='black-text'>$employee->personal_id</h3>
     <pre style='min-width: 10vw;'></pre>

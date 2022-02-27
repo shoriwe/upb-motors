@@ -29,7 +29,7 @@ if ($employee === null) {
             $permission = get_permission_name($employee->permission);
             echo "<h1 class='purple-text' style='margin-top: 0.5%;'>$employee->name</h1>";
             echo "<h3 class='black-text' style='margin-top: 0.5%;'>Id: $employee->id</h3>";
-            echo "<h3 class='black-text' style='margin-top: 0.5%;'>Cedula: $$employee->personal_id</h3>";
+            echo "<h3 class='black-text' style='margin-top: 0.5%;'>Cedula: $employee->personal_id</h3>";
             echo "<h3 class='black-text' style='margin-top: 0.5%;'>Activo: $activo</h3>";
             echo "<h3 class='black-text' style='margin-top: 0.5%;'>Telefono: $employee->phone</h3>";
             echo "<h3 class='black-text' style='margin-top: 0.5%;'>Direccion: $employee->address</h3>";

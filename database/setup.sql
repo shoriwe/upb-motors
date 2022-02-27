@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS empleados
     telefono        VARCHAR(20)  NOT NULL,
     correo          VARCHAR(200) NOT NULL,
     hash_contrasena VARCHAR(500) NOT NULL,
-    habilitado      BOOLEAN DEFAULT true,
+    habilitado      BOOLEAN NOT NULL DEFAULT true,
     CONSTRAINT empleados_cedula_unique UNIQUE (cedula),
     CONSTRAINT empleados_correo_unique UNIQUE (correo),
     CONSTRAINT fk_permisos_empleados_permisos_id FOREIGN KEY (permisos_id) REFERENCES permisos (id)
@@ -203,4 +203,82 @@ BEGIN
     FROM empleados
     WHERE cedula = v_cedula;
     RETURN @result > 0;
+END;
+
+CREATE FUNCTION update_user(
+    v_id INT,
+    v_permission INT,
+    v_name VARCHAR(45),
+    v_personal_id VARCHAR(45),
+    v_address VARCHAR(10000),
+    v_phone VARCHAR(45),
+    v_email VARCHAR(200),
+    v_password VARCHAR(500),
+    v_enabled BOOLEAN
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    SELECT id,
+           permisos_id,
+           nombre_completo,
+           cedula,
+           direccion,
+           telefono,
+           correo,
+           habilitado
+    INTO @id_empleado, @permisos_empleado, @nombre_empleado, @cedula_empleado, @direccion_empleado, @telefono_empleado, @correo_empleado, @habilitado_empleado
+    FROM empleados
+    WHERE id = v_id;
+    IF @id_empleado IS NULL THEN
+        RETURN false;
+    END IF;
+    IF v_permission != @permisos_empleado THEN
+        UPDATE
+            empleados
+        SET permisos_id = v_permission
+        WHERE id = v_id;
+    END IF;
+    IF v_name != @nombre_empleado THEN
+        UPDATE
+            empleados
+        SET nombre_completo = v_name
+        WHERE id = v_id;
+    END IF;
+    IF v_personal_id != @cedula_empleado THEN
+        UPDATE
+            empleados
+        SET cedula = v_personal_id
+        WHERE id = v_id;
+    END IF;
+    IF v_address != @direccion_empleado THEN
+        UPDATE
+            empleados
+        SET direccion = v_address
+        WHERE id = v_id;
+    END IF;
+    IF v_phone != @telefono_empleado THEN
+        UPDATE
+            empleados
+        SET telefono = v_phone
+        WHERE id = v_id;
+    END IF;
+    IF v_email != @correo_empleado THEN
+        UPDATE
+            empleados
+        SET correo = v_email
+        WHERE id = v_id;
+    END IF;
+    IF v_password IS NOT NULL THEN
+        UPDATE
+            empleados
+        SET hash_contrasena = v_password
+        WHERE id = v_id;
+    END IF;
+    UPDATE
+        empleados
+    SET habilitado = v_enabled
+    WHERE id = v_id;
+    return true;
 END;

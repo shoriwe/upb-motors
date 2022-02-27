@@ -49,6 +49,8 @@ interface iDatabase
 
     public function view_user(int $user_id): ?Employee;
 
+    public function update_user(int $id, int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password, bool $enabled): bool;
+
     public function view_product(int $id): ?Product;
 
     public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file): bool;
@@ -209,6 +211,12 @@ class TestDatabase implements iDatabase
     {
         // TODO: Implement view_user() method.
         return null;
+    }
+
+    public function update_user(int $id, int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password, bool $enabled): bool
+    {
+        // TODO: Implement update_user() method.
+        return false;
     }
 }
 
@@ -398,7 +406,7 @@ class MySQL implements iDatabase
 
     public function register_user(int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password): bool
     {
-        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+        $hash = password_hash($password, PASSWORD_DEFAULT);
         $records = $this->database->prepare('SELECT registrar_empleado(:permission, :name, :personal_id, :address, :phone, :email, :password_hash) AS result');
         $records->bindParam(':permission', $permission);
         $records->bindParam(':name', $name);
@@ -406,7 +414,7 @@ class MySQL implements iDatabase
         $records->bindParam(':address', $address);
         $records->bindParam(':phone', $phone);
         $records->bindParam(':email', $email);
-        $records->bindParam(':password_hash', $password_hash);
+        $records->bindParam(':password_hash', $hash);
         try {
             $records->execute();
             $result = $records->fetch(PDO::FETCH_ASSOC);
@@ -415,7 +423,6 @@ class MySQL implements iDatabase
             }
             return false;
         } catch (Exception $e) {
-            echo $e;
             return false;
         }
     }
@@ -444,8 +451,7 @@ class MySQL implements iDatabase
                     $row["habilitado"]
                 );
             }
-        }
-        if (strlen($employee_personal_id) > 0) {
+        } else if (strlen($employee_personal_id) > 0) {
             $employee_personal_id = "%" . $employee_personal_id . "%";
             $records = $this->database->prepare('SELECT id, permisos_id, nombre_completo, cedula, direccion, telefono, correo, hash_contrasena, habilitado FROM empleados WHERE LOWER(cedula) LIKE :personal_id;');
             $records->bindParam(':personal_id', $employee_personal_id);
@@ -492,5 +498,31 @@ class MySQL implements iDatabase
             }
         }
         return null;
+    }
+
+    public function update_user(int $id, int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password, bool $enabled): bool
+    {
+        $hash_of_password = null;
+        if (strlen($password) !== 0) {
+            $hash_of_password = password_hash($password, PASSWORD_DEFAULT);
+        }
+        $records = $this->database->prepare('SELECT update_user(:id, :permission, :name, :personal_id, :address, :phone, :email, :password, :enabled) AS result;');
+        $records->bindParam(':id', $id);
+        $records->bindParam(':permission', $permission);
+        $records->bindParam(':name', $name);
+        $records->bindParam(':personal_id', $personal_id);
+        $records->bindParam(':address', $address);
+        $records->bindParam(':phone', $phone);
+        $records->bindParam(':email', $email);
+        $records->bindParam(':password', $hash_of_password);
+        $records->bindParam(':enabled', $enabled, PDO::PARAM_BOOL);
+        $records->execute();
+        $result = $records->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            if (count($result) !== 0) {
+                return $result["result"];
+            }
+        }
+        return false;
     }
 }
