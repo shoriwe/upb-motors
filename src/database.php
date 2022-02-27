@@ -8,6 +8,23 @@ const Ventas = 3;
 const Inventario = 4;
 const Admin = 5;
 
+function get_permission_name(int $permission): string
+{
+    switch ($permission) {
+        case Gerente:
+            return "Gerente";
+        case RecursosHumanos:
+            return "Recursos Humanos";
+        case Ventas:
+            return "Ventas";
+        case Inventario:
+            return "Inventario";
+        case Admin:
+            return "Admin";
+    }
+    return "Unknown";
+}
+
 // Taken from https://stackoverflow.com/questions/4356289/php-random-string-generator
 function generateRandomString(int $length = 10): string
 {
@@ -27,6 +44,8 @@ interface iDatabase
      * @return array|null
      */
     public function search_products(string $product_name): array;
+
+    public function search_employees(string $employee_name, string $employee_personal_id): array;
 
     public function view_product(int $id): ?Product;
 
@@ -176,6 +195,12 @@ class TestDatabase implements iDatabase
     {
         // TODO: Implement register_user() method.
         return false;
+    }
+
+    public function search_employees(string $employee_name, string $employee_personal_id): array
+    {
+        // TODO: Implement search_employees() method.
+        return array();
     }
 }
 
@@ -385,5 +410,55 @@ class MySQL implements iDatabase
             echo $e;
             return false;
         }
+    }
+
+    public function search_employees(string $employee_name, string $employee_personal_id): array
+    {
+        $employees = array();
+        if (strlen($employee_name) > 0) {
+            $employee_name = "%" . $employee_name . "%";
+            $records = $this->database->prepare('SELECT id, permisos_id, nombre_completo, cedula, direccion, telefono, correo, hash_contrasena, habilitado FROM empleados WHERE LOWER(nombre_completo) LIKE :name;');
+            $records->bindParam(':name', $employee_name);
+            $records->execute();
+            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $employees[] = new Employee(
+                    $row["id"],
+                    $row["permisos_id"],
+                    $row["nombre_completo"],
+                    $row["cedula"],
+                    $row["direccion"],
+                    $row["telefono"],
+                    $row["correo"],
+                    $row["hash_contrasena"],
+                    $row["habilitado"]
+                );
+            }
+        }
+        if (strlen($employee_personal_id) > 0) {
+            $employee_personal_id = "%" . $employee_personal_id . "%";
+            $records = $this->database->prepare('SELECT id, permisos_id, nombre_completo, cedula, direccion, telefono, correo, hash_contrasena, habilitado FROM empleados WHERE LOWER(cedula) LIKE :personal_id;');
+            $records->bindParam(':personal_id', $employee_personal_id);
+            $records->execute();
+            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $employees[] = new Employee(
+                    $row["id"],
+                    $row["permisos_id"],
+                    $row["nombre_completo"],
+                    $row["cedula"],
+                    $row["direccion"],
+                    $row["telefono"],
+                    $row["correo"],
+                    $row["hash_contrasena"],
+                    $row["habilitado"]
+                );
+            }
+        }
+        return $employees;
     }
 }
