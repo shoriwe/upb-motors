@@ -47,9 +47,15 @@ interface iDatabase
 
     public function search_employees(string $employee_name, string $employee_personal_id): array;
 
+    public function search_clients(string $client_name, string $employee_personal_id): array;
+
     public function view_user(int $user_id): ?Employee;
 
+    public function view_client(int $client_id): ?Client;
+
     public function update_user(int $id, int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password, bool $enabled): bool;
+
+    public function update_client(int $id, string $name, string $personal_id, string $address, string $phone, string $email, bool $enabled): bool;
 
     public function view_product(int $id): ?Product;
 
@@ -80,6 +86,8 @@ interface iDatabase
     public function reset_password(string $code, string $new_password): bool;
 
     public function register_user(int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password): bool;
+
+    public function register_client(string $name, string $personal_id, string $address, string $phone, string $email): bool;
 }
 
 
@@ -224,6 +232,30 @@ class TestDatabase implements iDatabase
     public function update_product(int $id, int $amount, string $name, string $description, float $price, bool $active): bool
     {
         // TODO: Implement update_product() method.
+        return false;
+    }
+
+    public function register_client(string $name, string $personal_id, string $address, string $phone, string $email): bool
+    {
+        // TODO: Implement register_client() method.
+        return false;
+    }
+
+    public function search_clients(string $client_name, string $employee_personal_id): array
+    {
+        // TODO: Implement search_clients() method.
+        return array();
+    }
+
+    public function view_client(int $client_id): ?Client
+    {
+        // TODO: Implement view_client() method.
+        return null;
+    }
+
+    public function update_client(int $id, string $name, string $personal_id, string $address, string $phone, string $email, bool $enabled): bool
+    {
+        // TODO: Implement update_client() method.
         return false;
     }
 }
@@ -543,6 +575,113 @@ class MySQL implements iDatabase
         $records->bindParam(':description', $description);
         $records->bindParam(':price', $price);
         $records->bindParam(':active', $active, PDO::PARAM_BOOL);
+        $records->execute();
+        $result = $records->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            if (count($result) !== 0) {
+                return $result["result"];
+            }
+        }
+        return false;
+    }
+
+    public function register_client(string $name, string $personal_id, string $address, string $phone, string $email): bool
+    {
+        $records = $this->database->prepare('SELECT registrar_cliente(:name, :personal_id, :address, :phone, :email) AS result');
+        $records->bindParam(':name', $name);
+        $records->bindParam(':personal_id', $personal_id);
+        $records->bindParam(':address', $address);
+        $records->bindParam(':phone', $phone);
+        $records->bindParam(':email', $email);
+        try {
+            $records->execute();
+            $result = $records->fetch(PDO::FETCH_ASSOC);
+            if (count($result) !== 0) {
+                return $result["result"];
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function search_clients(string $client_name, string $employee_personal_id): array
+    {
+        $employees = array();
+        if (strlen($client_name) > 0) {
+            $client_name = "%" . $client_name . "%";
+            $records = $this->database->prepare('SELECT id, nombre_completo, cedula, direccion, telefono, correo, habilitado FROM clientes WHERE LOWER(nombre_completo) LIKE :name;');
+            $records->bindParam(':name', $client_name);
+            $records->execute();
+            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $employees[] = new Client(
+                    $row["id"],
+                    $row["nombre_completo"],
+                    $row["cedula"],
+                    $row["direccion"],
+                    $row["telefono"],
+                    $row["correo"],
+                    $row["habilitado"]
+                );
+            }
+        } else if (strlen($employee_personal_id) > 0) {
+            $employee_personal_id = "%" . $employee_personal_id . "%";
+            $records = $this->database->prepare('SELECT id, nombre_completo, cedula, direccion, telefono, correo, habilitado FROM clientes WHERE LOWER(cedula) LIKE :personal_id;');
+            $records->bindParam(':personal_id', $employee_personal_id);
+            $records->execute();
+            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $employees[] = new Client(
+                    $row["id"],
+                    $row["nombre_completo"],
+                    $row["cedula"],
+                    $row["direccion"],
+                    $row["telefono"],
+                    $row["correo"],
+                    $row["habilitado"]
+                );
+            }
+        }
+        return $employees;
+    }
+
+    public function view_client(int $client_id): ?Client
+    {
+        $records = $this->database->prepare('SELECT nombre_completo, cedula, direccion, telefono, correo, habilitado FROM clientes WHERE id = :v_id;');
+        $records->bindParam(':v_id', $client_id);
+        $records->execute();
+        $result = $records->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            if (count($result) !== 0) {
+                return new Client(
+                    $client_id,
+                    $result["nombre_completo"],
+                    $result["cedula"],
+                    $result["direccion"],
+                    $result["telefono"],
+                    $result["correo"],
+                    $result["habilitado"]
+                );
+            }
+        }
+        return null;
+    }
+
+    public function update_client(int $id, string $name, string $personal_id, string $address, string $phone, string $email, bool $enabled): bool
+    {
+        $records = $this->database->prepare('SELECT update_client(:id, :name, :personal_id, :address, :phone, :email, :enabled) AS result;');
+        $records->bindParam(':id', $id);
+        $records->bindParam(':name', $name);
+        $records->bindParam(':personal_id', $personal_id);
+        $records->bindParam(':address', $address);
+        $records->bindParam(':phone', $phone);
+        $records->bindParam(':email', $email);
+        $records->bindParam(':enabled', $enabled, PDO::PARAM_BOOL);
         $records->execute();
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if ($result) {

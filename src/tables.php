@@ -1,5 +1,35 @@
 <?php
 
+class Client
+{
+    public ?int $id = null;
+    public ?string $name = null;
+    public ?string $personal_id = null;
+    public ?string $address = null;
+    public ?string $phone = null;
+    public ?string $email = null;
+    public ?bool $is_enabled = null;
+
+    public function __construct(
+        int    $id,
+        string $name,
+        string $personal_id,
+        string $address,
+        string $phone,
+        string $email,
+        bool   $is_enabled
+    )
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->personal_id = $personal_id;
+        $this->address = $address;
+        $this->phone = $phone;
+        $this->email = $email;
+        $this->is_enabled = $is_enabled;
+    }
+}
+
 class Employee
 {
     public ?int $id = null;

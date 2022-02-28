@@ -27,7 +27,7 @@ BEGIN
     RETURN @resultado;
 END;
 
-CREATE TABLE IF NOT EXISTS logs
+CREATE TABLE IF NOT EXISTS app_logs
 (
     id      INT           NOT NULL PRIMARY KEY AUTO_INCREMENT,
     fecha   DATETIME      NOT NULL,
@@ -39,18 +39,18 @@ CREATE TABLE IF NOT EXISTS logs
 CREATE PROCEDURE
     log_login_failed(IN correo VARCHAR(500))
 BEGIN
-    INSERT INTO logs (fecha,
-                      nivel,
-                      mensaje)
+    INSERT INTO app_logs (fecha,
+                          nivel,
+                          mensaje)
     VALUES (NOW(), get_log_level('AUTH'), CONCAT('COULD NOT LOGIN AS ', correo));
 END;
 
 CREATE PROCEDURE
     log_login_succeed(IN correo VARCHAR(500))
 BEGIN
-    INSERT INTO logs (fecha,
-                      nivel,
-                      mensaje)
+    INSERT INTO app_logs (fecha,
+                          nivel,
+                          mensaje)
     VALUES (NOW(), get_log_level('LOG'), CONCAT('LOGIN SUCCEED ', correo));
 END;
 
@@ -102,6 +102,20 @@ CREATE TABLE IF NOT EXISTS inventario
     activo      BOOLEAN        NOT NULL DEFAULT true,
     imagen      LONGBLOB,
     CONSTRAINT unique_producto UNIQUE (nombre)
+);
+
+-- -- Clientes -- --
+CREATE TABLE IF NOT EXISTS clientes
+(
+    id              INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    nombre_completo VARCHAR(100) NOT NULL,
+    cedula          VARCHAR(45)  NOT NULL,
+    direccion       VARCHAR(500) NOT NULL,
+    telefono        VARCHAR(20)  NOT NULL,
+    correo          VARCHAR(200) NOT NULL,
+    habilitado      BOOLEAN      NOT NULL DEFAULT true,
+    CONSTRAINT empleados_cedula_unique UNIQUE (cedula),
+    CONSTRAINT empleados_correo_unique UNIQUE (correo)
 );
 
 -- -- Procesos -- --
@@ -228,10 +242,10 @@ BEGIN
            telefono,
            correo,
            habilitado
-    INTO @id_empleado, @permisos_empleado, @nombre_empleado, @cedula_empleado, @direccion_empleado, @telefono_empleado, @correo_empleado, @habilitado_empleado
+    INTO @id_cliente, @permisos_empleado, @nombre_empleado, @cedula_empleado, @direccion_empleado, @telefono_empleado, @correo_empleado, @habilitado_empleado
     FROM empleados
     WHERE id = v_id;
-    IF @id_empleado IS NULL THEN
+    IF @id_cliente IS NULL THEN
         RETURN false;
     END IF;
     IF v_permission != @permisos_empleado THEN
@@ -338,4 +352,95 @@ BEGIN
         WHERE id = v_id;
     END IF;
     RETURN true;
+END;
+
+CREATE FUNCTION registrar_cliente(
+    v_nombre_completo VARCHAR(100),
+    v_cedula VARCHAR(45),
+    v_direccion VARCHAR(500),
+    v_telefono VARCHAR(20),
+    v_correo VARCHAR(200)
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    INSERT INTO clientes (nombre_completo,
+                          cedula,
+                          direccion,
+                          telefono,
+                          correo)
+    VALUES (v_nombre_completo,
+            v_cedula,
+            v_direccion,
+            v_telefono,
+            v_correo);
+    SELECT id
+    INTO @result
+    FROM clientes
+    WHERE cedula = v_cedula;
+    RETURN @result > 0;
+END;
+
+CREATE FUNCTION update_client(
+    v_id INT,
+    v_name VARCHAR(45),
+    v_personal_id VARCHAR(45),
+    v_address VARCHAR(10000),
+    v_phone VARCHAR(45),
+    v_email VARCHAR(200),
+    v_enabled BOOLEAN
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    SELECT id,
+           nombre_completo,
+           cedula,
+           direccion,
+           telefono,
+           correo,
+           habilitado
+    INTO @id_cliente, @nombre_empleado, @cedula_empleado, @direccion_empleado, @telefono_empleado, @correo_empleado, @habilitado_empleado
+    FROM clientes
+    WHERE id = v_id;
+    IF @id_cliente IS NULL THEN
+        RETURN false;
+    END IF;
+    IF v_name != @nombre_empleado THEN
+        UPDATE
+            clientes
+        SET nombre_completo = v_name
+        WHERE id = v_id;
+    END IF;
+    IF v_personal_id != @cedula_empleado THEN
+        UPDATE
+            clientes
+        SET cedula = v_personal_id
+        WHERE id = v_id;
+    END IF;
+    IF v_address != @direccion_empleado THEN
+        UPDATE
+            clientes
+        SET direccion = v_address
+        WHERE id = v_id;
+    END IF;
+    IF v_phone != @telefono_empleado THEN
+        UPDATE
+            clientes
+        SET telefono = v_phone
+        WHERE id = v_id;
+    END IF;
+    IF v_email != @correo_empleado THEN
+        UPDATE
+            clientes
+        SET correo = v_email
+        WHERE id = v_id;
+    END IF;
+    UPDATE
+        clientes
+    SET habilitado = v_enabled
+    WHERE id = v_id;
+    return true;
 END;

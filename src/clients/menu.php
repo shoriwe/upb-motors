@@ -14,7 +14,7 @@ require_once '../navbar.php';
 </head>
 <br>
 <div class="centered-flex-container">
-    <a class="blue-button" href="#">Buscar cliente</a>
+    <a class="blue-button" href="/clients/search-clients.php">Buscar cliente</a>
     <pre style="width: 1vw;"></pre>
-    <a class="blue-button" href="#">Añadir cliente</a>
+    <a class="blue-button" href="/clients/add-clients.php">Añadir cliente</a>
 </div>
