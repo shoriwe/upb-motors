@@ -87,3 +87,33 @@ class Product
         $this->imagen = $imagen;
     }
 }
+
+class Lis_Product{
+    public ?int $id = null;
+    public ?string $nombre = null;
+    public function __construct(int $id, string $nombre)
+    {
+        $this->id = $id;
+        $this->nombre = $nombre;
+    }
+}
+
+class Lis_Clients{
+    public ?int $id = null;
+    public ?string $nombre = null;
+    public function __construct(int $id, string $nombre)
+    {
+        $this->id = $id;
+        $this->nombre = $nombre;
+    }
+}
+
+class Lis_Empleados{
+    public ?int $id = null;
+    public ?string $nombre = null;
+    public function __construct(int $id, string $nombre)
+    {
+        $this->id = $id;
+        $this->nombre = $nombre;
+    }
+}
