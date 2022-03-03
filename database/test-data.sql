@@ -1,6 +1,6 @@
 SET @_ = registrar_empleado(
         get_permisos_id('ADMIN'),
-        'upbmotorstest@gmail.com',
+        'Antonio',
         '1234567891',
         '1234567890',
         '1234567890',
@@ -10,7 +10,7 @@ SET @_ = registrar_empleado(
 
 SET @_ = registrar_empleado(
         get_permisos_id('RECURSOS HUMANOS'),
-        'rh@gmail.com',
+        'Miguel',
         '1234567892',
         '1234567890',
         '1234567890',
@@ -20,7 +20,7 @@ SET @_ = registrar_empleado(
 
 SET @_ = registrar_empleado(
         get_permisos_id('INVENTARIO'),
-        'inventario@gmail.com',
+        'Jean',
         '1234567893',
         '1234567890',
         '1234567890',
@@ -30,7 +30,7 @@ SET @_ = registrar_empleado(
 
 SET @_ = registrar_empleado(
         get_permisos_id('GERENTE'),
-        'gerente@gmail.com',
+        'Andres',
         '1234567894',
         '1234567890',
         '1234567890',
@@ -40,7 +40,7 @@ SET @_ = registrar_empleado(
 
 SET @_ = registrar_empleado(
         get_permisos_id('VENTAS'),
-        'ventas@gmail.com',
+        'Gleisson',
         '1234567895',
         '1234567890',
         '1234567890',
