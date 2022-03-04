@@ -79,7 +79,7 @@ require_once '../navbar.php';
         <input class="blue-button" type="button" value="Delete Row" onclick="eliminar_fila('dataTable');" />
 </div>
 <div class="centered-container" style="margin-top: 10vh">
-    <input id="ok" class="blue-button" type="button" value="Add Row" />
+    <input id="ok" class="blue-button" type="button" value="Guardar" />
 </div>
 
 
