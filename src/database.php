@@ -276,6 +276,12 @@ class TestDatabase implements iDatabase
         // TODO: Implement lista_productos() method.
         return array();
     }
+
+    public function registrar_orden(int $empleado, int $cliente, string $hoy): bool
+    {
+        // TODO: Implement registrar_orden() method.
+        return false;
+    }
 }
 
 class MySQL implements iDatabase
@@ -750,5 +756,23 @@ class MySQL implements iDatabase
             $empleados[] = new Lis_Clients($row["id"], $row["nombre_completo"]);
         }
         return $empleados;
+    }
+
+    public function registrar_orden(int $empleado, int $cliente, string $hoy): bool
+    {
+        $records = $this->database->prepare('SELECT registrar_orden(:empleado, :cliente, :hoy) AS result');
+        $records->bindParam(':empleado', $empleado);
+        $records->bindParam(':cliente', $cliente);
+        $records->bindParam(':hoy', $hoy);
+        try {
+            $records->execute();
+            $result = $records->fetch(PDO::FETCH_ASSOC);
+            if (count($result) !== 0) {
+                return $result["result"];
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
     }
 }

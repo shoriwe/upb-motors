@@ -1,6 +1,8 @@
 <?php
 require_once '../navbar.php';
 ?>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <head>
     <title>Ventas</title>
@@ -11,28 +13,31 @@ require_once '../navbar.php';
     <link rel="stylesheet" href="/css/table.css">
     <script src="/js/addrow.js"></script>
 </head>
-<div class="centered-container" style="margin-top: 10vh">
-    <div className="container-a">
+
+
+<div class="centered-container" style="margin-top: 10vh" id="empleados">
+    <div>
         <?php
         $empleados = connect()->database->lista_empleados();
-        echo "<select>";
-        echo "<option>Seleccionar Empleado</option>";
+        echo "<select id='empleados' name='empleados'>";
+        echo "<option value=null>Seleccionar Empleado</option>";
         foreach ($empleados as $empleado) {
-            echo "<option value=$empleado->nombre>$empleado->nombre</option>";
+            echo "<option value=$empleado->id>$empleado->nombre</option>";
         }
         echo "</select>";
         ?>
     </div>
 </div>
 
-<div class="centered-container" style="margin-top: 10vh">
-    <div className="container-a">
+
+<div class="centered-container" style="margin-top: 10vh" id="clientes">
+    <div>
         <?php
         $clientes = connect()->database->lista_clientes();
-        echo "<select>";
-        echo "<option>Seleccionar cliente</option>";
+        echo "<select id='clientes'>";
+        echo "<option value=null>Seleccionar cliente</option>";
         foreach ($clientes as $cliente) {
-            echo "<option value=$cliente->nombre>$cliente->nombre</option>";
+            echo "<option value=$cliente->id>$cliente->nombre</option>";
         }
         echo "</select>";
         ?>
@@ -40,31 +45,41 @@ require_once '../navbar.php';
 </div>
 
 <div class="centered-container" style="margin-top: 10vh">
-            <table id="dataTable">
+            <table id="dataTable" >
+                <thead>
                 <tr>
                     <th>Check</th>
                     <th>Nombre Producto</th>
                     <th>Cantidad</th>
                 </tr>
-                <tr>
+                </thead>
+                <tbody id="details">
+                <tr name="tabla">
                     <td><input type="checkbox" name="chk"/></td>
                     <td class="itemRow">
                         <?php
                         $products = connect()->database->lista_productos();
                         echo "<select id = 'productos'>";
-                        echo "<option>Seleccionar</option>";
+                        echo "<option value=null>Seleccionar</option>";
                         foreach ($products as $product) {
-                            echo "<option value=$product->nombre>$product->nombre</option>";
+                            echo "<option value=$product->id>$product->nombre</option>";
                         }
                         echo "</select>";
                         ?>
                     </td>
                     <td><input type="number" name="quantity[]" id="quantity_1" class="form-control quantity" autocomplete="off"></td>
                 </tr>
+                </tbody>
             </table>
 </div>
 
 <div class="centered-container" style="margin-top: 10vh">
-        <input type="button" value="Add Row" onclick="addRow('dataTable');" />
-        <input type="button" value="Delete Row" onclick="deleteRow('dataTable');" />
+        <input class="blue-button" type="button" value="Add Row" onclick="agregar_fila('dataTable');" />
+    <p>&nbsp</p>
+        <input class="blue-button" type="button" value="Delete Row" onclick="eliminar_fila('dataTable');" />
 </div>
+<div class="centered-container" style="margin-top: 10vh">
+    <input id="ok" class="blue-button" type="button" value="Add Row" />
+</div>
+
+
