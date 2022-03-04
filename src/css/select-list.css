@@ -1,0 +1,35 @@
+.select-container {
+    position: relative;
+    width: 170px;
+}
+
+select {
+    border: 2px solid #eee;
+    border-radius: 10px;
+    width: 100%;
+    height: 35px;
+    line-height: 35px;
+    background: #FFF;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    text-transform: uppercase;
+    outline:none;
+    padding-left: 10px;
+    padding-right: 10px;
+    box-shadow: 3px 3px 30px #eee;
+    transition: 0.2s;
+}
+
+select:focus, select:hover {
+    box-shadow: 3px 3px 10px #eee
+}
+
+select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #000;
+}
+
+select::-ms-expand {
+    display: none;
+}

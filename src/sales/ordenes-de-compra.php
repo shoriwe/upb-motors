@@ -10,10 +10,15 @@ require_once '../navbar.php';
 </head>
 <div class="centered-container" style="margin-top: 10vh">
     <div class="centered-container-for-input">
-        <h1 class="purple-text">Ventas</h1>
+        <h1 class="purple-text">Ordenes de Compra</h1>
         <div class="centered-flex-container">
-            <a class="blue-button" href="/sales/ordenes-de-compra.php">Ordenes de Compra</a>
+            <a class="blue-button" href="#">Lista de ordenes de Compra</a>
             <pre style="width: 1vw;"></pre>
+            <a class="blue-button" href="/sales/add-orden.php">Crear orden de compra</a>
+            <pre style="width: 1vw;"></pre>
+            <a class="blue-button" href="#">Cancelar orden de compra</a>
+            <pre style="width: 1vw;"></pre>
+            <a class="blue-button" href="#">Entregar orden de compra</a>
         </div>
     </div>
 </div>

@@ -1,0 +1,70 @@
+<?php
+require_once '../navbar.php';
+?>
+
+<head>
+    <title>Ventas</title>
+    <link rel="stylesheet" href="/css/containers.css">
+    <link rel="stylesheet" href="/css/text.css">
+    <link rel="stylesheet" href="/css/buttons.css">
+    <link rel="stylesheet" href="/css/select-list.css">
+    <link rel="stylesheet" href="/css/table.css">
+    <script src="/js/addrow.js"></script>
+</head>
+<div class="centered-container" style="margin-top: 10vh">
+    <div className="container-a">
+        <?php
+        $empleados = connect()->database->lista_empleados();
+        echo "<select>";
+        echo "<option>Seleccionar Empleado</option>";
+        foreach ($empleados as $empleado) {
+            echo "<option value=$empleado->nombre>$empleado->nombre</option>";
+        }
+        echo "</select>";
+        ?>
+    </div>
+</div>
+
+<div class="centered-container" style="margin-top: 10vh">
+    <div className="container-a">
+        <?php
+        $clientes = connect()->database->lista_clientes();
+        echo "<select>";
+        echo "<option>Seleccionar cliente</option>";
+        foreach ($clientes as $cliente) {
+            echo "<option value=$cliente->nombre>$cliente->nombre</option>";
+        }
+        echo "</select>";
+        ?>
+    </div>
+</div>
+
+<div class="centered-container" style="margin-top: 10vh">
+            <table id="dataTable">
+                <tr>
+                    <th>Check</th>
+                    <th>Nombre Producto</th>
+                    <th>Cantidad</th>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" name="chk"/></td>
+                    <td class="itemRow">
+                        <?php
+                        $products = connect()->database->lista_productos();
+                        echo "<select id = 'productos'>";
+                        echo "<option>Seleccionar</option>";
+                        foreach ($products as $product) {
+                            echo "<option value=$product->nombre>$product->nombre</option>";
+                        }
+                        echo "</select>";
+                        ?>
+                    </td>
+                    <td><input type="number" name="quantity[]" id="quantity_1" class="form-control quantity" autocomplete="off"></td>
+                </tr>
+            </table>
+</div>
+
+<div class="centered-container" style="margin-top: 10vh">
+        <input type="button" value="Add Row" onclick="addRow('dataTable');" />
+        <input type="button" value="Delete Row" onclick="deleteRow('dataTable');" />
+</div>

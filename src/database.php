@@ -258,6 +258,24 @@ class TestDatabase implements iDatabase
         // TODO: Implement update_client() method.
         return false;
     }
+
+    public function lista_productos(): array
+    {
+        // TODO: Implement lista_productos() method.
+        return array();
+    }
+
+    public function lista_clientes(): array
+    {
+        // TODO: Implement lista_productos() method.
+        return array();
+    }
+
+    public function lista_empleados(): array
+    {
+        // TODO: Implement lista_productos() method.
+        return array();
+    }
 }
 
 class MySQL implements iDatabase
@@ -690,5 +708,47 @@ class MySQL implements iDatabase
             }
         }
         return false;
+    }
+
+    public function lista_productos(): array
+    {
+        $records = $this->database->prepare('SELECT id,nombre FROM inventario;');
+        $records->execute();
+        $products = array();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $products[] = new Lis_Product($row["id"], $row["nombre"]);
+        }
+        return $products;
+    }
+
+    public function lista_clientes(): array
+    {
+        $records = $this->database->prepare('SELECT id,nombre_completo FROM clientes;');
+        $records->execute();
+        $clientes = array();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $clientes[] = new Lis_Clients($row["id"], $row["nombre_completo"]);
+        }
+        return $clientes;
+    }
+
+    public function lista_empleados(): array
+    {
+        $records = $this->database->prepare('SELECT id,nombre_completo FROM empleados WHERE permisos_id = 3;');
+        $records->execute();
+        $empleados = array();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $empleados[] = new Lis_Clients($row["id"], $row["nombre_completo"]);
+        }
+        return $empleados;
     }
 }
