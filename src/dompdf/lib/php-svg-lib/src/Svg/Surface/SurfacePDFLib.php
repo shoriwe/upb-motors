@@ -8,8 +8,8 @@
 
 namespace Svg\Surface;
 
-use Svg\Style;
 use Svg\Document;
+use Svg\Style;
 
 class SurfacePDFLib implements SurfaceInterface
 {
@@ -56,7 +56,7 @@ class SurfacePDFLib implements SurfaceInterface
             0, $h
         );
 
-        $this->width  = $w;
+        $this->width = $w;
         $this->height = $h;
 
         $this->canvas = $canvas;
@@ -154,8 +154,7 @@ class SurfacePDFLib implements SurfaceInterface
             if (strpos($data, "base64") === 0) {
                 $data = base64_decode(substr($data, 7));
             }
-        }
-        else {
+        } else {
             $data = file_get_contents($image);
         }
 
@@ -250,7 +249,7 @@ class SurfacePDFLib implements SurfaceInterface
         $canvas->arc($x + $w - $rx, $y + $rx, $rx, 270, 360);
 
         /* Start of the arc segment in the upper right corner */
-        $canvas->lineto($x + $w, $y + $h - $rx );
+        $canvas->lineto($x + $w, $y + $h - $rx);
 
         /* Arc segment in the upper right corner */
         $canvas->arc($x + $w - $rx, $y + $h - $rx, $rx, 0, 90);
@@ -262,7 +261,7 @@ class SurfacePDFLib implements SurfaceInterface
         $canvas->arc($x + $rx, $y + $h - $rx, $rx, 90, 180);
 
         /* Start of the arc segment in the lower left corner */
-        $canvas->lineto($x , $y + $rx);
+        $canvas->lineto($x, $y + $rx);
 
         /* Arc segment in the lower left corner */
         $canvas->arc($x + $rx, $y + $rx, $rx, 180, 270);
@@ -370,8 +369,7 @@ class SurfacePDFLib implements SurfaceInterface
         if ($opacity !== null && $opacity < 1.0) {
             $opts[] = "opacityfill=$opacity";
             $opts[] = "opacitystroke=$opacity";
-        }
-        else {
+        } else {
             $fillOpacity = $style->fillOpacity;
             if ($fillOpacity !== null && $fillOpacity < 1.0) {
                 $opts[] = "opacityfill=$fillOpacity";
@@ -397,14 +395,14 @@ class SurfacePDFLib implements SurfaceInterface
     private function getFont($family, $style)
     {
         $map = array(
-            "serif"      => "Times",
+            "serif" => "Times",
             "sans-serif" => "Helvetica",
-            "fantasy"    => "Symbol",
-            "cursive"    => "Times",
-            "monospace"  => "Courier",
+            "fantasy" => "Symbol",
+            "cursive" => "Times",
+            "monospace" => "Courier",
 
-            "arial"      => "Helvetica",
-            "verdana"    => "Helvetica",
+            "arial" => "Helvetica",
+            "verdana" => "Helvetica",
         );
 
         $family = strtolower($family);

@@ -35,18 +35,18 @@ class SurfaceCpdf implements SurfaceInterface
         if (!$canvas) {
             $canvas = new \Svg\Surface\CPdf(array(0, 0, $w, $h));
             $refl = new \ReflectionClass($canvas);
-            $canvas->fontcache = realpath(dirname($refl->getFileName()) . "/../../fonts/")."/";
+            $canvas->fontcache = realpath(dirname($refl->getFileName()) . "/../../fonts/") . "/";
         }
 
         // Flip PDF coordinate system so that the origin is in
         // the top left rather than the bottom left
         $canvas->transform(array(
-            1,  0,
+            1, 0,
             0, -1,
             0, $h
         ));
 
-        $this->width  = $w;
+        $this->width = $w;
         $this->height = $h;
 
         $this->canvas = $canvas;
@@ -77,6 +77,13 @@ class SurfaceCpdf implements SurfaceInterface
         $this->transform($x, 0, 0, $y, 0, 0);
     }
 
+    public function transform($a, $b, $c, $d, $e, $f)
+    {
+        if (self::DEBUG) echo __FUNCTION__ . "\n";
+
+        $this->canvas->transform(array($a, $b, $c, $d, $e, $f));
+    }
+
     public function rotate($angle)
     {
         if (self::DEBUG) echo __FUNCTION__ . "\n";
@@ -86,8 +93,8 @@ class SurfaceCpdf implements SurfaceInterface
         $sin_a = sin($a);
 
         $this->transform(
-            $cos_a,                         $sin_a,
-            -$sin_a,                         $cos_a,
+            $cos_a, $sin_a,
+            -$sin_a, $cos_a,
             0, 0
         );
     }
@@ -97,17 +104,10 @@ class SurfaceCpdf implements SurfaceInterface
         if (self::DEBUG) echo __FUNCTION__ . "\n";
 
         $this->transform(
-            1,  0,
-            0,  1,
+            1, 0,
+            0, 1,
             $x, $y
         );
-    }
-
-    public function transform($a, $b, $c, $d, $e, $f)
-    {
-        if (self::DEBUG) echo __FUNCTION__ . "\n";
-
-        $this->canvas->transform(array($a, $b, $c, $d, $e, $f));
     }
 
     public function beginPath()
@@ -168,8 +168,7 @@ class SurfaceCpdf implements SurfaceInterface
             if ($base64) {
                 $data = base64_decode($data);
             }
-        }
-        else {
+        } else {
             $data = file_get_contents($image);
         }
 
@@ -180,6 +179,28 @@ class SurfaceCpdf implements SurfaceInterface
 
 
         unlink($image);
+    }
+
+    function image($img, $x, $y, $w, $h, $resolution = "normal")
+    {
+        list($width, $height, $type) = $this->getimagesize($img);
+
+        switch ($type) {
+            case IMAGETYPE_JPEG:
+                $this->canvas->addJpegFromFile($img, $x, $y - $h, $w, $h);
+                break;
+
+            case IMAGETYPE_GIF:
+            case IMAGETYPE_BMP:
+                // @todo use cache for BMP and GIF
+                $img = $this->_convert_gif_bmp_to_png($img, $type);
+
+            case IMAGETYPE_PNG:
+                $this->canvas->addPngFromFile($img, $x, $y - $h, $w, $h);
+                break;
+
+            default:
+        }
     }
 
     public static function getimagesize($filename)
@@ -206,40 +227,6 @@ class SurfaceCpdf implements SurfaceInterface
         return $cache[$filename] = array($width, $height, $type);
     }
 
-    function image($img, $x, $y, $w, $h, $resolution = "normal")
-    {
-        list($width, $height, $type) = $this->getimagesize($img);
-
-        switch ($type) {
-            case IMAGETYPE_JPEG:
-                $this->canvas->addJpegFromFile($img, $x, $y - $h, $w, $h);
-                break;
-
-            case IMAGETYPE_GIF:
-            case IMAGETYPE_BMP:
-                // @todo use cache for BMP and GIF
-                $img = $this->_convert_gif_bmp_to_png($img, $type);
-
-            case IMAGETYPE_PNG:
-                $this->canvas->addPngFromFile($img, $x, $y - $h, $w, $h);
-                break;
-
-            default:
-        }
-    }
-
-    public function lineTo($x, $y)
-    {
-        if (self::DEBUG) echo __FUNCTION__ . "\n";
-        $this->canvas->lineTo($x, $y);
-    }
-
-    public function moveTo($x, $y)
-    {
-        if (self::DEBUG) echo __FUNCTION__ . "\n";
-        $this->canvas->moveTo($x, $y);
-    }
-
     public function quadraticCurveTo($cpx, $cpy, $x, $y)
     {
         if (self::DEBUG) echo __FUNCTION__ . "\n";
@@ -257,12 +244,6 @@ class SurfaceCpdf implements SurfaceInterface
     public function arcTo($x1, $y1, $x2, $y2, $radius)
     {
         if (self::DEBUG) echo __FUNCTION__ . "\n";
-    }
-
-    public function arc($x, $y, $radius, $startAngle, $endAngle, $anticlockwise = false)
-    {
-        if (self::DEBUG) echo __FUNCTION__ . "\n";
-        $this->canvas->ellipse($x, $y, $radius, $radius, 0, 8, $startAngle, $endAngle, false, false, false, true);
     }
 
     public function circle($x, $y, $radius)
@@ -311,7 +292,7 @@ class SurfaceCpdf implements SurfaceInterface
         $this->arc($x + $w - $rx, $y + $rx, $rx, 270, 360);
 
         /* Start of the arc segment in the upper right corner */
-        $this->lineTo($x + $w, $y + $h - $rx );
+        $this->lineTo($x + $w, $y + $h - $rx);
 
         /* Arc segment in the upper right corner */
         $this->arc($x + $w - $rx, $y + $h - $rx, $rx, 0, 90);
@@ -323,10 +304,28 @@ class SurfaceCpdf implements SurfaceInterface
         $this->arc($x + $rx, $y + $h - $rx, $rx, 90, 180);
 
         /* Start of the arc segment in the lower left corner */
-        $this->lineTo($x , $y + $rx);
+        $this->lineTo($x, $y + $rx);
 
         /* Arc segment in the lower left corner */
         $this->arc($x + $rx, $y + $rx, $rx, 180, 270);
+    }
+
+    public function moveTo($x, $y)
+    {
+        if (self::DEBUG) echo __FUNCTION__ . "\n";
+        $this->canvas->moveTo($x, $y);
+    }
+
+    public function lineTo($x, $y)
+    {
+        if (self::DEBUG) echo __FUNCTION__ . "\n";
+        $this->canvas->lineTo($x, $y);
+    }
+
+    public function arc($x, $y, $radius, $startAngle, $endAngle, $anticlockwise = false)
+    {
+        if (self::DEBUG) echo __FUNCTION__ . "\n";
+        $this->canvas->ellipse($x, $y, $radius, $radius, 0, 8, $startAngle, $endAngle, false, false, false, true);
     }
 
     public function fill()
@@ -377,11 +376,11 @@ class SurfaceCpdf implements SurfaceInterface
         $canvas = $this->canvas;
 
         if (is_array($style->stroke) && $stroke = $style->stroke) {
-            $canvas->setStrokeColor(array((float)$stroke[0]/255, (float)$stroke[1]/255, (float)$stroke[2]/255), true);
+            $canvas->setStrokeColor(array((float)$stroke[0] / 255, (float)$stroke[1] / 255, (float)$stroke[2] / 255), true);
         }
 
         if (is_array($style->fill) && $fill = $style->fill) {
-            $canvas->setColor(array((float)$fill[0]/255, (float)$fill[1]/255, (float)$fill[2]/255), true);
+            $canvas->setColor(array((float)$fill[0] / 255, (float)$fill[1] / 255, (float)$fill[2] / 255), true);
         }
 
         if ($fillRule = strtolower($style->fillRule)) {
@@ -395,8 +394,7 @@ class SurfaceCpdf implements SurfaceInterface
 
             $canvas->setFillTransparency("Normal", $opacity);
             $canvas->currentFillTransparency = null;
-        }
-        else {
+        } else {
             $fillOpacity = $style->fillOpacity;
             if ($fillOpacity !== null && $fillOpacity < 1.0) {
                 $canvas->setFillTransparency("Normal", $fillOpacity);
@@ -416,9 +414,9 @@ class SurfaceCpdf implements SurfaceInterface
         }
 
 
-        $phase=0;
+        $phase = 0;
         if ($style->strokeDashoffset) {
-           $phase = $style->strokeDashoffset;
+            $phase = $style->strokeDashoffset;
         }
 
 
@@ -436,37 +434,37 @@ class SurfaceCpdf implements SurfaceInterface
     public function setFont($family, $style, $weight)
     {
         $map = array(
-            "serif"      => "Times",
+            "serif" => "Times",
             "sans-serif" => "Helvetica",
-            "fantasy"    => "Symbol",
-            "cursive"    => "Times",
-            "monospace"  => "Courier",
+            "fantasy" => "Symbol",
+            "cursive" => "Times",
+            "monospace" => "Courier",
 
-            "arial"      => "Helvetica",
-            "verdana"    => "Helvetica",
+            "arial" => "Helvetica",
+            "verdana" => "Helvetica",
         );
 
         $styleMap = array(
             'Helvetica' => array(
-                'b'  => 'Helvetica-Bold',
-                'i'  => 'Helvetica-Oblique',
+                'b' => 'Helvetica-Bold',
+                'i' => 'Helvetica-Oblique',
                 'bi' => 'Helvetica-BoldOblique',
             ),
             'Courier' => array(
-                'b'  => 'Courier-Bold',
-                'i'  => 'Courier-Oblique',
+                'b' => 'Courier-Bold',
+                'i' => 'Courier-Oblique',
                 'bi' => 'Courier-BoldOblique',
             ),
             'Times' => array(
-                ''   => 'Times-Roman',
-                'b'  => 'Times-Bold',
-                'i'  => 'Times-Italic',
+                '' => 'Times-Roman',
+                'b' => 'Times-Bold',
+                'i' => 'Times-Italic',
                 'bi' => 'Times-BoldItalic',
             ),
         );
 
         $family = strtolower($family);
-        $style  = strtolower($style);
+        $style = strtolower($style);
         $weight = strtolower($weight);
 
         if (isset($map[$family])) {

@@ -40,6 +40,18 @@ class Document extends CSSBlockList
      * Gets all `DeclarationBlock` objects recursively.
      *
      * @return array<int, DeclarationBlock>
+     *
+     * @deprecated will be removed in version 9.0; use `getAllDeclarationBlocks()` instead
+     */
+    public function getAllSelectors()
+    {
+        return $this->getAllDeclarationBlocks();
+    }
+
+    /**
+     * Gets all `DeclarationBlock` objects recursively.
+     *
+     * @return array<int, DeclarationBlock>
      */
     public function getAllDeclarationBlocks()
     {
@@ -47,18 +59,6 @@ class Document extends CSSBlockList
         $aResult = [];
         $this->allDeclarationBlocks($aResult);
         return $aResult;
-    }
-
-    /**
-     * Gets all `DeclarationBlock` objects recursively.
-     *
-     * @return array<int, DeclarationBlock>
-     *
-     * @deprecated will be removed in version 9.0; use `getAllDeclarationBlocks()` instead
-     */
-    public function getAllSelectors()
-    {
-        return $this->getAllDeclarationBlocks();
     }
 
     /**

@@ -45,41 +45,42 @@ require_once '../navbar.php';
 </div>
 
 <div class="centered-container" style="margin-top: 10vh">
-            <table id="dataTable" >
-                <thead>
-                <tr>
-                    <th>Check</th>
-                    <th>Nombre Producto</th>
-                    <th>Cantidad</th>
-                </tr>
-                </thead>
-                <tbody id="details">
-                <tr name="tabla">
-                    <td><input type="checkbox" name="chk"/></td>
-                    <td class="itemRow">
-                        <?php
-                        $products = connect()->database->lista_productos();
-                        echo "<select id = 'productos'>";
-                        echo "<option value=null>Seleccionar</option>";
-                        foreach ($products as $product) {
-                            echo "<option value=$product->id>$product->nombre</option>";
-                        }
-                        echo "</select>";
-                        ?>
-                    </td>
-                    <td><input type="number" name="quantity[]" id="quantity_1" class="form-control quantity" autocomplete="off"></td>
-                </tr>
-                </tbody>
-            </table>
+    <table id="dataTable">
+        <thead>
+        <tr>
+            <th>Check</th>
+            <th>Nombre Producto</th>
+            <th>Cantidad</th>
+        </tr>
+        </thead>
+        <tbody id="details">
+        <tr name="tabla">
+            <td><input type="checkbox" name="chk"/></td>
+            <td class="itemRow">
+                <?php
+                $products = connect()->database->lista_productos();
+                echo "<select id = 'productos'>";
+                echo "<option value=null>Seleccionar</option>";
+                foreach ($products as $product) {
+                    echo "<option value=$product->id>$product->nombre</option>";
+                }
+                echo "</select>";
+                ?>
+            </td>
+            <td><input type="number" name="quantity[]" id="quantity_1" class="form-control quantity" autocomplete="off">
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 <div class="centered-container" style="margin-top: 10vh">
-        <input class="blue-button" type="button" value="Add Row" onclick="agregar_fila('dataTable');" />
+    <input class="blue-button" type="button" value="Add Row" onclick="agregar_fila('dataTable');"/>
     <p>&nbsp</p>
-        <input class="blue-button" type="button" value="Delete Row" onclick="eliminar_fila('dataTable');" />
+    <input class="blue-button" type="button" value="Delete Row" onclick="eliminar_fila('dataTable');"/>
 </div>
 <div class="centered-container" style="margin-top: 10vh">
-    <input id="ok" class="blue-button" type="button" value="Guardar" />
+    <input id="ok" class="blue-button" type="button" value="Guardar"/>
 </div>
 
 

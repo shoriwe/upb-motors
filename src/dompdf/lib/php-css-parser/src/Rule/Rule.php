@@ -19,39 +19,33 @@ use Sabberworm\CSS\Value\Value;
 class Rule implements Renderable, Commentable
 {
     /**
-     * @var string
-     */
-    private $sRule;
-
-    /**
-     * @var RuleValueList|null
-     */
-    private $mValue;
-
-    /**
-     * @var bool
-     */
-    private $bIsImportant;
-
-    /**
-     * @var array<int, int>
-     */
-    private $aIeHack;
-
-    /**
      * @var int
      */
     protected $iLineNo;
-
     /**
      * @var int
      */
     protected $iColNo;
-
     /**
      * @var array<array-key, Comment>
      */
     protected $aComments;
+    /**
+     * @var string
+     */
+    private $sRule;
+    /**
+     * @var RuleValueList|null
+     */
+    private $mValue;
+    /**
+     * @var bool
+     */
+    private $bIsImportant;
+    /**
+     * @var array<int, int>
+     */
+    private $aIeHack;
 
     /**
      * @param string $sRule
@@ -112,6 +106,26 @@ class Rule implements Renderable, Commentable
     }
 
     /**
+     * @param array<array-key, Comment> $aComments
+     *
+     * @return void
+     */
+    public function setComments(array $aComments)
+    {
+        $this->aComments = $aComments;
+    }
+
+    /**
+     * @param array<array-key, Comment> $aComments
+     *
+     * @return void
+     */
+    public function addComments(array $aComments)
+    {
+        $this->aComments = array_merge($this->aComments, $aComments);
+    }
+
+    /**
      * @param string $sRule
      *
      * @return array<int, string>
@@ -122,6 +136,44 @@ class Rule implements Renderable, Commentable
             return [',', '/', ' '];
         }
         return [',', ' ', '/'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getRule()
+    {
+        return $this->sRule;
+    }
+
+    /**
+     * @param RuleValueList|null $mValue
+     *
+     * @return void
+     */
+    public function setValue($mValue)
+    {
+        $this->mValue = $mValue;
+    }
+
+    /**
+     * @param int $iModifier
+     *
+     * @return void
+     */
+    public function addIeHack($iModifier)
+    {
+        $this->aIeHack[] = $iModifier;
+    }
+
+    /**
+     * @param bool $bIsImportant
+     *
+     * @return void
+     */
+    public function setIsImportant($bIsImportant)
+    {
+        $this->bIsImportant = $bIsImportant;
     }
 
     /**
@@ -163,29 +215,11 @@ class Rule implements Renderable, Commentable
     }
 
     /**
-     * @return string
-     */
-    public function getRule()
-    {
-        return $this->sRule;
-    }
-
-    /**
      * @return RuleValueList|null
      */
     public function getValue()
     {
         return $this->mValue;
-    }
-
-    /**
-     * @param RuleValueList|null $mValue
-     *
-     * @return void
-     */
-    public function setValue($mValue)
-    {
-        $this->mValue = $mValue;
     }
 
     /**
@@ -288,16 +322,6 @@ class Rule implements Renderable, Commentable
     }
 
     /**
-     * @param int $iModifier
-     *
-     * @return void
-     */
-    public function addIeHack($iModifier)
-    {
-        $this->aIeHack[] = $iModifier;
-    }
-
-    /**
      * @param array<int, int> $aModifiers
      *
      * @return void
@@ -313,16 +337,6 @@ class Rule implements Renderable, Commentable
     public function getIeHack()
     {
         return $this->aIeHack;
-    }
-
-    /**
-     * @param bool $bIsImportant
-     *
-     * @return void
-     */
-    public function setIsImportant($bIsImportant)
-    {
-        $this->bIsImportant = $bIsImportant;
     }
 
     /**
@@ -363,30 +377,10 @@ class Rule implements Renderable, Commentable
     }
 
     /**
-     * @param array<array-key, Comment> $aComments
-     *
-     * @return void
-     */
-    public function addComments(array $aComments)
-    {
-        $this->aComments = array_merge($this->aComments, $aComments);
-    }
-
-    /**
      * @return array<array-key, Comment>
      */
     public function getComments()
     {
         return $this->aComments;
-    }
-
-    /**
-     * @param array<array-key, Comment> $aComments
-     *
-     * @return void
-     */
-    public function setComments(array $aComments)
-    {
-        $this->aComments = $aComments;
     }
 }

@@ -72,16 +72,6 @@ class Selector
 
     /**
      * @param string $sSelector
-     *
-     * @return bool
-     */
-    public static function isValid($sSelector)
-    {
-        return preg_match(static::SELECTOR_VALIDATION_RX, $sSelector);
-    }
-
-    /**
-     * @param string $sSelector
      * @param bool $bCalculateSpecificity
      */
     public function __construct($sSelector, $bCalculateSpecificity = false)
@@ -93,14 +83,6 @@ class Selector
     }
 
     /**
-     * @return string
-     */
-    public function getSelector()
-    {
-        return $this->sSelector;
-    }
-
-    /**
      * @param string $sSelector
      *
      * @return void
@@ -109,14 +91,6 @@ class Selector
     {
         $this->sSelector = trim($sSelector);
         $this->iSpecificity = null;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->getSelector();
     }
 
     /**
@@ -134,5 +108,31 @@ class Selector
             $this->iSpecificity = ($a * 1000) + ($b * 100) + ($c * 10) + $d;
         }
         return $this->iSpecificity;
+    }
+
+    /**
+     * @param string $sSelector
+     *
+     * @return bool
+     */
+    public static function isValid($sSelector)
+    {
+        return preg_match(static::SELECTOR_VALIDATION_RX, $sSelector);
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getSelector();
+    }
+
+    /**
+     * @return string
+     */
+    public function getSelector()
+    {
+        return $this->sSelector;
     }
 }

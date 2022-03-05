@@ -154,6 +154,14 @@ class DeclarationBlock extends RuleSet
     }
 
     /**
+     * @return array<int, Selector|string>
+     */
+    public function getSelectors()
+    {
+        return $this->aSelectors;
+    }
+
+    /**
      * @param Selector|string $mSelector
      * @param CSSList|null $oList
      *
@@ -164,14 +172,6 @@ class DeclarationBlock extends RuleSet
     public function setSelector($mSelector, $oList = null)
     {
         $this->setSelectors($mSelector, $oList);
-    }
-
-    /**
-     * @return array<int, Selector|string>
-     */
-    public function getSelectors()
-    {
-        return $this->aSelectors;
     }
 
     /**
@@ -187,21 +187,6 @@ class DeclarationBlock extends RuleSet
         $this->expandFontShorthand();
         $this->expandBackgroundShorthand();
         $this->expandListStyleShorthand();
-    }
-
-    /**
-     * Creates shorthand declarations (e.g. `margin` or `font`) whenever possible.
-     *
-     * @return void
-     */
-    public function createShorthands()
-    {
-        $this->createBackgroundShorthand();
-        $this->createDimensionsShorthand();
-        // border must be shortened after dimensions
-        $this->createBorderShorthand();
-        $this->createFontShorthand();
-        $this->createListStyleShorthand();
     }
 
     /**
@@ -554,6 +539,36 @@ class DeclarationBlock extends RuleSet
     }
 
     /**
+     * Creates shorthand declarations (e.g. `margin` or `font`) whenever possible.
+     *
+     * @return void
+     */
+    public function createShorthands()
+    {
+        $this->createBackgroundShorthand();
+        $this->createDimensionsShorthand();
+        // border must be shortened after dimensions
+        $this->createBorderShorthand();
+        $this->createFontShorthand();
+        $this->createListStyleShorthand();
+    }
+
+    /**
+     * @return void
+     */
+    public function createBackgroundShorthand()
+    {
+        $aProperties = [
+            'background-color',
+            'background-image',
+            'background-repeat',
+            'background-position',
+            'background-attachment',
+        ];
+        $this->createShorthandProperties($aProperties, 'background');
+    }
+
+    /**
      * @param array<array-key, string> $aProperties
      * @param string $sShorthand
      *
@@ -589,51 +604,6 @@ class DeclarationBlock extends RuleSet
             }
             $this->addRule($oNewRule);
         }
-    }
-
-    /**
-     * @return void
-     */
-    public function createBackgroundShorthand()
-    {
-        $aProperties = [
-            'background-color',
-            'background-image',
-            'background-repeat',
-            'background-position',
-            'background-attachment',
-        ];
-        $this->createShorthandProperties($aProperties, 'background');
-    }
-
-    /**
-     * @return void
-     */
-    public function createListStyleShorthand()
-    {
-        $aProperties = [
-            'list-style-type',
-            'list-style-position',
-            'list-style-image',
-        ];
-        $this->createShorthandProperties($aProperties, 'list-style');
-    }
-
-    /**
-     * Combines `border-color`, `border-style` and `border-width` into `border`.
-     *
-     * Should be run after `create_dimensions_shorthand`!
-     *
-     * @return void
-     */
-    public function createBorderShorthand()
-    {
-        $aProperties = [
-            'border-width',
-            'border-style',
-            'border-color',
-        ];
-        $this->createShorthandProperties($aProperties, 'border');
     }
 
     /**
@@ -707,6 +677,23 @@ class DeclarationBlock extends RuleSet
                 }
             }
         }
+    }
+
+    /**
+     * Combines `border-color`, `border-style` and `border-width` into `border`.
+     *
+     * Should be run after `create_dimensions_shorthand`!
+     *
+     * @return void
+     */
+    public function createBorderShorthand()
+    {
+        $aProperties = [
+            'border-width',
+            'border-style',
+            'border-color',
+        ];
+        $this->createShorthandProperties($aProperties, 'border');
     }
 
     /**
@@ -793,6 +780,19 @@ class DeclarationBlock extends RuleSet
         foreach ($aFontProperties as $sProperty) {
             $this->removeRule($sProperty);
         }
+    }
+
+    /**
+     * @return void
+     */
+    public function createListStyleShorthand()
+    {
+        $aProperties = [
+            'list-style-type',
+            'list-style-position',
+            'list-style-image',
+        ];
+        $this->createShorthandProperties($aProperties, 'list-style');
     }
 
     /**

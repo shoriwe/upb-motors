@@ -28,6 +28,14 @@ class KeyFrame extends CSSList implements AtRule
     }
 
     /**
+     * @return string|null
+     */
+    public function getVendorKeyFrame()
+    {
+        return $this->vendorKeyFrame;
+    }
+
+    /**
      * @param string $vendorKeyFrame
      */
     public function setVendorKeyFrame($vendorKeyFrame)
@@ -38,9 +46,9 @@ class KeyFrame extends CSSList implements AtRule
     /**
      * @return string|null
      */
-    public function getVendorKeyFrame()
+    public function getAnimationName()
     {
-        return $this->vendorKeyFrame;
+        return $this->animationName;
     }
 
     /**
@@ -49,14 +57,6 @@ class KeyFrame extends CSSList implements AtRule
     public function setAnimationName($animationName)
     {
         $this->animationName = $animationName;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getAnimationName()
-    {
-        return $this->animationName;
     }
 
     /**

@@ -8,8 +8,6 @@
 
 namespace Svg\Tag;
 
-use Svg\Style;
-
 class Shape extends AbstractTag
 {
     protected function before($attributes)
@@ -33,7 +31,7 @@ class Shape extends AbstractTag
         if ($this->hasShape) {
             $style = $surface->getStyle();
 
-            $fill   = $style->fill   && is_array($style->fill);
+            $fill = $style->fill && is_array($style->fill);
             $stroke = $style->stroke && is_array($style->stroke);
 
             if ($fill) {
@@ -49,11 +47,9 @@ class Shape extends AbstractTag
 
                     $surface->fill();
                 }
-            }
-            elseif ($stroke) {
+            } elseif ($stroke) {
                 $surface->stroke();
-            }
-            else {
+            } else {
                 $surface->endPath();
             }
         }

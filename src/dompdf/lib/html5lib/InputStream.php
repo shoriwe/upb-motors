@@ -29,32 +29,31 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // /* */ indicates verbatim text from the HTML 5 specification
 // // indicates regular comments
 
-class HTML5_InputStream {
+class HTML5_InputStream
+{
+    /**
+     * Parse errors.
+     */
+    public $errors = [];
     /**
      * The string data we're parsing.
      */
     private $data;
-
     /**
      * The current integer byte position we are in $data
      */
     private $char;
-
     /**
      * Length of $data; when $char === $data, we are at the end-of-file.
      */
     private $EOF;
 
     /**
-     * Parse errors.
-     */
-    public $errors = [];
-
-    /**
      * @param $data | Data to parse
      * @throws Exception
      */
-    public function __construct($data) {
+    public function __construct($data)
+    {
 
         /* Given an encoding, the bytes in the input stream must be
         converted to Unicode characters for the tokeniser, as
@@ -157,7 +156,7 @@ class HTML5_InputStream {
 
         $this->data = $data;
         $this->char = 0;
-        $this->EOF  = strlen($data);
+        $this->EOF = strlen($data);
     }
 
     /**
@@ -165,7 +164,8 @@ class HTML5_InputStream {
      *
      * @return int
      */
-    public function getCurrentLine() {
+    public function getCurrentLine()
+    {
         // Check the string isn't empty
         if ($this->EOF) {
             // Add one to $this->char because we want the number for the next
@@ -182,7 +182,8 @@ class HTML5_InputStream {
      *
      * @return int
      */
-    public function getColumnOffset() {
+    public function getColumnOffset()
+    {
         // strrpos is weird, and the offset needs to be negative for what we
         // want (i.e., the last \n before $this->char). This needs to not have
         // one (to make it point to the next character, the one we want the
@@ -210,7 +211,7 @@ class HTML5_InputStream {
             // 0x80 = 0x7F - 0 + 1 (one added to get inclusive range)
             // 0x33 = 0xF4 - 0x2C + 1 (one added to get inclusive range)
             return array_sum(array_slice($count, 0, 0x80)) +
-                   array_sum(array_slice($count, 0xC2, 0x33));
+                array_sum(array_slice($count, 0xC2, 0x33));
         }
     }
 
@@ -220,7 +221,8 @@ class HTML5_InputStream {
      *
      * @return bool|string
      */
-    public function char() {
+    public function char()
+    {
         return ($this->char++ < $this->EOF)
             ? $this->data[$this->char - 1]
             : false;
@@ -232,7 +234,8 @@ class HTML5_InputStream {
      *
      * @return string|bool
      */
-    public function remainingChars() {
+    public function remainingChars()
+    {
         if ($this->char < $this->EOF) {
             $data = substr($this->data, $this->char);
             $this->char = $this->EOF;
@@ -250,14 +253,15 @@ class HTML5_InputStream {
      * @param null $max
      * @return bool|string
      */
-    public function charsUntil($bytes, $max = null) {
+    public function charsUntil($bytes, $max = null)
+    {
         if ($this->char < $this->EOF) {
             if ($max === 0 || $max) {
                 $len = strcspn($this->data, $bytes, $this->char, $max);
             } else {
                 $len = strcspn($this->data, $bytes, $this->char);
             }
-            $string = (string) substr($this->data, $this->char, $len);
+            $string = (string)substr($this->data, $this->char, $len);
             $this->char += $len;
             return $string;
         } else {
@@ -273,14 +277,15 @@ class HTML5_InputStream {
      * @param null $max
      * @return bool|string
      */
-    public function charsWhile($bytes, $max = null) {
+    public function charsWhile($bytes, $max = null)
+    {
         if ($this->char < $this->EOF) {
             if ($max === 0 || $max) {
                 $len = strspn($this->data, $bytes, $this->char, $max);
             } else {
                 $len = strspn($this->data, $bytes, $this->char);
             }
-            $string = (string) substr($this->data, $this->char, $len);
+            $string = (string)substr($this->data, $this->char, $len);
             $this->char += $len;
             return $string;
         } else {
@@ -291,7 +296,8 @@ class HTML5_InputStream {
     /**
      * Unconsume one character.
      */
-    public function unget() {
+    public function unget()
+    {
         if ($this->char <= $this->EOF) {
             $this->char--;
         }

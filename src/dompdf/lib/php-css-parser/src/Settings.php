@@ -69,6 +69,14 @@ class Settings
     }
 
     /**
+     * @return self fluent interface
+     */
+    public function beStrict()
+    {
+        return $this->withLenientParsing(false);
+    }
+
+    /**
      * @param bool $bLenientParsing
      *
      * @return self fluent interface
@@ -77,13 +85,5 @@ class Settings
     {
         $this->bLenientParsing = $bLenientParsing;
         return $this;
-    }
-
-    /**
-     * @return self fluent interface
-     */
-    public function beStrict()
-    {
-        return $this->withLenientParsing(false);
     }
 }

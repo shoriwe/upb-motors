@@ -55,7 +55,8 @@ class HTML5_Data
      * Returns the "real" Unicode codepoint of a malformed character
      * reference.
      */
-    public static function getRealCodepoint($ref) {
+    public static function getRealCodepoint($ref)
+    {
         if (!isset(self::$realCodepointTable[$ref])) {
             return false;
         } else {
@@ -63,7 +64,8 @@ class HTML5_Data
         }
     }
 
-    public static function getNamedCharacterReferences() {
+    public static function getNamedCharacterReferences()
+    {
         if (!self::$namedCharacterReferences) {
             self::$namedCharacterReferences = unserialize(
                 file_get_contents(dirname(__FILE__) . '/named-character-references.ser'));
@@ -76,7 +78,8 @@ class HTML5_Data
      * @note Shamelessly stolen from HTML Purifier, which is also
      *       shamelessly stolen from Feyd (which is in public domain).
      */
-    public static function utf8chr($code) {
+    public static function utf8chr($code)
+    {
         /* We don't care: we live dangerously
          * if($code > 0x10FFFF or $code < 0x0 or
           ($code >= 0xD800 and $code <= 0xDFFF) ) {
@@ -93,7 +96,7 @@ class HTML5_Data
             // set up bits for UTF-8
             $x = ($code & 0x3F) | 0x80;
             if ($code < 0x800) {
-               $y = (($code & 0x7FF) >> 6) | 0xC0;
+                $y = (($code & 0x7FF) >> 6) | 0xC0;
             } else {
                 $y = (($code & 0xFC0) >> 6) | 0x80;
                 if ($code < 0x10000) {

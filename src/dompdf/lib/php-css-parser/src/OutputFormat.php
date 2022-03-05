@@ -163,20 +163,60 @@ class OutputFormat
     }
 
     /**
-     * @param string $sName
+     * Creates an instance of this class with a preset for compact formatting.
      *
-     * @return string|null
+     * @return self
      */
-    public function get($sName)
+    public static function createCompact()
     {
-        $aVarPrefixes = ['a', 's', 'm', 'b', 'f', 'o', 'c', 'i'];
-        foreach ($aVarPrefixes as $sPrefix) {
-            $sFieldName = $sPrefix . ucfirst($sName);
-            if (isset($this->$sFieldName)) {
-                return $this->$sFieldName;
-            }
+        $format = self::create();
+        $format->set('Space*Rules', "")->set('Space*Blocks', "")->setSpaceAfterRuleName('')
+            ->setSpaceBeforeOpeningBrace('')->setSpaceAfterSelectorSeparator('');
+        return $format;
+    }
+
+    /**
+     * Creates an instance of this class without any particular formatting settings.
+     *
+     * @return self
+     */
+    public static function create()
+    {
+        return new OutputFormat();
+    }
+
+    /**
+     * Creates an instance of this class with a preset for pretty formatting.
+     *
+     * @return self
+     */
+    public static function createPretty()
+    {
+        $format = self::create();
+        $format->set('Space*Rules', "\n")->set('Space*Blocks', "\n")
+            ->setSpaceBetweenBlocks("\n\n")->set('SpaceAfterListArgumentSeparator', ['default' => '', ',' => ' ']);
+        return $format;
+    }
+
+    /**
+     * @param string $sMethodName
+     * @param array<array-key, mixed> $aArguments
+     *
+     * @return mixed
+     *
+     * @throws \Exception
+     */
+    public function __call($sMethodName, array $aArguments)
+    {
+        if (strpos($sMethodName, 'set') === 0) {
+            return $this->set(substr($sMethodName, 3), $aArguments[0]);
+        } elseif (strpos($sMethodName, 'get') === 0) {
+            return $this->get(substr($sMethodName, 3));
+        } elseif (method_exists(OutputFormatter::class, $sMethodName)) {
+            return call_user_func_array([$this->getFormatter(), $sMethodName], $aArguments);
+        } else {
+            throw new \Exception('Unknown OutputFormat method called: ' . $sMethodName);
         }
-        return null;
     }
 
     /**
@@ -216,24 +256,31 @@ class OutputFormat
     }
 
     /**
-     * @param string $sMethodName
-     * @param array<array-key, mixed> $aArguments
+     * @param string $sName
      *
-     * @return mixed
-     *
-     * @throws \Exception
+     * @return string|null
      */
-    public function __call($sMethodName, array $aArguments)
+    public function get($sName)
     {
-        if (strpos($sMethodName, 'set') === 0) {
-            return $this->set(substr($sMethodName, 3), $aArguments[0]);
-        } elseif (strpos($sMethodName, 'get') === 0) {
-            return $this->get(substr($sMethodName, 3));
-        } elseif (method_exists(OutputFormatter::class, $sMethodName)) {
-            return call_user_func_array([$this->getFormatter(), $sMethodName], $aArguments);
-        } else {
-            throw new \Exception('Unknown OutputFormat method called: ' . $sMethodName);
+        $aVarPrefixes = ['a', 's', 'm', 'b', 'f', 'o', 'c', 'i'];
+        foreach ($aVarPrefixes as $sPrefix) {
+            $sFieldName = $sPrefix . ucfirst($sName);
+            if (isset($this->$sFieldName)) {
+                return $this->$sFieldName;
+            }
         }
+        return null;
+    }
+
+    /**
+     * @return OutputFormatter
+     */
+    public function getFormatter()
+    {
+        if ($this->oFormatter === null) {
+            $this->oFormatter = new OutputFormatter($this);
+        }
+        return $this->oFormatter;
     }
 
     /**
@@ -278,57 +325,10 @@ class OutputFormat
     }
 
     /**
-     * @return OutputFormatter
-     */
-    public function getFormatter()
-    {
-        if ($this->oFormatter === null) {
-            $this->oFormatter = new OutputFormatter($this);
-        }
-        return $this->oFormatter;
-    }
-
-    /**
      * @return int
      */
     public function level()
     {
         return $this->iIndentationLevel;
-    }
-
-    /**
-     * Creates an instance of this class without any particular formatting settings.
-     *
-     * @return self
-     */
-    public static function create()
-    {
-        return new OutputFormat();
-    }
-
-    /**
-     * Creates an instance of this class with a preset for compact formatting.
-     *
-     * @return self
-     */
-    public static function createCompact()
-    {
-        $format = self::create();
-        $format->set('Space*Rules', "")->set('Space*Blocks', "")->setSpaceAfterRuleName('')
-            ->setSpaceBeforeOpeningBrace('')->setSpaceAfterSelectorSeparator('');
-        return $format;
-    }
-
-    /**
-     * Creates an instance of this class with a preset for pretty formatting.
-     *
-     * @return self
-     */
-    public static function createPretty()
-    {
-        $format = self::create();
-        $format->set('Space*Rules', "\n")->set('Space*Blocks', "\n")
-            ->setSpaceBetweenBlocks("\n\n")->set('SpaceAfterListArgumentSeparator', ['default' => '', ',' => ' ']);
-        return $format;
     }
 }

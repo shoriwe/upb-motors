@@ -18,20 +18,20 @@ class Path extends Shape
     const COMMA_PATTERN = '(?:\s+,?\s*|,\s*)?';
     const FLAG_PATTERN = '([01])';
     const ARC_REGEXP = '/'
-        . self::NUMBER_PATTERN
-        . self::COMMA_PATTERN
-        . self::NUMBER_PATTERN
-        . self::COMMA_PATTERN
-        . self::NUMBER_PATTERN
-        . self::COMMA_PATTERN
-        . self::FLAG_PATTERN
-        . self::COMMA_PATTERN
-        . self::FLAG_PATTERN
-        . self::COMMA_PATTERN
-        . self::NUMBER_PATTERN
-        . self::COMMA_PATTERN
-        . self::NUMBER_PATTERN
-        . '/';
+    . self::NUMBER_PATTERN
+    . self::COMMA_PATTERN
+    . self::NUMBER_PATTERN
+    . self::COMMA_PATTERN
+    . self::NUMBER_PATTERN
+    . self::COMMA_PATTERN
+    . self::FLAG_PATTERN
+    . self::COMMA_PATTERN
+    . self::FLAG_PATTERN
+    . self::COMMA_PATTERN
+    . self::NUMBER_PATTERN
+    . self::COMMA_PATTERN
+    . self::NUMBER_PATTERN
+    . '/';
 
     static $commandLengths = array(
         'm' => 2,
@@ -49,68 +49,6 @@ class Path extends Shape
         'm' => 'l',
         'M' => 'L',
     );
-
-    public static function parse(string $commandSequence): array
-    {
-        $commands = array();
-        preg_match_all('/([MZLHVCSQTAmzlhvcsqta])([eE ,\-.\d]+)*/', $commandSequence, $commands, PREG_SET_ORDER);
-        
-        $path = array();
-        foreach ($commands as $c) {
-            if (count($c) == 3) {
-                $commandLower = strtolower($c[1]);
-
-                // arcs have special flags that apparently don't require spaces.
-                if ($commandLower === 'a' && preg_match_all(static::ARC_REGEXP, $c[2], $matches)) {
-                    $numberOfMatches = count($matches[0]);
-                    for ($k = 0; $k < $numberOfMatches; ++$k) {
-                        $path[] = [
-                            $c[1],
-                            $matches[1][$k],
-                            $matches[2][$k],
-                            $matches[3][$k],
-                            $matches[4][$k],
-                            $matches[5][$k],
-                            $matches[6][$k],
-                            $matches[7][$k],
-                        ];
-                    }
-                    continue;
-                }
-
-                $arguments = array();
-                preg_match_all('/([-+]?((\d+\.\d+)|((\d+)|(\.\d+)))(?:e[-+]?\d+)?)/i', $c[2], $arguments, PREG_PATTERN_ORDER);
-                $item = $arguments[0];
-
-                if (
-                    isset(self::$commandLengths[$commandLower]) &&
-                    ($commandLength = self::$commandLengths[$commandLower]) &&
-                    count($item) > $commandLength
-                ) {
-                    $repeatedCommand = isset(self::$repeatedCommands[$c[1]]) ? self::$repeatedCommands[$c[1]] : $c[1];
-                    $command = $c[1];
-
-                    for ($k = 0, $klen = count($item); $k < $klen; $k += $commandLength) {
-                        $_item = array_slice($item, $k, $k + $commandLength);
-                        array_unshift($_item, $command);
-                        $path[] = $_item;
-
-                        $command = $repeatedCommand;
-                    }
-                } else {
-                    array_unshift($item, $c[1]);
-                    $path[] = $item;
-                }
-
-            } else {
-                $item = array($c[1]);
-
-                $path[] = $item;
-            }
-        }
-
-        return $path;
-    }
 
     public function start($attributes)
     {
@@ -435,6 +373,68 @@ class Path extends Shape
         }
     }
 
+    public static function parse(string $commandSequence): array
+    {
+        $commands = array();
+        preg_match_all('/([MZLHVCSQTAmzlhvcsqta])([eE ,\-.\d]+)*/', $commandSequence, $commands, PREG_SET_ORDER);
+
+        $path = array();
+        foreach ($commands as $c) {
+            if (count($c) == 3) {
+                $commandLower = strtolower($c[1]);
+
+                // arcs have special flags that apparently don't require spaces.
+                if ($commandLower === 'a' && preg_match_all(static::ARC_REGEXP, $c[2], $matches)) {
+                    $numberOfMatches = count($matches[0]);
+                    for ($k = 0; $k < $numberOfMatches; ++$k) {
+                        $path[] = [
+                            $c[1],
+                            $matches[1][$k],
+                            $matches[2][$k],
+                            $matches[3][$k],
+                            $matches[4][$k],
+                            $matches[5][$k],
+                            $matches[6][$k],
+                            $matches[7][$k],
+                        ];
+                    }
+                    continue;
+                }
+
+                $arguments = array();
+                preg_match_all('/([-+]?((\d+\.\d+)|((\d+)|(\.\d+)))(?:e[-+]?\d+)?)/i', $c[2], $arguments, PREG_PATTERN_ORDER);
+                $item = $arguments[0];
+
+                if (
+                    isset(self::$commandLengths[$commandLower]) &&
+                    ($commandLength = self::$commandLengths[$commandLower]) &&
+                    count($item) > $commandLength
+                ) {
+                    $repeatedCommand = isset(self::$repeatedCommands[$c[1]]) ? self::$repeatedCommands[$c[1]] : $c[1];
+                    $command = $c[1];
+
+                    for ($k = 0, $klen = count($item); $k < $klen; $k += $commandLength) {
+                        $_item = array_slice($item, $k, $k + $commandLength);
+                        array_unshift($_item, $command);
+                        $path[] = $_item;
+
+                        $command = $repeatedCommand;
+                    }
+                } else {
+                    array_unshift($item, $c[1]);
+                    $path[] = $item;
+                }
+
+            } else {
+                $item = array($c[1]);
+
+                $path[] = $item;
+            }
+        }
+
+        return $path;
+    }
+
     function drawArc(SurfaceInterface $surface, $fx, $fy, $coords)
     {
         $rx = $coords[0];
@@ -538,6 +538,17 @@ class Path extends Shape
         return $result;
     }
 
+    function calcVectorAngle($ux, $uy, $vx, $vy)
+    {
+        $ta = atan2($uy, $ux);
+        $tb = atan2($vy, $vx);
+        if ($tb >= $ta) {
+            return $tb - $ta;
+        } else {
+            return 2 * M_PI - ($ta - $tb);
+        }
+    }
+
     function segmentToBezier($th2, $th3, $cosTh, $sinTh, $rx, $ry, $cx1, $cy1, $mT, $fromX, $fromY)
     {
         $costh2 = cos($th2);
@@ -559,16 +570,5 @@ class Path extends Shape
             $toX,
             $toY
         );
-    }
-
-    function calcVectorAngle($ux, $uy, $vx, $vy)
-    {
-        $ta = atan2($uy, $ux);
-        $tb = atan2($vy, $vx);
-        if ($tb >= $ta) {
-            return $tb - $ta;
-        } else {
-            return 2 * M_PI - ($ta - $tb);
-        }
     }
 }

@@ -13,11 +13,9 @@ use Svg\Style;
 
 abstract class AbstractTag
 {
+    public $tagName;
     /** @var Document */
     protected $document;
-
-    public $tagName;
-
     /** @var Style */
     protected $style;
 
@@ -34,16 +32,13 @@ abstract class AbstractTag
         $this->tagName = $tagName;
     }
 
-    public function getDocument(){
-        return $this->document;
-    }
-
     /**
      * @return Group|null
      */
-    public function getParentGroup() {
+    public function getParentGroup()
+    {
         $stack = $this->getDocument()->getStack();
-        for ($i = count($stack)-2; $i >= 0; $i--) {
+        for ($i = count($stack) - 2; $i >= 0; $i--) {
             $tag = $stack[$i];
 
             if ($tag instanceof Group || $tag instanceof Document) {
@@ -52,6 +47,11 @@ abstract class AbstractTag
         }
 
         return null;
+    }
+
+    public function getDocument()
+    {
+        return $this->document;
     }
 
     public function handle($attributes)
@@ -64,20 +64,20 @@ abstract class AbstractTag
         }
     }
 
-    public function handleEnd()
-    {
-        if (!$this->getDocument()->inDefs) {
-            $this->end();
-            $this->after();
-        }
-    }
-
     protected function before($attributes)
     {
     }
 
     protected function start($attributes)
     {
+    }
+
+    public function handleEnd()
+    {
+        if (!$this->getDocument()->inDefs) {
+            $this->end();
+            $this->after();
+        }
     }
 
     protected function end()
@@ -93,6 +93,14 @@ abstract class AbstractTag
         return $this->attributes;
     }
 
+    /**
+     * @return Style
+     */
+    public function getStyle()
+    {
+        return $this->style;
+    }
+
     protected function setStyle(Style $style)
     {
         $this->style = $style;
@@ -103,21 +111,14 @@ abstract class AbstractTag
     }
 
     /**
-     * @return Style
-     */
-    public function getStyle()
-    {
-        return $this->style;
-    }
-
-    /**
      * Make a style object from the tag and its attributes
      *
      * @param array $attributes
      *
      * @return Style
      */
-    protected function makeStyle($attributes) {
+    protected function makeStyle($attributes)
+    {
         $style = new Style();
         $style->inherit($this);
         $style->fromStyleSheets($this, $attributes);

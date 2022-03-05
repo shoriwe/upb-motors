@@ -11,24 +11,21 @@ use Sabberworm\CSS\OutputFormat;
 class CSSNamespace implements AtRule
 {
     /**
+     * @var array<array-key, Comment>
+     */
+    protected $aComments;
+    /**
      * @var string
      */
     private $mUrl;
-
     /**
      * @var string
      */
     private $sPrefix;
-
     /**
      * @var int
      */
     private $iLineNo;
-
-    /**
-     * @var array<array-key, Comment>
-     */
-    protected $aComments;
 
     /**
      * @param string $mUrl

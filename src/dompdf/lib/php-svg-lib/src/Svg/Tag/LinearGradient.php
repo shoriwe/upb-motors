@@ -40,7 +40,8 @@ class LinearGradient extends AbstractTag
         }
     }
 
-    public function getStops() {
+    public function getStops()
+    {
         if (empty($this->stops)) {
             foreach ($this->children as $_child) {
                 if ($_child->tagName != "stop") {
