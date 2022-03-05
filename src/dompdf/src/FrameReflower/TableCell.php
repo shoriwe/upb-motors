@@ -5,6 +5,7 @@
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\FrameReflower;
 
 use Dompdf\FrameDecorator\Block as BlockFrameDecorator;
@@ -55,22 +56,22 @@ class TableCell extends Block
         $h = $this->_frame->get_containing_block("h");
 
         $left_space = (float)$style->length_in_pt([$style->margin_left,
-                $style->padding_left,
-                $style->border_left_width],
+            $style->padding_left,
+            $style->border_left_width],
             $w);
 
         $right_space = (float)$style->length_in_pt([$style->padding_right,
-                $style->margin_right,
-                $style->border_right_width],
+            $style->margin_right,
+            $style->border_right_width],
             $w);
 
         $top_space = (float)$style->length_in_pt([$style->margin_top,
-                $style->padding_top,
-                $style->border_top_width],
+            $style->padding_top,
+            $style->border_top_width],
             $h);
         $bottom_space = (float)$style->length_in_pt([$style->margin_bottom,
-                $style->padding_bottom,
-                $style->border_bottom_width],
+            $style->padding_bottom,
+            $style->border_bottom_width],
             $h);
 
         $style->width = $cb_w = $w - $left_space - $right_space;
@@ -141,7 +142,7 @@ class TableCell extends Block
         // For table cells: Use specified width if it is greater than the
         // minimum defined by the content
         if ($fixed_width) {
-            $width = (float) $style->length_in_pt($width, 0);
+            $width = (float)$style->length_in_pt($width, 0);
             $min = max($width, $min);
             $max = $min;
         }

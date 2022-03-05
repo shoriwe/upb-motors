@@ -5,6 +5,7 @@
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf;
 
 use Dompdf\Renderer\AbstractRenderer;
@@ -213,7 +214,7 @@ class Renderer extends AbstractRenderer
      * gets triggered on a frame
      *
      * @param string $event The type of event
-     * @param Frame  $frame The frame that event is triggered on
+     * @param Frame $frame The frame that event is triggered on
      */
     protected function _check_callbacks(string $event, Frame $frame): void
     {
@@ -225,7 +226,7 @@ class Renderer extends AbstractRenderer
             $fs = $this->_callbacks[$event];
             $info = [
                 0 => $this->_canvas, "canvas" => $this->_canvas,
-                1 => $frame,         "frame"  => $frame
+                1 => $frame, "frame" => $frame
             ];
 
             foreach ($fs as $f) {

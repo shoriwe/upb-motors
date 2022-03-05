@@ -29,7 +29,7 @@ class ListBullet extends AbstractPositioner
         $parent = $frame->get_parent();
         $style = $parent->get_style();
         $cbw = $parent->get_containing_block("w");
-        $margin_left = (float) $style->length_in_pt($style->margin_left, $cbw);
+        $margin_left = (float)$style->length_in_pt($style->margin_left, $cbw);
         $border_edge = $parent->get_position("x") + $margin_left;
 
         // This includes the marker indentation

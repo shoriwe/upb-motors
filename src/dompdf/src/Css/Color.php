@@ -209,7 +209,7 @@ class Color
             // #rgba format
             if ($length === 5) {
                 if (ctype_xdigit($color[4])) {
-                    $alpha = round(hexdec($color[4] . $color[4])/255, 2);
+                    $alpha = round(hexdec($color[4] . $color[4]) / 255, 2);
                 }
                 return $cache[$color] = self::getArray($color[1] . $color[1] . $color[2] . $color[2] . $color[3] . $color[3], $alpha);
             }
@@ -218,11 +218,11 @@ class Color
             if ($length === 7) {
                 return $cache[$color] = self::getArray(mb_substr($color, 1, 6));
             }
-            
+
             // #rrggbbaa format
             if ($length === 9) {
                 if (ctype_xdigit(mb_substr($color, 7, 2))) {
-                    $alpha = round(hexdec(mb_substr($color, 7, 2))/255, 2);
+                    $alpha = round(hexdec(mb_substr($color, 7, 2)) / 255, 2);
                 }
                 return $cache[$color] = self::getArray(mb_substr($color, 1, 6), $alpha);
             }
@@ -261,16 +261,16 @@ class Color
 
             // Parse alpha value
             if (Helpers::is_percent($alpha)) {
-                $alpha = round((float) $alpha / 100, 2);
+                $alpha = round((float)$alpha / 100, 2);
             } else {
-                $alpha = (float) $alpha;
+                $alpha = (float)$alpha;
             }
 
             $alpha = max(0.0, min($alpha, 1.0));
 
             foreach ($triplet as &$c) {
                 if (Helpers::is_percent($c)) {
-                    $c = round((float) $c * 2.55);
+                    $c = round((float)$c * 2.55);
                 }
             }
 
@@ -294,7 +294,7 @@ class Color
                 return null;
             }
 
-            $values = array_map(function($c) {
+            $values = array_map(function ($c) {
                 return min(1.0, max(0.0, floatval(trim($c))));
             }, $values);
 

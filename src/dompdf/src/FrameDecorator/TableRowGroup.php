@@ -5,6 +5,7 @@
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\FrameDecorator;
 
 use Dompdf\Dompdf;
@@ -23,7 +24,7 @@ class TableRowGroup extends AbstractFrameDecorator
     /**
      * Class constructor
      *
-     * @param Frame $frame   Frame to decorate
+     * @param Frame $frame Frame to decorate
      * @param Dompdf $dompdf Current dompdf instance
      */
     function __construct(Frame $frame, Dompdf $dompdf)

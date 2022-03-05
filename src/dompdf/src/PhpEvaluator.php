@@ -5,6 +5,7 @@
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf;
 
 /**
@@ -30,6 +31,14 @@ class PhpEvaluator
     }
 
     /**
+     * @param Frame $frame
+     */
+    public function render(Frame $frame)
+    {
+        $this->evaluate($frame->get_node()->nodeValue);
+    }
+
+    /**
      * @param $code
      * @param array $vars
      */
@@ -51,13 +60,5 @@ class PhpEvaluator
         }
 
         eval($code);
-    }
-
-    /**
-     * @param Frame $frame
-     */
-    public function render(Frame $frame)
-    {
-        $this->evaluate($frame->get_node()->nodeValue);
     }
 }

@@ -152,15 +152,15 @@ interface Canvas
      *
      * See {@link Style::munge_color()} for the format of the color array.
      *
-     * @param float  $x
-     * @param float  $y
-     * @param string $text       the text to write
-     * @param string $font       the font file to use
-     * @param float  $size       the font size, in points
-     * @param array  $color
-     * @param float  $word_space word spacing adjustment
-     * @param float  $char_space char spacing adjustment
-     * @param float  $angle      angle to write the text at, measured CW starting from the x-axis
+     * @param float $x
+     * @param float $y
+     * @param string $text the text to write
+     * @param string $font the font file to use
+     * @param float $size the font size, in points
+     * @param array $color
+     * @param float $word_space word spacing adjustment
+     * @param float $char_space char spacing adjustment
+     * @param float $angle angle to write the text at, measured CW starting from the x-axis
      */
     public function page_text($x, $y, $text, $font, $size, $color = [0, 0, 0], $word_space = 0.0, $char_space = 0.0, $angle = 0.0);
 
@@ -194,8 +194,8 @@ interface Canvas
      * Rotate
      *
      * @param float $angle angle in degrees for counter-clockwise rotation
-     * @param float $x     Origin abscissa
-     * @param float $y     Origin ordinate
+     * @param float $x Origin abscissa
+     * @param float $y Origin ordinate
      */
     function rotate($angle, $x, $y);
 
@@ -214,8 +214,8 @@ interface Canvas
      *
      * @param float $s_x scaling factor for width as percent
      * @param float $s_y scaling factor for height as percent
-     * @param float $x   Origin abscissa
-     * @param float $y   Origin ordinate
+     * @param float $x Origin abscissa
+     * @param float $y Origin ordinate
      */
     function scale($s_x, $s_y, $x, $y);
 

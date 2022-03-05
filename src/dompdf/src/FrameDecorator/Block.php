@@ -5,6 +5,7 @@
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\FrameDecorator;
 
 use Dompdf\Dompdf;
@@ -146,6 +147,26 @@ class Block extends AbstractFrameDecorator
     }
 
     /**
+     * @param float $w
+     */
+    function increase_line_width($w)
+    {
+        $this->_line_boxes[$this->_cl]->w += $w;
+    }
+
+    /**
+     * @param float $val
+     * @param Frame $frame
+     */
+    function maximize_line_height($val, Frame $frame)
+    {
+        if ($val > $this->_line_boxes[$this->_cl]->h) {
+            $this->_line_boxes[$this->_cl]->tallest_frame = $frame;
+            $this->_line_boxes[$this->_cl]->h = $val;
+        }
+    }
+
+    /**
      * Remove the given frame and all following frames and lines from the block.
      *
      * @param Frame $frame
@@ -198,26 +219,6 @@ class Block extends AbstractFrameDecorator
         // Reset array indices
         $this->_line_boxes = array_values($this->_line_boxes);
         $this->_cl = count($this->_line_boxes) - 1;
-    }
-
-    /**
-     * @param float $w
-     */
-    function increase_line_width($w)
-    {
-        $this->_line_boxes[$this->_cl]->w += $w;
-    }
-
-    /**
-     * @param float $val
-     * @param Frame $frame
-     */
-    function maximize_line_height($val, Frame $frame)
-    {
-        if ($val > $this->_line_boxes[$this->_cl]->h) {
-            $this->_line_boxes[$this->_cl]->tallest_frame = $frame;
-            $this->_line_boxes[$this->_cl]->h = $val;
-        }
     }
 
     /**

@@ -6,14 +6,15 @@
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\FrameReflower;
 
+use Dompdf\Css\Style;
+use Dompdf\Exception;
 use Dompdf\Frame;
 use Dompdf\FrameDecorator\Block as BlockFrameDecorator;
 use Dompdf\FrameDecorator\TableCell as TableCellFrameDecorator;
 use Dompdf\FrameDecorator\Text as TextFrameDecorator;
-use Dompdf\Exception;
-use Dompdf\Css\Style;
 use Dompdf\Helpers;
 
 /**
@@ -34,6 +35,199 @@ class Block extends AbstractFrameReflower
     function __construct(BlockFrameDecorator $frame)
     {
         parent::__construct($frame);
+    }
+
+    /**
+     * @param BlockFrameDecorator $block
+     */
+    function reflow(BlockFrameDecorator $block = null)
+    {
+
+        // Check if a page break is forced
+        $page = $this->_frame->get_root();
+        $page->check_forced_page_break($this->_frame);
+
+        // Bail if the page is full
+        if ($page->is_full()) {
+            return;
+        }
+
+        $this->determine_absolute_containing_block();
+
+        // Counters and generated content
+        $this->_set_content();
+
+        // Inherit any dangling list markers
+        if ($block && $this->_frame->is_in_flow()) {
+            $this->_frame->inherit_dangling_markers($block);
+        }
+
+        // Collapse margins if required
+        $this->_collapse_margins();
+
+        $style = $this->_frame->get_style();
+        $cb = $this->_frame->get_containing_block();
+
+        // Determine the constraints imposed by this frame: calculate the width
+        // of the content area:
+        list($width, $left_margin, $right_margin, $left, $right) = $this->_calculate_restricted_width();
+
+        // Store the calculated properties
+        $style->width = $width;
+        $style->margin_left = $left_margin;
+        $style->margin_right = $right_margin;
+        $style->left = $left;
+        $style->right = $right;
+
+        $margin_top = $style->length_in_pt($style->margin_top, $cb["w"]);
+        $margin_bottom = $style->length_in_pt($style->margin_bottom, $cb["w"]);
+
+        $auto_top = $style->top === "auto";
+        $auto_margin_top = $margin_top === "auto";
+
+        // Update the position
+        $this->_frame->position();
+        list($x, $y) = $this->_frame->get_position();
+
+        // Adjust the first line based on the text-indent property
+        $indent = (float)$style->length_in_pt($style->text_indent, $cb["w"]);
+        $this->_frame->increase_line_width($indent);
+
+        // Determine the content edge
+        $top = (float)$style->length_in_pt([
+            $margin_top !== "auto" ? $margin_top : 0,
+            $style->border_top_width,
+            $style->padding_top
+        ], $cb["w"]);
+        $bottom = (float)$style->length_in_pt([
+            $margin_bottom !== "auto" ? $margin_bottom : 0,
+            $style->border_bottom_width,
+            $style->padding_bottom
+        ], $cb["w"]);
+
+        $cb_x = $x + (float)$left_margin + (float)$style->length_in_pt([$style->border_left_width,
+                $style->padding_left], $cb["w"]);
+
+        $cb_y = $y + $top;
+
+        $height = $style->length_in_pt($style->height, $cb["h"]);
+        if ($height === "auto") {
+            $height = ($cb["h"] + $cb["y"]) - $bottom - $cb_y;
+        }
+
+        // Set the y position of the first line in this block
+        $line_box = $this->_frame->get_current_line_box();
+        $line_box->y = $cb_y;
+        $line_box->get_float_offsets();
+
+        // Set the containing blocks and reflow each child
+        foreach ($this->_frame->get_children() as $child) {
+            $child->set_containing_block($cb_x, $cb_y, $width, $height);
+            $this->process_clear($child);
+            $child->reflow($this->_frame);
+
+            // Check for a page break before the child
+            $page->check_page_break($child);
+
+            // Don't add the child to the line if a page break has occurred
+            // before it (possibly via a descendant), in which case it has been
+            // reset, including its position
+            if ($page->is_full() && $child->get_position("x") === null) {
+                break;
+            }
+
+            $this->process_float($child, $cb_x, $width);
+        }
+
+        // Stop reflow if a page break has occurred before the frame, in which
+        // case it has been reset, including its position
+        if ($page->is_full() && $this->_frame->get_position("x") === null) {
+            return;
+        }
+
+        // Determine our height
+        list($height, $margin_top, $margin_bottom, $top, $bottom) = $this->_calculate_restricted_height();
+        $style->height = $height;
+        $style->margin_top = $margin_top;
+        $style->margin_bottom = $margin_bottom;
+        $style->top = $top;
+        $style->bottom = $bottom;
+
+        if ($this->_frame->is_absolute()) {
+            if ($auto_top) {
+                $this->_frame->move(0, $top);
+            }
+            if ($auto_margin_top) {
+                $this->_frame->move(0, $margin_top, true);
+            }
+        }
+
+        $this->_text_align();
+        $this->vertical_align();
+
+        // Handle relative positioning
+        foreach ($this->_frame->get_children() as $child) {
+            $this->position_relative($child);
+        }
+
+        if ($block && $this->_frame->is_in_flow()) {
+            $block->add_frame_to_line($this->_frame);
+
+            if ($this->_frame->is_block_level()) {
+                $block->add_line();
+            }
+        }
+    }
+
+    /**
+     * Call the above function, but resolve max/min widths
+     *
+     * @return array
+     * @throws Exception
+     */
+    protected function _calculate_restricted_width()
+    {
+        $frame = $this->_frame;
+        $style = $frame->get_style();
+        $cb = $frame->get_containing_block();
+
+        if (!isset($cb["w"])) {
+            throw new Exception("Box property calculation requires containing block width");
+        }
+
+        $width = $style->length_in_pt($style->width, $cb["w"]);
+
+        $values = $this->_calculate_width($width);
+        $margin_left = $values["margin_left"];
+        $margin_right = $values["margin_right"];
+        $width = $values["width"];
+        $left = $values["left"];
+        $right = $values["right"];
+
+        // Handle min/max width
+        // https://www.w3.org/TR/CSS21/visudet.html#min-max-widths
+        $min_width = $this->resolve_min_width($cb["w"]);
+        $max_width = $this->resolve_max_width($cb["w"]);
+
+        if ($width > $max_width) {
+            $values = $this->_calculate_width($max_width);
+            $margin_left = $values["margin_left"];
+            $margin_right = $values["margin_right"];
+            $width = $values["width"];
+            $left = $values["left"];
+            $right = $values["right"];
+        }
+
+        if ($width < $min_width) {
+            $values = $this->_calculate_width($min_width);
+            $margin_left = $values["margin_left"];
+            $margin_right = $values["margin_right"];
+            $width = $values["width"];
+            $left = $values["left"];
+            $right = $values["right"];
+        }
+
+        return [$width, $margin_left, $margin_right, $left, $right];
     }
 
     /**
@@ -195,7 +389,7 @@ class Block extends AbstractFrameReflower
                 }
             } else {
                 // We are over constrained--set margin-right to the difference
-                $rm = (float) $rm + $diff;
+                $rm = (float)$rm + $diff;
 
                 if ($width === "auto") {
                     $width = 0;
@@ -216,73 +410,94 @@ class Block extends AbstractFrameReflower
     }
 
     /**
-     * Call the above function, but resolve max/min widths
-     *
-     * @throws Exception
-     * @return array
+     * @param Frame $child
      */
-    protected function _calculate_restricted_width()
+    function process_clear(Frame $child)
     {
-        $frame = $this->_frame;
-        $style = $frame->get_style();
-        $cb = $frame->get_containing_block();
+        $child_style = $child->get_style();
+        $root = $this->_frame->get_root();
 
-        if (!isset($cb["w"])) {
-            throw new Exception("Box property calculation requires containing block width");
+        // Handle "clear"
+        if ($child_style->clear !== "none") {
+            //TODO: this is a WIP for handling clear/float frames that are in between inline frames
+            if ($child->get_prev_sibling() !== null) {
+                $this->_frame->add_line();
+            }
+            if ($child_style->float !== "none" && $child->get_next_sibling()) {
+                $this->_frame->set_current_line_number($this->_frame->get_current_line_number() - 1);
+            }
+
+            $lowest_y = $root->get_lowest_float_offset($child);
+
+            // If a float is still applying, we handle it
+            if ($lowest_y) {
+                if ($child->is_in_flow()) {
+                    $line_box = $this->_frame->get_current_line_box();
+                    $line_box->y = $lowest_y + $child->get_margin_height();
+                    $line_box->left = 0;
+                    $line_box->right = 0;
+                }
+
+                $child->move(0, $lowest_y - $child->get_position("y"));
+            }
         }
-
-        $width = $style->length_in_pt($style->width, $cb["w"]);
-
-        $values = $this->_calculate_width($width);
-        $margin_left = $values["margin_left"];
-        $margin_right = $values["margin_right"];
-        $width = $values["width"];
-        $left = $values["left"];
-        $right = $values["right"];
-
-        // Handle min/max width
-        // https://www.w3.org/TR/CSS21/visudet.html#min-max-widths
-        $min_width = $this->resolve_min_width($cb["w"]);
-        $max_width = $this->resolve_max_width($cb["w"]);
-
-        if ($width > $max_width) {
-            $values = $this->_calculate_width($max_width);
-            $margin_left = $values["margin_left"];
-            $margin_right = $values["margin_right"];
-            $width = $values["width"];
-            $left = $values["left"];
-            $right = $values["right"];
-        }
-
-        if ($width < $min_width) {
-            $values = $this->_calculate_width($min_width);
-            $margin_left = $values["margin_left"];
-            $margin_right = $values["margin_right"];
-            $width = $values["width"];
-            $left = $values["left"];
-            $right = $values["right"];
-        }
-
-        return [$width, $margin_left, $margin_right, $left, $right];
     }
 
     /**
-     * Determine the unrestricted height of content within the block
-     * not by adding each line's height, but by getting the last line's position.
-     * This because lines could have been pushed lower by a clearing element.
-     *
-     * @return float
+     * @param Frame $child
+     * @param float $cb_x
+     * @param float $cb_w
      */
-    protected function _calculate_content_height()
+    function process_float(Frame $child, $cb_x, $cb_w)
     {
-        $height = 0;
-        $lines = $this->_frame->get_line_boxes();
-        if (count($lines) > 0) {
-            $last_line = end($lines);
-            $content_box = $this->_frame->get_content_box();
-            $height = $last_line->y + $last_line->h - $content_box["y"];
+        $child_style = $child->get_style();
+        $root = $this->_frame->get_root();
+
+        // Handle "float"
+        if ($child_style->float !== "none") {
+            $root->add_floating_frame($child);
+
+            // Remove next frame's beginning whitespace
+            $next = $child->get_next_sibling();
+            if ($next && $next instanceof TextFrameDecorator) {
+                $next->set_text(ltrim($next->get_text()));
+            }
+
+            $line_box = $this->_frame->get_current_line_box();
+            list($old_x, $old_y) = $child->get_position();
+
+            $float_x = $cb_x;
+            $float_y = $old_y;
+            $float_w = $child->get_margin_width();
+
+            if ($child_style->clear === "none") {
+                switch ($child_style->float) {
+                    case "left":
+                        $float_x += $line_box->left;
+                        break;
+                    case "right":
+                        $float_x += ($cb_w - $line_box->right - $float_w);
+                        break;
+                }
+            } else {
+                if ($child_style->float === "right") {
+                    $float_x += ($cb_w - $float_w);
+                }
+            }
+
+            if ($cb_w < $float_x + $float_w - $old_x) {
+                // TODO handle when floating elements don't fit
+            }
+
+            $line_box->get_float_offsets();
+
+            if ($child->_float_next_line) {
+                $float_y += $line_box->h;
+            }
+
+            $child->set_position($float_x, $float_y);
+            $child->move($float_x - $old_x, $float_y - $old_y, true);
         }
-        return $height;
     }
 
     /**
@@ -421,6 +636,25 @@ class Block extends AbstractFrameReflower
         // not affected
 
         return [$height, $margin_top, $margin_bottom, $top, $bottom];
+    }
+
+    /**
+     * Determine the unrestricted height of content within the block
+     * not by adding each line's height, but by getting the last line's position.
+     * This because lines could have been pushed lower by a clearing element.
+     *
+     * @return float
+     */
+    protected function _calculate_content_height()
+    {
+        $height = 0;
+        $lines = $this->_frame->get_line_boxes();
+        if (count($lines) > 0) {
+            $last_line = end($lines);
+            $content_box = $this->_frame->get_content_box();
+            $height = $last_line->y + $last_line->h - $content_box["y"];
+        }
+        return $height;
     }
 
     /**
@@ -589,7 +823,7 @@ class Block extends AbstractFrameReflower
                     foreach ($line->get_frames() as $other) {
                         if ($other !== $frame
                             && !($other->is_text_node() && $other->get_node()->nodeValue === "")
-                         ) {
+                        ) {
                             $skip = false;
                             break;
                         }
@@ -684,239 +918,6 @@ class Block extends AbstractFrameReflower
         }
     }
 
-    /**
-     * @param Frame $child
-     */
-    function process_clear(Frame $child)
-    {
-        $child_style = $child->get_style();
-        $root = $this->_frame->get_root();
-
-        // Handle "clear"
-        if ($child_style->clear !== "none") {
-            //TODO: this is a WIP for handling clear/float frames that are in between inline frames
-            if ($child->get_prev_sibling() !== null) {
-                $this->_frame->add_line();
-            }
-            if ($child_style->float !== "none" && $child->get_next_sibling()) {
-                $this->_frame->set_current_line_number($this->_frame->get_current_line_number() - 1);
-            }
-
-            $lowest_y = $root->get_lowest_float_offset($child);
-
-            // If a float is still applying, we handle it
-            if ($lowest_y) {
-                if ($child->is_in_flow()) {
-                    $line_box = $this->_frame->get_current_line_box();
-                    $line_box->y = $lowest_y + $child->get_margin_height();
-                    $line_box->left = 0;
-                    $line_box->right = 0;
-                }
-
-                $child->move(0, $lowest_y - $child->get_position("y"));
-            }
-        }
-    }
-
-    /**
-     * @param Frame $child
-     * @param float $cb_x
-     * @param float $cb_w
-     */
-    function process_float(Frame $child, $cb_x, $cb_w)
-    {
-        $child_style = $child->get_style();
-        $root = $this->_frame->get_root();
-
-        // Handle "float"
-        if ($child_style->float !== "none") {
-            $root->add_floating_frame($child);
-
-            // Remove next frame's beginning whitespace
-            $next = $child->get_next_sibling();
-            if ($next && $next instanceof TextFrameDecorator) {
-                $next->set_text(ltrim($next->get_text()));
-            }
-
-            $line_box = $this->_frame->get_current_line_box();
-            list($old_x, $old_y) = $child->get_position();
-
-            $float_x = $cb_x;
-            $float_y = $old_y;
-            $float_w = $child->get_margin_width();
-
-            if ($child_style->clear === "none") {
-                switch ($child_style->float) {
-                    case "left":
-                        $float_x += $line_box->left;
-                        break;
-                    case "right":
-                        $float_x += ($cb_w - $line_box->right - $float_w);
-                        break;
-                }
-            } else {
-                if ($child_style->float === "right") {
-                    $float_x += ($cb_w - $float_w);
-                }
-            }
-
-            if ($cb_w < $float_x + $float_w - $old_x) {
-                // TODO handle when floating elements don't fit
-            }
-
-            $line_box->get_float_offsets();
-
-            if ($child->_float_next_line) {
-                $float_y += $line_box->h;
-            }
-
-            $child->set_position($float_x, $float_y);
-            $child->move($float_x - $old_x, $float_y - $old_y, true);
-        }
-    }
-
-    /**
-     * @param BlockFrameDecorator $block
-     */
-    function reflow(BlockFrameDecorator $block = null)
-    {
-
-        // Check if a page break is forced
-        $page = $this->_frame->get_root();
-        $page->check_forced_page_break($this->_frame);
-
-        // Bail if the page is full
-        if ($page->is_full()) {
-            return;
-        }
-
-        $this->determine_absolute_containing_block();
-
-        // Counters and generated content
-        $this->_set_content();
-
-        // Inherit any dangling list markers
-        if ($block && $this->_frame->is_in_flow()) {
-            $this->_frame->inherit_dangling_markers($block);
-        }
-
-        // Collapse margins if required
-        $this->_collapse_margins();
-
-        $style = $this->_frame->get_style();
-        $cb = $this->_frame->get_containing_block();
-
-        // Determine the constraints imposed by this frame: calculate the width
-        // of the content area:
-        list($width, $left_margin, $right_margin, $left, $right) = $this->_calculate_restricted_width();
-
-        // Store the calculated properties
-        $style->width = $width;
-        $style->margin_left = $left_margin;
-        $style->margin_right = $right_margin;
-        $style->left = $left;
-        $style->right = $right;
-
-        $margin_top = $style->length_in_pt($style->margin_top, $cb["w"]);
-        $margin_bottom = $style->length_in_pt($style->margin_bottom, $cb["w"]);
-
-        $auto_top = $style->top === "auto";
-        $auto_margin_top = $margin_top === "auto";
-
-        // Update the position
-        $this->_frame->position();
-        list($x, $y) = $this->_frame->get_position();
-
-        // Adjust the first line based on the text-indent property
-        $indent = (float)$style->length_in_pt($style->text_indent, $cb["w"]);
-        $this->_frame->increase_line_width($indent);
-
-        // Determine the content edge
-        $top = (float)$style->length_in_pt([
-            $margin_top !== "auto" ? $margin_top : 0,
-            $style->border_top_width,
-            $style->padding_top
-        ], $cb["w"]);
-        $bottom = (float)$style->length_in_pt([
-            $margin_bottom !== "auto" ? $margin_bottom : 0,
-            $style->border_bottom_width,
-            $style->padding_bottom
-        ], $cb["w"]);
-
-        $cb_x = $x + (float)$left_margin + (float)$style->length_in_pt([$style->border_left_width,
-                $style->padding_left], $cb["w"]);
-
-        $cb_y = $y + $top;
-
-        $height = $style->length_in_pt($style->height, $cb["h"]);
-        if ($height === "auto") {
-            $height = ($cb["h"] + $cb["y"]) - $bottom - $cb_y;
-        }
-
-        // Set the y position of the first line in this block
-        $line_box = $this->_frame->get_current_line_box();
-        $line_box->y = $cb_y;
-        $line_box->get_float_offsets();
-
-        // Set the containing blocks and reflow each child
-        foreach ($this->_frame->get_children() as $child) {
-            $child->set_containing_block($cb_x, $cb_y, $width, $height);
-            $this->process_clear($child);
-            $child->reflow($this->_frame);
-
-            // Check for a page break before the child
-            $page->check_page_break($child);
-
-            // Don't add the child to the line if a page break has occurred
-            // before it (possibly via a descendant), in which case it has been
-            // reset, including its position
-            if ($page->is_full() && $child->get_position("x") === null) {
-                break;
-            }
-
-            $this->process_float($child, $cb_x, $width);
-        }
-
-        // Stop reflow if a page break has occurred before the frame, in which
-        // case it has been reset, including its position
-        if ($page->is_full() && $this->_frame->get_position("x") === null) {
-            return;
-        }
-
-        // Determine our height
-        list($height, $margin_top, $margin_bottom, $top, $bottom) = $this->_calculate_restricted_height();
-        $style->height = $height;
-        $style->margin_top = $margin_top;
-        $style->margin_bottom = $margin_bottom;
-        $style->top = $top;
-        $style->bottom = $bottom;
-
-        if ($this->_frame->is_absolute()) {
-            if ($auto_top) {
-                $this->_frame->move(0, $top);
-            }
-            if ($auto_margin_top) {
-                $this->_frame->move(0, $margin_top, true);
-            }
-        }
-
-        $this->_text_align();
-        $this->vertical_align();
-
-        // Handle relative positioning
-        foreach ($this->_frame->get_children() as $child) {
-            $this->position_relative($child);
-        }
-
-        if ($block && $this->_frame->is_in_flow()) {
-            $block->add_frame_to_line($this->_frame);
-
-            if ($this->_frame->is_block_level()) {
-                $block->add_line();
-            }
-        }
-    }
-
     public function get_min_max_content_width(): array
     {
         // TODO: While the containing block is not set yet on the frame, it can
@@ -930,7 +931,7 @@ class Block extends AbstractFrameReflower
         // If the frame has a specified width, then we don't need to check
         // its children
         if ($fixed_width) {
-            $min = (float) $style->length_in_pt($width, 0);
+            $min = (float)$style->length_in_pt($width, 0);
             $max = $min;
         } else {
             [$min, $max] = $this->get_min_max_child_width();

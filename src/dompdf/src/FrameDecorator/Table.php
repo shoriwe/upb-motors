@@ -5,10 +5,11 @@
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\FrameDecorator;
 
-use Dompdf\Cellmap;
 use DOMNode;
+use Dompdf\Cellmap;
 use Dompdf\Css\Style;
 use Dompdf\Dompdf;
 use Dompdf\Frame;
@@ -87,6 +88,26 @@ class Table extends AbstractFrameDecorator
         $this->_footers = [];
     }
 
+    /**
+     * Static function to locate the parent table of a frame
+     *
+     * @param Frame $frame
+     *
+     * @return Table the table that is an ancestor of $frame
+     */
+    public static function find_parent_table(Frame $frame)
+    {
+        while ($frame = $frame->get_parent()) {
+            if ($frame->is_table()) {
+                break;
+            }
+        }
+
+        return $frame;
+    }
+
+    //........................................................................
+
     public function reset()
     {
         parent::reset();
@@ -97,8 +118,6 @@ class Table extends AbstractFrameDecorator
         $this->_footers = [];
         $this->_reflower->reset();
     }
-
-    //........................................................................
 
     /**
      * Split the table at $row.  $row and all subsequent rows will be
@@ -164,24 +183,6 @@ class Table extends AbstractFrameDecorator
     }
 
     /**
-     * Static function to locate the parent table of a frame
-     *
-     * @param Frame $frame
-     *
-     * @return Table the table that is an ancestor of $frame
-     */
-    public static function find_parent_table(Frame $frame)
-    {
-        while ($frame = $frame->get_parent()) {
-            if ($frame->is_table()) {
-                break;
-            }
-        }
-
-        return $frame;
-    }
-
-    /**
      * Return this table's Cellmap
      *
      * @return Cellmap
@@ -202,16 +203,6 @@ class Table extends AbstractFrameDecorator
     }
 
     /**
-     * Return the maximum width of this table
-     *
-     * @return float
-     */
-    public function get_max_width()
-    {
-        return $this->_max_width;
-    }
-
-    /**
      * Set the minimum width of the table
      *
      * @param float $width the new minimum width
@@ -219,6 +210,16 @@ class Table extends AbstractFrameDecorator
     public function set_min_width($width)
     {
         $this->_min_width = $width;
+    }
+
+    /**
+     * Return the maximum width of this table
+     *
+     * @return float
+     */
+    public function get_max_width()
+    {
+        return $this->_max_width;
     }
 
     /**
@@ -234,27 +235,11 @@ class Table extends AbstractFrameDecorator
     //........................................................................
 
     /**
-     * Check for text nodes between valid table children that only contain white
-     * space, except if white space is to be preserved.
-     *
-     * @param AbstractFrameDecorator $frame
-     *
-     * @return bool
+     * @deprecated
      */
-    private function isEmptyTextNode(AbstractFrameDecorator $frame): bool
+    public function normalise()
     {
-        // This is based on the white-space pattern in `FrameReflower\Text`,
-        // i.e. only match on collapsible white space
-        $wsPattern = '/^[^\S\xA0\x{202F}\x{2007}]*$/u';
-        $validChildOrNull = function ($frame) {
-            return $frame === null
-                || in_array($frame->get_style()->display, self::$VALID_CHILDREN, true);
-        };
-
-        return $frame->is_text_node() && !$frame->is_pre()
-            && preg_match($wsPattern, $frame->get_text())
-            && $validChildOrNull($frame->get_prev_sibling())
-            && $validChildOrNull($frame->get_next_sibling());
+        $this->normalize();
     }
 
     /**
@@ -320,6 +305,30 @@ class Table extends AbstractFrameDecorator
         }
     }
 
+    /**
+     * Check for text nodes between valid table children that only contain white
+     * space, except if white space is to be preserved.
+     *
+     * @param AbstractFrameDecorator $frame
+     *
+     * @return bool
+     */
+    private function isEmptyTextNode(AbstractFrameDecorator $frame): bool
+    {
+        // This is based on the white-space pattern in `FrameReflower\Text`,
+        // i.e. only match on collapsible white space
+        $wsPattern = '/^[^\S\xA0\x{202F}\x{2007}]*$/u';
+        $validChildOrNull = function ($frame) {
+            return $frame === null
+                || in_array($frame->get_style()->display, self::$VALID_CHILDREN, true);
+        };
+
+        return $frame->is_text_node() && !$frame->is_pre()
+            && preg_match($wsPattern, $frame->get_text())
+            && $validChildOrNull($frame->get_prev_sibling())
+            && $validChildOrNull($frame->get_next_sibling());
+    }
+
     private function normalizeRowGroup(AbstractFrameDecorator $frame): void
     {
         $children = iterator_to_array($frame->get_children());
@@ -360,6 +369,8 @@ class Table extends AbstractFrameDecorator
         }
     }
 
+    //........................................................................
+
     private function normalizeRow(AbstractFrameDecorator $frame): void
     {
         $children = iterator_to_array($frame->get_children());
@@ -396,22 +407,12 @@ class Table extends AbstractFrameDecorator
         }
     }
 
-    //........................................................................
-
-    /**
-     * @deprecated
-     */
-    public function normalise()
-    {
-        $this->normalize();
-    }
-
     /**
      * Moves the specified frame and it's corresponding node outside of
      * the table.
      *
-     * @deprecated
      * @param Frame $frame the frame to move
+     * @deprecated
      */
     public function move_after(Frame $frame)
     {

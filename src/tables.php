@@ -88,9 +88,11 @@ class Product
     }
 }
 
-class Lis_Product{
+class Lis_Product
+{
     public ?int $id = null;
     public ?string $nombre = null;
+
     public function __construct(int $id, string $nombre)
     {
         $this->id = $id;
@@ -98,9 +100,11 @@ class Lis_Product{
     }
 }
 
-class Lis_Clients{
+class Lis_Clients
+{
     public ?int $id = null;
     public ?string $nombre = null;
+
     public function __construct(int $id, string $nombre)
     {
         $this->id = $id;
@@ -108,9 +112,11 @@ class Lis_Clients{
     }
 }
 
-class Lis_Empleados{
+class Lis_Empleados
+{
     public ?int $id = null;
     public ?string $nombre = null;
+
     public function __construct(int $id, string $nombre)
     {
         $this->id = $id;

@@ -1,8 +1,9 @@
 <?php
+
 namespace Dompdf\Frame;
 
-use Iterator;
 use Dompdf\Frame;
+use Iterator;
 
 /**
  * Linked-list Iterator

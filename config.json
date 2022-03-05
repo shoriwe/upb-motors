@@ -1,10 +1,10 @@
 {
-"DB_HOST": "localhost:3306",
-"DB_USERNAME": "upb_motors_client",
-"DB_PASSWORD": "password",
-"DB_DATABASE": "upb_motors",
-"EMAIL_HOST": "smtp.gmail.com",
-"EMAIL_PORT": "465",
-"EMAIL_USERNAME": "upbmotorstestmail@gmail.com",
-"EMAIL_PASSWORD": "SuperSecurePassword123@"
+  "DB_HOST": "localhost:3306",
+  "DB_USERNAME": "upb_motors_client",
+  "DB_PASSWORD": "password",
+  "DB_DATABASE": "upb_motors",
+  "EMAIL_HOST": "smtp.gmail.com",
+  "EMAIL_PORT": "465",
+  "EMAIL_USERNAME": "upbmotorstestmail@gmail.com",
+  "EMAIL_PASSWORD": "SuperSecurePassword123@"
 }

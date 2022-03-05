@@ -6,12 +6,13 @@
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\Adapter;
 
 use Dompdf\Canvas;
 use Dompdf\Dompdf;
-use Dompdf\Image\Cache;
 use Dompdf\Helpers;
+use Dompdf\Image\Cache;
 
 /**
  * Image rendering interface
@@ -24,102 +25,6 @@ use Dompdf\Helpers;
 class GD implements Canvas
 {
     /**
-     * @var Dompdf
-     */
-    protected $_dompdf;
-
-    /**
-     * Resource handle for the image
-     *
-     * @var \GdImage|resource
-     */
-    protected $_img;
-
-    /**
-     * Resource handle for the image
-     *
-     * @var \GdImage[]|resource[]
-     */
-    protected $_imgs;
-
-    /**
-     * Apparent canvas width in pixels
-     *
-     * @var int
-     */
-    protected $_width;
-
-    /**
-     * Apparent canvas height in pixels
-     *
-     * @var int
-     */
-    protected $_height;
-
-    /**
-     * Actual image width in pixels
-     *
-     * @var int
-     */
-    protected $_actual_width;
-
-    /**
-     * Actual image height in pixels
-     *
-     * @var int
-     */
-    protected $_actual_height;
-
-    /**
-     * Current page number
-     *
-     * @var int
-     */
-    protected $_page_number;
-
-    /**
-     * Total number of pages
-     *
-     * @var int
-     */
-    protected $_page_count;
-
-    /**
-     * Image antialias factor
-     *
-     * @var float
-     */
-    protected $_aa_factor;
-
-    /**
-     * Allocated colors
-     *
-     * @var array
-     */
-    protected $_colors;
-
-    /**
-     * Background color
-     *
-     * @var int
-     */
-    protected $_bg_color;
-
-    /**
-     * Background color array
-     *
-     * @var int
-     */
-    protected $_bg_color_array;
-
-    /**
-     * Actual DPI
-     *
-     * @var int
-     */
-    protected $dpi;
-
-    /**
      * Amount to scale font sizes
      *
      * Font sizes are 72 DPI, GD internally uses 96. Scale them proportionally.
@@ -128,6 +33,88 @@ class GD implements Canvas
      * @var float
      */
     const FONT_SCALE = 0.75;
+    /**
+     * @var Dompdf
+     */
+    protected $_dompdf;
+    /**
+     * Resource handle for the image
+     *
+     * @var \GdImage|resource
+     */
+    protected $_img;
+    /**
+     * Resource handle for the image
+     *
+     * @var \GdImage[]|resource[]
+     */
+    protected $_imgs;
+    /**
+     * Apparent canvas width in pixels
+     *
+     * @var int
+     */
+    protected $_width;
+    /**
+     * Apparent canvas height in pixels
+     *
+     * @var int
+     */
+    protected $_height;
+    /**
+     * Actual image width in pixels
+     *
+     * @var int
+     */
+    protected $_actual_width;
+    /**
+     * Actual image height in pixels
+     *
+     * @var int
+     */
+    protected $_actual_height;
+    /**
+     * Current page number
+     *
+     * @var int
+     */
+    protected $_page_number;
+    /**
+     * Total number of pages
+     *
+     * @var int
+     */
+    protected $_page_count;
+    /**
+     * Image antialias factor
+     *
+     * @var float
+     */
+    protected $_aa_factor;
+    /**
+     * Allocated colors
+     *
+     * @var array
+     */
+    protected $_colors;
+    /**
+     * Background color
+     *
+     * @var int
+     */
+    protected $_bg_color;
+    /**
+     * Background color array
+     *
+     * @var int
+     */
+    protected $_bg_color_array;
+    /**
+     * Actual DPI
+     *
+     * @var int
+     */
+    protected $dpi;
 
     /**
      * Class constructor
@@ -199,84 +186,34 @@ class GD implements Canvas
     }
 
     /**
-     * Return the GD image resource
+     * Scales value up to the current canvas DPI from 72 DPI
      *
-     * @return \GdImage|resource
-     */
-    public function get_image()
-    {
-        return $this->_img;
-    }
-
-    /**
-     * Return the image's width in pixels
-     *
+     * @param float $length
      * @return int
      */
-    public function get_width()
+    protected function _upscale($length)
     {
-        return round($this->_width / $this->_aa_factor);
+        return round(($length * $this->dpi) / 72 * $this->_aa_factor);
     }
 
     /**
-     * Return the image's height in pixels
+     * Starts a new page
      *
-     * @return int
+     * Subsequent drawing operations will appear on the new page.
      */
-    public function get_height()
+    public function new_page()
     {
-        return round($this->_height / $this->_aa_factor);
-    }
+        $this->_page_number++;
+        $this->_page_count++;
 
-    /**
-     * Returns the current page number
-     *
-     * @return int
-     */
-    public function get_page_number()
-    {
-        return $this->_page_number;
-    }
+        $this->_img = imagecreatetruecolor($this->_actual_width, $this->_actual_height);
 
-    /**
-     * Returns the total number of pages in the document
-     *
-     * @return int
-     */
-    public function get_page_count()
-    {
-        return $this->_page_count;
-    }
+        $this->_bg_color = $this->_allocate_color($this->_bg_color_array);
+        imagealphablending($this->_img, true);
+        imagesavealpha($this->_img, true);
+        imagefill($this->_img, 0, 0, $this->_bg_color);
 
-    /**
-     * Sets the current page number
-     *
-     * @param int $num
-     */
-    public function set_page_number($num)
-    {
-        $this->_page_number = $num;
-    }
-
-    /**
-     * Sets the page count
-     *
-     * @param int $count
-     */
-    public function set_page_count($count)
-    {
-        $this->_page_count = $count;
-    }
-
-    /**
-     * Sets the opacity
-     *
-     * @param $opacity
-     * @param $mode
-     */
-    public function set_opacity($opacity, $mode = "Normal")
-    {
-        // FIXME
+        $this->_imgs[] = $this->_img;
     }
 
     /**
@@ -328,25 +265,84 @@ class GD implements Canvas
     }
 
     /**
-     * Scales value up to the current canvas DPI from 72 DPI
+     * Return the GD image resource
      *
-     * @param float $length
-     * @return int
+     * @return \GdImage|resource
      */
-    protected function _upscale($length)
+    public function get_image()
     {
-        return round(($length * $this->dpi) / 72 * $this->_aa_factor);
+        return $this->_img;
     }
 
     /**
-     * Scales value down from the current canvas DPI to 72 DPI
+     * Return the image's width in pixels
      *
-     * @param float $length
      * @return int
      */
-    protected function _downscale($length)
+    public function get_width()
     {
-        return round(($length / $this->dpi * 72) / $this->_aa_factor);
+        return round($this->_width / $this->_aa_factor);
+    }
+
+    /**
+     * Return the image's height in pixels
+     *
+     * @return int
+     */
+    public function get_height()
+    {
+        return round($this->_height / $this->_aa_factor);
+    }
+
+    /**
+     * Returns the current page number
+     *
+     * @return int
+     */
+    public function get_page_number()
+    {
+        return $this->_page_number;
+    }
+
+    /**
+     * Sets the current page number
+     *
+     * @param int $num
+     */
+    public function set_page_number($num)
+    {
+        $this->_page_number = $num;
+    }
+
+    /**
+     * Returns the total number of pages in the document
+     *
+     * @return int
+     */
+    public function get_page_count()
+    {
+        return $this->_page_count;
+    }
+
+    /**
+     * Sets the page count
+     *
+     * @param int $count
+     */
+    public function set_page_count($count)
+    {
+        $this->_page_count = $count;
+    }
+
+    /**
+     * Sets the opacity
+     *
+     * @param $opacity
+     * @param $mode
+     */
+    public function set_opacity($opacity, $mode = "Normal")
+    {
+        // FIXME
     }
 
     /**
@@ -800,6 +796,49 @@ class GD implements Canvas
         imagettftext($this->get_image(), $size, $angle, $x, $y + $h, $c, $font, $text);
     }
 
+    protected function get_font_height_actual($font, $size)
+    {
+        $font = $this->get_ttf_file($font);
+        $ratio = $this->_dompdf->getOptions()->getFontHeightRatio();
+
+        // FIXME: word spacing
+        list(, $y2, , , , $y1) = imagettfbbox($size, 0, $font, "MXjpqytfhl"); // Test string with ascenders, descenders and caps
+        return ($y2 - $y1) * $ratio;
+    }
+
+    /**
+     * @param string|null $font
+     * @return string
+     */
+    public function get_ttf_file($font)
+    {
+        if ($font === null) {
+            $font = "";
+        }
+
+        if (stripos($font, ".ttf") === false) {
+            $font .= ".ttf";
+        }
+
+        if (!file_exists($font)) {
+            $font_metrics = $this->_dompdf->getFontMetrics();
+            $font = $font_metrics->getFont($this->_dompdf->getOptions()->getDefaultFont()) . ".ttf";
+            if (!file_exists($font)) {
+                if (strpos($font, "mono")) {
+                    $font = $font_metrics->getFont("DejaVu Mono") . ".ttf";
+                } elseif (strpos($font, "sans") !== false) {
+                    $font = $font_metrics->getFont("DejaVu Sans") . ".ttf";
+                } elseif (strpos($font, "serif")) {
+                    $font = $font_metrics->getFont("DejaVu Serif") . ".ttf";
+                } else {
+                    $font = $font_metrics->getFont("DejaVu Sans") . ".ttf";
+                }
+            }
+        }
+
+        return $font;
+    }
+
     public function javascript($code)
     {
         // Not implemented
@@ -881,36 +920,25 @@ class GD implements Canvas
     }
 
     /**
-     * @param string|null $font
-     * @return string
+     * Scales value down from the current canvas DPI to 72 DPI
+     *
+     * @param float $length
+     * @return int
      */
-    public function get_ttf_file($font)
+    protected function _downscale($length)
     {
-        if ($font === null) {
-            $font = "";
-        }
+        return round(($length / $this->dpi * 72) / $this->_aa_factor);
+    }
 
-        if ( stripos($font, ".ttf") === false ) {
-            $font .= ".ttf";
-        }
-
-        if (!file_exists($font)) {
-            $font_metrics = $this->_dompdf->getFontMetrics();
-            $font = $font_metrics->getFont($this->_dompdf->getOptions()->getDefaultFont()) . ".ttf";
-            if (!file_exists($font)) {
-                if (strpos($font, "mono")) {
-                    $font = $font_metrics->getFont("DejaVu Mono") . ".ttf";
-                } elseif (strpos($font, "sans") !== false) {
-                    $font = $font_metrics->getFont("DejaVu Sans") . ".ttf";
-                } elseif (strpos($font, "serif")) {
-                    $font = $font_metrics->getFont("DejaVu Serif") . ".ttf";
-                } else {
-                    $font = $font_metrics->getFont("DejaVu Sans") . ".ttf";
-                }
-            }
-        }
-
-        return $font;
+    /**
+     * @param string $font
+     * @param float $size
+     * @return float
+     */
+    public function get_font_baseline($font, $size)
+    {
+        $ratio = $this->_dompdf->getOptions()->getFontHeightRatio();
+        return $this->get_font_height($font, $size) / $ratio;
     }
 
     /**
@@ -927,47 +955,6 @@ class GD implements Canvas
         $height = $this->get_font_height_actual($font, $size);
 
         return $this->_downscale($height);
-    }
-
-    protected function get_font_height_actual($font, $size)
-    {
-        $font = $this->get_ttf_file($font);
-        $ratio = $this->_dompdf->getOptions()->getFontHeightRatio();
-
-        // FIXME: word spacing
-        list(, $y2, , , , $y1) = imagettfbbox($size, 0, $font, "MXjpqytfhl"); // Test string with ascenders, descenders and caps
-        return ($y2 - $y1) * $ratio;
-    }
-
-    /**
-     * @param string $font
-     * @param float $size
-     * @return float
-     */
-    public function get_font_baseline($font, $size)
-    {
-        $ratio = $this->_dompdf->getOptions()->getFontHeightRatio();
-        return $this->get_font_height($font, $size) / $ratio;
-    }
-
-    /**
-     * Starts a new page
-     *
-     * Subsequent drawing operations will appear on the new page.
-     */
-    public function new_page()
-    {
-        $this->_page_number++;
-        $this->_page_count++;
-
-        $this->_img = imagecreatetruecolor($this->_actual_width, $this->_actual_height);
-
-        $this->_bg_color = $this->_allocate_color($this->_bg_color_array);
-        imagealphablending($this->_img, true);
-        imagesavealpha($this->_img, true);
-        imagefill($this->_img, 0, 0, $this->_bg_color);
-
-        $this->_imgs[] = $this->_img;
     }
 
     public function open_object()
@@ -1042,22 +1029,6 @@ class GD implements Canvas
     }
 
     /**
-     * Returns the image as a string.
-     *
-     * @param array $options Associative array: 'type' => jpeg|jpg|png; 'quality' => 0 - 100 (JPEG only);
-     *     'page' => Number of the page to output (defaults to the first).
-     * @return string
-     */
-    public function output($options = [])
-    {
-        ob_start();
-
-        $this->_output($options);
-
-        return ob_get_clean();
-    }
-
-    /**
      * Outputs the image stream directly.
      *
      * @param array $options Associative array: 'type' => jpeg|jpg|png; 'quality' => 0 - 100 (JPEG only);
@@ -1105,5 +1076,21 @@ class GD implements Canvas
         if ($this->_aa_factor != 1) {
             imagedestroy($dst);
         }
+    }
+
+    /**
+     * Returns the image as a string.
+     *
+     * @param array $options Associative array: 'type' => jpeg|jpg|png; 'quality' => 0 - 100 (JPEG only);
+     *     'page' => Number of the page to output (defaults to the first).
+     * @return string
+     */
+    public function output($options = [])
+    {
+        ob_start();
+
+        $this->_output($options);
+
+        return ob_get_clean();
     }
 }

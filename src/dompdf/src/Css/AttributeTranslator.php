@@ -6,6 +6,7 @@
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\Css;
 
 use Dompdf\Frame;
@@ -23,6 +24,28 @@ class AttributeTranslator
     // Munged data originally from
     // http://www.w3.org/TR/REC-html40/index/attributes.html
     // http://www.cs.tut.fi/~jkorpela/html2css.html
+    protected static $_last_basefont_size = 3;
+    protected static $_font_size_lookup = [
+        // For basefont support
+        -3 => "4pt",
+        -2 => "5pt",
+        -1 => "6pt",
+        0 => "7pt",
+
+        1 => "8pt",
+        2 => "10pt",
+        3 => "12pt",
+        4 => "14pt",
+        5 => "18pt",
+        6 => "24pt",
+        7 => "34pt",
+
+        // For basefont support
+        8 => "48pt",
+        9 => "44pt",
+        10 => "52pt",
+        11 => "60pt",
+    ];
     private static $__ATTRIBUTE_LOOKUP = [
         //'caption' => array ( 'align' => '', ),
         'img' => [
@@ -184,29 +207,6 @@ class AttributeTranslator
         ],
     ];
 
-    protected static $_last_basefont_size = 3;
-    protected static $_font_size_lookup = [
-        // For basefont support
-        -3 => "4pt",
-        -2 => "5pt",
-        -1 => "6pt",
-        0 => "7pt",
-
-        1 => "8pt",
-        2 => "10pt",
-        3 => "12pt",
-        4 => "14pt",
-        5 => "18pt",
-        6 => "24pt",
-        7 => "34pt",
-
-        // For basefont support
-        8 => "48pt",
-        9 => "44pt",
-        10 => "52pt",
-        11 => "60pt",
-    ];
-
     /**
      * @param Frame $frame
      */
@@ -270,43 +270,15 @@ class AttributeTranslator
 
     /**
      * @param \DOMElement $node
-     * @param string $new_style
-     */
-    static function append_style(\DOMElement $node, $new_style)
-    {
-        $style = rtrim($node->getAttribute(self::$_style_attr), ";");
-        $style .= $new_style;
-        $style = ltrim($style, ";");
-        $node->setAttribute(self::$_style_attr, $style);
-    }
-
-    /**
-     * @param \DOMNode $node
+     * @param string $value
      *
-     * @return \DOMNodeList|\DOMElement[]
+     * @return string
      */
-    protected static function get_cell_list(\DOMNode $node)
+    protected static function _set_color(\DOMElement $node, $value)
     {
-        $xpath = new \DOMXpath($node->ownerDocument);
+        $value = self::_get_valid_color($value);
 
-        switch ($node->nodeName) {
-            default:
-            case "table":
-                $query = "tr/td | thead/tr/td | tbody/tr/td | tfoot/tr/td | tr/th | thead/tr/th | tbody/tr/th | tfoot/tr/th";
-                break;
-
-            case "tbody":
-            case "tfoot":
-            case "thead":
-                $query = "tr/td | tr/th";
-                break;
-
-            case "tr":
-                $query = "td | th";
-                break;
-        }
-
-        return $xpath->query($query, $node);
+        return "color: $value;";
     }
 
     /**
@@ -321,19 +293,6 @@ class AttributeTranslator
         }
 
         return $value;
-    }
-
-    /**
-     * @param \DOMElement $node
-     * @param string $value
-     *
-     * @return string
-     */
-    protected static function _set_color(\DOMElement $node, $value)
-    {
-        $value = self::_get_valid_color($value);
-
-        return "color: $value;";
     }
 
     /**
@@ -390,6 +349,47 @@ class AttributeTranslator
         }
 
         return null;
+    }
+
+    /**
+     * @param \DOMNode $node
+     *
+     * @return \DOMNodeList|\DOMElement[]
+     */
+    protected static function get_cell_list(\DOMNode $node)
+    {
+        $xpath = new \DOMXpath($node->ownerDocument);
+
+        switch ($node->nodeName) {
+            default:
+            case "table":
+                $query = "tr/td | thead/tr/td | tbody/tr/td | tfoot/tr/td | tr/th | thead/tr/th | tbody/tr/th | tfoot/tr/th";
+                break;
+
+            case "tbody":
+            case "tfoot":
+            case "thead":
+                $query = "tr/td | tr/th";
+                break;
+
+            case "tr":
+                $query = "td | th";
+                break;
+        }
+
+        return $xpath->query($query, $node);
+    }
+
+    /**
+     * @param \DOMElement $node
+     * @param string $new_style
+     */
+    static function append_style(\DOMElement $node, $new_style)
+    {
+        $style = rtrim($node->getAttribute(self::$_style_attr), ";");
+        $style .= $new_style;
+        $style = ltrim($style, ";");
+        $node->setAttribute(self::$_style_attr, $style);
     }
 
     /**
@@ -531,10 +531,12 @@ class AttributeTranslator
      */
     protected static function _set_input_width(\DOMElement $node, $value)
     {
-        if (empty($value)) { return null; }
+        if (empty($value)) {
+            return null;
+        }
 
-        if ($node->hasAttribute("type") && in_array(strtolower($node->getAttribute("type")), ["text","password"])) {
-            return sprintf("width: %Fem", (((int)$value * .65)+2));
+        if ($node->hasAttribute("type") && in_array(strtolower($node->getAttribute("type")), ["text", "password"])) {
+            return sprintf("width: %Fem", (((int)$value * .65) + 2));
         } else {
             return sprintf("width: %upx;", (int)$value);
         }
