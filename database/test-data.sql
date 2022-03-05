@@ -1,3 +1,5 @@
+USE upb_motors;
+
 SET @_ = registrar_empleado(
         get_permisos_id('ADMIN'),
         'Antonio',

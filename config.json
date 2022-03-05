@@ -6,5 +6,6 @@
   "EMAIL_HOST": "smtp.gmail.com",
   "EMAIL_PORT": "465",
   "EMAIL_USERNAME": "upbmotorstestmail@gmail.com",
-  "EMAIL_PASSWORD": "SuperSecurePassword123@"
+  "EMAIL_PASSWORD": "SuperSecurePassword123@",
+  "TEST": 1
 }
