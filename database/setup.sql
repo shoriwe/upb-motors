@@ -118,6 +118,41 @@ CREATE TABLE IF NOT EXISTS clientes
     CONSTRAINT empleados_correo_unique UNIQUE (correo)
 );
 
+-- -- ordenes_compra -- --
+CREATE TABLE IF NOT EXISTS ordenes_compra
+(
+    id              INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    empleados_id    INT NOT NULL,
+    clientes_id     INT NOT NULL,
+    fehca           DATE NOT NULL,
+    CONSTRAINT fk_clientes_id FOREIGN KEY (clientes_id) REFERENCES clientes (id),
+    CONSTRAINT fk_empleados_id FOREIGN KEY (empleados_id) REFERENCES empleados (id)
+
+);
+
+-- -- detalles_ordenes_compra -- --
+CREATE TABLE IF NOT EXISTS detalles_ordenes_compra
+(
+    id              INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    cantidad        INT NOT NULL,
+    decuento        DOUBLE NOT NULL,
+    valor_total     DOUBLE NOT NULL,
+    productos_id    INT NOT NULL,
+    tipo_pago_id    INT NOT NULL,
+    orden_compra_id INT NOT NULL,
+    CONSTRAINT fk_productos_id FOREIGN KEY (productos_id) REFERENCES inventario (id),
+    CONSTRAINT fk_orden_compra_id FOREIGN KEY (orden_compra_id) REFERENCES ordenes_compra (id),
+    CONSTRAINT fk_tipo_pago_id FOREIGN KEY (tipo_pago_id) REFERENCES tipo_pago (id)
+
+);
+
+-- -- ordenes_compra -- --
+CREATE TABLE IF NOT EXISTS tipo_pago
+(
+    id              INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    tipo            VARCHAR(10) NOT NULL
+);
+
 -- -- Procesos -- --
 CREATE PROCEDURE actualizar_contrasena(IN v_id INT, IN hash_nueva_contrasena VARCHAR(500))
 BEGIN
@@ -443,4 +478,22 @@ BEGIN
     SET habilitado = v_enabled
     WHERE id = v_id;
     return true;
+END;
+
+CREATE FUNCTION registrar_orden(
+    v_empleados_id INT,
+    v_clientes_id INT,
+    v_fehca VARCHAR(10)
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    INSERT INTO ordenes_compra (empleados_id,
+                                clientes_id,
+                                fehca)
+    VALUES (v_empleados_id,
+            v_clientes_id,
+            v_fehca);
+    RETURN TRUE;
 END;

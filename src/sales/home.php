@@ -12,13 +12,8 @@ require_once '../navbar.php';
     <div class="centered-container-for-input">
         <h1 class="purple-text">Ventas</h1>
         <div class="centered-flex-container">
-            <a class="blue-button" href="#">Listar ordenes pendientes</a>
+            <a class="blue-button" href="/sales/ordenes-de-compra.php">Ordenes de Compra</a>
             <pre style="width: 1vw;"></pre>
-            <a class="blue-button" href="#">Crear orden de compra</a>
-            <pre style="width: 1vw;"></pre>
-            <a class="blue-button" href="#">Cancelar orden de compra</a>
-            <pre style="width: 1vw;"></pre>
-            <a class="blue-button" href="#">Entregar orden de compra</a>
         </div>
     </div>
 </div>
