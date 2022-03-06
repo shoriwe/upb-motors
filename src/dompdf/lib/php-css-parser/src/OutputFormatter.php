@@ -17,6 +17,14 @@ class OutputFormatter
     }
 
     /**
+     * @return string
+     */
+    public function spaceAfterRuleName()
+    {
+        return $this->space('AfterRuleName');
+    }
+
+    /**
      * @param string $sName
      * @param string|null $sType
      *
@@ -38,11 +46,21 @@ class OutputFormatter
     }
 
     /**
+     * @param string $sSpaceString
+     *
      * @return string
      */
-    public function spaceAfterRuleName()
+    private function prepareSpace($sSpaceString)
     {
-        return $this->space('AfterRuleName');
+        return str_replace("\n", "\n" . $this->indent(), $sSpaceString);
+    }
+
+    /**
+     * @return string
+     */
+    private function indent()
+    {
+        return str_repeat($this->oFormat->sIndentation, $this->oFormat->level());
     }
 
     /**
@@ -209,23 +227,5 @@ class OutputFormatter
         $sNextToLast = array_pop($sString);
         array_push($sString, $sNextToLast . $sLast);
         return implode(';', $sString);
-    }
-
-    /**
-     * @param string $sSpaceString
-     *
-     * @return string
-     */
-    private function prepareSpace($sSpaceString)
-    {
-        return str_replace("\n", "\n" . $this->indent(), $sSpaceString);
-    }
-
-    /**
-     * @return string
-     */
-    private function indent()
-    {
-        return str_repeat($this->oFormat->sIndentation, $this->oFormat->level());
     }
 }

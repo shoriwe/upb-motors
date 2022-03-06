@@ -6,6 +6,7 @@
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\FrameReflower;
 
 use Dompdf\Frame;
@@ -41,50 +42,6 @@ class Page extends AbstractFrameReflower
     function __construct(PageFrameDecorator $frame)
     {
         parent::__construct($frame);
-    }
-
-    /**
-     * @param PageFrameDecorator $frame
-     * @param int $page_number
-     */
-    function apply_page_style(Frame $frame, $page_number)
-    {
-        $style = $frame->get_style();
-        $page_styles = $style->get_stylesheet()->get_page_styles();
-
-        // http://www.w3.org/TR/CSS21/page.html#page-selectors
-        if (count($page_styles) > 1) {
-            $odd = $page_number % 2 == 1;
-            $first = $page_number == 1;
-
-            $style = clone $page_styles["base"];
-
-            // FIXME RTL
-            if ($odd && isset($page_styles[":right"])) {
-                $style->merge($page_styles[":right"]);
-            }
-
-            if ($odd && isset($page_styles[":odd"])) {
-                $style->merge($page_styles[":odd"]);
-            }
-
-            // FIXME RTL
-            if (!$odd && isset($page_styles[":left"])) {
-                $style->merge($page_styles[":left"]);
-            }
-
-            if (!$odd && isset($page_styles[":even"])) {
-                $style->merge($page_styles[":even"]);
-            }
-
-            if ($first && isset($page_styles[":first"])) {
-                $style->merge($page_styles[":first"]);
-            }
-
-            $frame->set_style($style);
-        }
-
-        $frame->calculate_bottom_page_edge();
     }
 
     /**
@@ -173,11 +130,55 @@ class Page extends AbstractFrameReflower
     }
 
     /**
+     * @param PageFrameDecorator $frame
+     * @param int $page_number
+     */
+    function apply_page_style(Frame $frame, $page_number)
+    {
+        $style = $frame->get_style();
+        $page_styles = $style->get_stylesheet()->get_page_styles();
+
+        // http://www.w3.org/TR/CSS21/page.html#page-selectors
+        if (count($page_styles) > 1) {
+            $odd = $page_number % 2 == 1;
+            $first = $page_number == 1;
+
+            $style = clone $page_styles["base"];
+
+            // FIXME RTL
+            if ($odd && isset($page_styles[":right"])) {
+                $style->merge($page_styles[":right"]);
+            }
+
+            if ($odd && isset($page_styles[":odd"])) {
+                $style->merge($page_styles[":odd"]);
+            }
+
+            // FIXME RTL
+            if (!$odd && isset($page_styles[":left"])) {
+                $style->merge($page_styles[":left"]);
+            }
+
+            if (!$odd && isset($page_styles[":even"])) {
+                $style->merge($page_styles[":even"]);
+            }
+
+            if ($first && isset($page_styles[":first"])) {
+                $style->merge($page_styles[":first"]);
+            }
+
+            $frame->set_style($style);
+        }
+
+        $frame->calculate_bottom_page_edge();
+    }
+
+    /**
      * Check for callbacks that need to be performed when a given event
      * gets triggered on a page
      *
      * @param string $event The type of event
-     * @param Frame  $frame The frame that event is triggered on
+     * @param Frame $frame The frame that event is triggered on
      */
     protected function _check_callbacks(string $event, Frame $frame): void
     {
@@ -191,7 +192,7 @@ class Page extends AbstractFrameReflower
             $fs = $this->_callbacks[$event];
             $info = [
                 0 => $this->_canvas, "canvas" => $this->_canvas,
-                1 => $frame,         "frame"  => $frame,
+                1 => $frame, "frame" => $frame,
             ];
 
             foreach ($fs as $f) {

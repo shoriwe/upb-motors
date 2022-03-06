@@ -7,11 +7,12 @@
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\FrameDecorator;
 
 use Dompdf\Dompdf;
-use Dompdf\Frame;
 use Dompdf\Exception;
+use Dompdf\Frame;
 
 /**
  * Decorates Frame objects for text layout
@@ -59,6 +60,22 @@ class Text extends AbstractFrameDecorator
     }
 
     /**
+     * @param float $spacing
+     */
+    function set_text_spacing($spacing)
+    {
+        $style = $this->_frame->get_style();
+
+        $this->_text_spacing = $spacing;
+        $char_spacing = (float)$style->length_in_pt($style->letter_spacing);
+
+        // Re-adjust our width to account for the change in spacing
+        $style->width = $this->_dompdf->getFontMetrics()->getTextWidth($this->get_text(), $style->font_family, $style->font_size, $spacing, $char_spacing);
+    }
+
+    //........................................................................
+
+    /**
      * @return string
      */
     function get_text()
@@ -79,8 +96,6 @@ class Text extends AbstractFrameDecorator
 
         return $this->_frame->get_node()->data;
     }
-
-    //........................................................................
 
     /**
      * Vertical padding, border, and margin do not apply when determining the
@@ -111,22 +126,8 @@ class Text extends AbstractFrameDecorator
     {
         $style = $this->_frame->get_style();
         $pb = $this->_frame->get_padding_box();
-        $pb[3] = $pb["h"] = (float) $style->length_in_pt($style->height);
+        $pb[3] = $pb["h"] = (float)$style->length_in_pt($style->height);
         return $pb;
-    }
-
-    /**
-     * @param float $spacing
-     */
-    function set_text_spacing($spacing)
-    {
-        $style = $this->_frame->get_style();
-
-        $this->_text_spacing = $spacing;
-        $char_spacing = (float)$style->length_in_pt($style->letter_spacing);
-
-        // Re-adjust our width to account for the change in spacing
-        $style->width = $this->_dompdf->getFontMetrics()->getTextWidth($this->get_text(), $style->font_family, $style->font_size, $spacing, $char_spacing);
     }
 
     /**
@@ -165,7 +166,7 @@ class Text extends AbstractFrameDecorator
         if ($split === false) {
             return null;
         }
-        
+
         $deco = $this->copy($split);
 
         $p = $this->get_parent();

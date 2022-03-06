@@ -152,14 +152,6 @@ class Size extends PrimitiveValue
     }
 
     /**
-     * @return bool
-     */
-    public function isColorComponent()
-    {
-        return $this->bIsColorComponent;
-    }
-
-    /**
      * Returns whether the number stored in this Size really represents a size (as in a length of something on screen).
      *
      * @return false if the unit an angle, a duration, a frequency or the number is a component in a Color object.
@@ -170,6 +162,14 @@ class Size extends PrimitiveValue
             return false;
         }
         return !$this->isColorComponent();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isColorComponent()
+    {
+        return $this->bIsColorComponent;
     }
 
     /**

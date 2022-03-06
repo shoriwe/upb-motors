@@ -14,8 +14,8 @@ namespace Dompdf\Adapter;
 
 use Dompdf\Canvas;
 use Dompdf\Dompdf;
-use Dompdf\Helpers;
 use Dompdf\Exception;
+use Dompdf\Helpers;
 use Dompdf\Image\Cache;
 use Dompdf\PhpEvaluator;
 use FontLib\Exception\FontNotFoundException;
@@ -215,14 +215,6 @@ class CPDF implements Canvas
     }
 
     /**
-     * @return Dompdf
-     */
-    public function get_dompdf()
-    {
-        return $this->_dompdf;
-    }
-
-    /**
      * Returns the Cpdf instance
      *
      * @return \Dompdf\Cpdf
@@ -252,39 +244,16 @@ class CPDF implements Canvas
      *
      * The return value is an integer ID for the new object.
      *
-     * @see CPDF::close_object()
+     * @return int
      * @see CPDF::add_object()
      *
-     * @return int
+     * @see CPDF::close_object()
      */
     public function open_object()
     {
         $ret = $this->_pdf->openObject();
         $this->_pdf->saveState();
         return $ret;
-    }
-
-    /**
-     * Reopens an existing 'object'
-     *
-     * @see CPDF::open_object()
-     * @param int $object the ID of a previously opened object
-     */
-    public function reopen_object($object)
-    {
-        $this->_pdf->reopenObject($object);
-        $this->_pdf->saveState();
-    }
-
-    /**
-     * Closes the current 'object'
-     *
-     * @see CPDF::open_object()
-     */
-    public function close_object()
-    {
-        $this->_pdf->restoreState();
-        $this->_pdf->closeObject();
     }
 
     /**
@@ -300,10 +269,10 @@ class CPDF implements Canvas
      * - 'nextodd' add to all odd numbered pages from the next one
      * - 'nexteven' add to all even numbered pages from the next one
      *
-     * @see Cpdf::addObject()
-     *
      * @param int $object
      * @param string $where
+     * @see Cpdf::addObject()
+     *
      */
     public function add_object($object, $where = 'all')
     {
@@ -340,8 +309,6 @@ class CPDF implements Canvas
         return $this->_pdf->restoreSerializedObject($obj);
     }
 
-    //........................................................................
-
     /**
      * Returns the PDF's width in points
      * @return float
@@ -369,14 +336,7 @@ class CPDF implements Canvas
         return $this->_page_number;
     }
 
-    /**
-     * Returns the total number of pages in the document
-     * @return int
-     */
-    public function get_page_count()
-    {
-        return $this->_page_count;
-    }
+    //........................................................................
 
     /**
      * Sets the current page number
@@ -389,6 +349,15 @@ class CPDF implements Canvas
     }
 
     /**
+     * Returns the total number of pages in the document
+     * @return int
+     */
+    public function get_page_count()
+    {
+        return $this->_page_count;
+    }
+
+    /**
      * Sets the page count
      *
      * @param int $count
@@ -396,89 +365,6 @@ class CPDF implements Canvas
     public function set_page_count($count)
     {
         $this->_page_count = $count;
-    }
-
-    /**
-     * Sets the stroke color
-     *
-     * See {@link Style::set_color()} for the format of the color array.
-     * @param array $color
-     */
-    protected function _set_stroke_color($color)
-    {
-        $this->_pdf->setStrokeColor($color);
-        $alpha = isset($color["alpha"]) ? $color["alpha"] : 1;
-        if ($this->_current_opacity != 1) {
-            $alpha *= $this->_current_opacity;
-        }
-        $this->_set_line_transparency("Normal", $alpha);
-    }
-
-    /**
-     * Sets the fill colour
-     *
-     * See {@link Style::set_color()} for the format of the colour array.
-     * @param array $color
-     */
-    protected function _set_fill_color($color)
-    {
-        $this->_pdf->setColor($color);
-        $alpha = isset($color["alpha"]) ? $color["alpha"] : 1;
-        if ($this->_current_opacity) {
-            $alpha *= $this->_current_opacity;
-        }
-        $this->_set_fill_transparency("Normal", $alpha);
-    }
-
-    /**
-     * Sets line transparency
-     * @see Cpdf::setLineTransparency()
-     *
-     * Valid blend modes are (case-sensitive):
-     *
-     * Normal, Multiply, Screen, Overlay, Darken, Lighten,
-     * ColorDodge, ColorBurn, HardLight, SoftLight, Difference,
-     * Exclusion
-     *
-     * @param string $mode the blending mode to use
-     * @param float $opacity 0.0 fully transparent, 1.0 fully opaque
-     */
-    protected function _set_line_transparency($mode, $opacity)
-    {
-        $this->_pdf->setLineTransparency($mode, $opacity);
-    }
-
-    /**
-     * Sets fill transparency
-     * @see Cpdf::setFillTransparency()
-     *
-     * Valid blend modes are (case-sensitive):
-     *
-     * Normal, Multiply, Screen, Overlay, Darken, Lighten,
-     * ColorDogde, ColorBurn, HardLight, SoftLight, Difference,
-     * Exclusion
-     *
-     * @param string $mode the blending mode to use
-     * @param float $opacity 0.0 fully transparent, 1.0 fully opaque
-     */
-    protected function _set_fill_transparency($mode, $opacity)
-    {
-        $this->_pdf->setFillTransparency($mode, $opacity);
-    }
-
-    /**
-     * Sets the line style
-     *
-     * @see Cpdf::setLineStyle()
-     *
-     * @param float $width
-     * @param string $cap
-     * @param string $join
-     * @param array $dash
-     */
-    protected function _set_line_style($width, $cap, $join, $dash)
-    {
-        $this->_pdf->setLineStyle($width, $cap, $join, $dash);
     }
 
     /**
@@ -494,42 +380,46 @@ class CPDF implements Canvas
         $this->_current_opacity = $opacity;
     }
 
+    /**
+     * Sets line transparency
+     * @param string $mode the blending mode to use
+     * @param float $opacity 0.0 fully transparent, 1.0 fully opaque
+     * @see Cpdf::setLineTransparency()
+     *
+     * Valid blend modes are (case-sensitive):
+     *
+     * Normal, Multiply, Screen, Overlay, Darken, Lighten,
+     * ColorDodge, ColorBurn, HardLight, SoftLight, Difference,
+     * Exclusion
+     *
+     */
+    protected function _set_line_transparency($mode, $opacity)
+    {
+        $this->_pdf->setLineTransparency($mode, $opacity);
+    }
+
+    /**
+     * Sets fill transparency
+     * @param string $mode the blending mode to use
+     * @param float $opacity 0.0 fully transparent, 1.0 fully opaque
+     * @see Cpdf::setFillTransparency()
+     *
+     * Valid blend modes are (case-sensitive):
+     *
+     * Normal, Multiply, Screen, Overlay, Darken, Lighten,
+     * ColorDogde, ColorBurn, HardLight, SoftLight, Difference,
+     * Exclusion
+     *
+     */
+    protected function _set_fill_transparency($mode, $opacity)
+    {
+        $this->_pdf->setFillTransparency($mode, $opacity);
+    }
+
     public function set_default_view($view, $options = [])
     {
         array_unshift($options, $view);
         call_user_func_array([$this->_pdf, "openHere"], $options);
-    }
-
-    /**
-     * Remaps y coords from 4th to 1st quadrant
-     *
-     * @param float $y
-     * @return float
-     */
-    protected function y($y)
-    {
-        return $this->_height - $y;
-    }
-
-    /**
-     * Canvas implementation
-     *
-     * @param float $x1
-     * @param float $y1
-     * @param float $x2
-     * @param float $y2
-     * @param array $color
-     * @param float $width
-     * @param array $style
-     */
-    public function line($x1, $y1, $x2, $y2, $color, $width, $style = [])
-    {
-        $this->_set_stroke_color($color);
-        $this->_set_line_style($width, "butt", "", $style);
-
-        $this->_pdf->line($x1, $this->y($y1),
-            $x2, $this->y($y2));
-        $this->_set_line_transparency("Normal", $this->_current_opacity);
     }
 
     /**
@@ -572,6 +462,48 @@ class CPDF implements Canvas
     }
 
     /**
+     * Sets the stroke color
+     *
+     * See {@link Style::set_color()} for the format of the color array.
+     * @param array $color
+     */
+    protected function _set_stroke_color($color)
+    {
+        $this->_pdf->setStrokeColor($color);
+        $alpha = isset($color["alpha"]) ? $color["alpha"] : 1;
+        if ($this->_current_opacity != 1) {
+            $alpha *= $this->_current_opacity;
+        }
+        $this->_set_line_transparency("Normal", $alpha);
+    }
+
+    /**
+     * Sets the line style
+     *
+     * @param float $width
+     * @param string $cap
+     * @param string $join
+     * @param array $dash
+     * @see Cpdf::setLineStyle()
+     *
+     */
+    protected function _set_line_style($width, $cap, $join, $dash)
+    {
+        $this->_pdf->setLineStyle($width, $cap, $join, $dash);
+    }
+
+    /**
+     * Remaps y coords from 4th to 1st quadrant
+     *
+     * @param float $y
+     * @return float
+     */
+    protected function y($y)
+    {
+        return $this->_height - $y;
+    }
+
+    /**
      * @param float $x1
      * @param float $y1
      * @param float $w
@@ -600,6 +532,22 @@ class CPDF implements Canvas
         $this->_set_fill_color($color);
         $this->_pdf->filledRectangle($x1, $this->y($y1) - $h, $w, $h);
         $this->_set_fill_transparency("Normal", $this->_current_opacity);
+    }
+
+    /**
+     * Sets the fill colour
+     *
+     * See {@link Style::set_color()} for the format of the colour array.
+     * @param array $color
+     */
+    protected function _set_fill_color($color)
+    {
+        $this->_pdf->setColor($color);
+        $alpha = isset($color["alpha"]) ? $color["alpha"] : 1;
+        if ($this->_current_opacity) {
+            $alpha *= $this->_current_opacity;
+        }
+        $this->_set_fill_transparency("Normal", $alpha);
     }
 
     /**
@@ -754,13 +702,72 @@ class CPDF implements Canvas
     }
 
     /**
+     * @param string $img
+     * @param float $x
+     * @param float $y
+     * @param int $w
+     * @param int $h
+     * @param string $resolution
+     */
+    public function image($img, $x, $y, $w, $h, $resolution = "normal")
+    {
+        [$width, $height, $type] = Helpers::dompdf_getimagesize($img, $this->get_dompdf()->getHttpContext());
+
+        $debug_png = $this->_dompdf->getOptions()->getDebugPng();
+
+        if ($debug_png) {
+            print "[image:$img|$width|$height|$type]";
+        }
+
+        switch ($type) {
+            case "jpeg":
+                if ($debug_png) {
+                    print '!!!jpg!!!';
+                }
+                $this->_pdf->addJpegFromFile($img, $x, $this->y($y) - $h, $w, $h);
+                break;
+
+            case "webp":
+                /** @noinspection PhpMissingBreakStatementInspection */
+            case "gif":
+                /** @noinspection PhpMissingBreakStatementInspection */
+            case "bmp":
+                if ($debug_png) print "!!!{$type}!!!";
+                $img = $this->_convert_to_png($img, $type);
+
+            case "png":
+                if ($debug_png) print '!!!png!!!';
+
+                $this->_pdf->addPngFromFile($img, $x, $this->y($y) - $h, $w, $h);
+                break;
+
+            case "svg":
+                if ($debug_png) print '!!!SVG!!!';
+
+                $this->_pdf->addSvgFromFile($img, $x, $this->y($y) - $h, $w, $h);
+                break;
+
+            default:
+                if ($debug_png) print '!!!unknown!!!';
+        }
+    }
+
+    /**
+     * @return Dompdf
+     */
+    public function get_dompdf()
+    {
+        return $this->_dompdf;
+    }
+
+    /**
      * Convert image to a PNG image
      *
      * @param string $image_url
      * @param string $type
      *
-     * @throws Exception
      * @return string The url of the newly converted image
+     * @throws Exception
      */
     protected function _convert_to_png($image_url, $type)
     {
@@ -769,7 +776,7 @@ class CPDF implements Canvas
         if ($filename !== null && file_exists($filename)) {
             return $filename;
         }
- 
+
         $func_name = "imagecreatefrom$type";
 
         if (!function_exists($func_name)) {
@@ -804,57 +811,6 @@ class CPDF implements Canvas
         Cache::addTempImage($image_url, $filename);
 
         return $filename;
-    }
-
-    /**
-     * @param string $img
-     * @param float $x
-     * @param float $y
-     * @param int $w
-     * @param int $h
-     * @param string $resolution
-     */
-    public function image($img, $x, $y, $w, $h, $resolution = "normal")
-    {
-        [$width, $height, $type] = Helpers::dompdf_getimagesize($img, $this->get_dompdf()->getHttpContext());
-
-        $debug_png = $this->_dompdf->getOptions()->getDebugPng();
-
-        if ($debug_png) {
-            print "[image:$img|$width|$height|$type]";
-        }
-
-        switch ($type) {
-            case "jpeg":
-                if ($debug_png) {
-                    print '!!!jpg!!!';
-                }
-                $this->_pdf->addJpegFromFile($img, $x, $this->y($y) - $h, $w, $h);
-                break;
-
-            case "webp":
-            /** @noinspection PhpMissingBreakStatementInspection */
-            case "gif":
-            /** @noinspection PhpMissingBreakStatementInspection */
-            case "bmp":
-                if ($debug_png) print "!!!{$type}!!!";
-                $img = $this->_convert_to_png($img, $type);
-
-            case "png":
-                if ($debug_png) print '!!!png!!!';
-
-                $this->_pdf->addPngFromFile($img, $x, $this->y($y) - $h, $w, $h);
-                break;
-
-            case "svg":
-                if ($debug_png) print '!!!SVG!!!';
-
-                $this->_pdf->addSvgFromFile($img, $x, $this->y($y) - $h, $w, $h);
-                break;
-
-            default:
-                if ($debug_png) print '!!!unknown!!!';
-        }
     }
 
     public function select($x, $y, $w, $h, $font, $size, $color = [0, 0, 0], $opts = [])
@@ -923,39 +879,12 @@ class CPDF implements Canvas
     }
 
     /**
-     * @param float $x
-     * @param float $y
-     * @param string $text
-     * @param string $font
-     * @param float $size
-     * @param array $color
-     * @param float $word_space
-     * @param float $char_space
-     * @param float $angle
-     */
-    public function text($x, $y, $text, $font, $size, $color = [0, 0, 0], $word_space = 0.0, $char_space = 0.0, $angle = 0.0)
-    {
-        $pdf = $this->_pdf;
-
-        $this->_set_fill_color($color);
-
-        $is_font_subsetting = $this->_dompdf->getOptions()->getIsFontSubsettingEnabled();
-        $pdf->selectFont($font . '.afm', '', true, $is_font_subsetting);
-
-        $pdf->addText($x, $this->y($y) - $pdf->getFontHeight($size), $size, $text, $angle, $word_space, $char_space);
-
-        $this->_set_fill_transparency("Normal", $this->_current_opacity);
-    }
-
-    /**
      * @param string $code
      */
     public function javascript($code)
     {
         $this->_pdf->addJavascript($code);
     }
-
-    //........................................................................
 
     /**
      * Add a named destination (similar to <a name="foo">...</a> in html)
@@ -1008,6 +937,19 @@ class CPDF implements Canvas
     /**
      * @param string $font
      * @param float $size
+     * @return float
+     */
+    public function get_font_baseline($font, $size)
+    {
+        $ratio = $this->_dompdf->getOptions()->getFontHeightRatio();
+        return $this->get_font_height($font, $size) / $ratio;
+    }
+
+    //........................................................................
+
+    /**
+     * @param string $font
+     * @param float $size
      * @return float|int
      * @throws FontNotFoundException
      */
@@ -1017,23 +959,6 @@ class CPDF implements Canvas
         $this->_pdf->selectFont($font, '', true, $options->getIsFontSubsettingEnabled());
 
         return $this->_pdf->getFontHeight($size) * $options->getFontHeightRatio();
-    }
-
-    /*function get_font_x_height($font, $size) {
-      $this->_pdf->selectFont($font);
-      $ratio = $this->_dompdf->getOptions()->getFontHeightRatio();
-      return $this->_pdf->getFontXHeight($size) * $ratio;
-    }*/
-
-    /**
-     * @param string $font
-     * @param float $size
-     * @return float
-     */
-    public function get_font_baseline($font, $size)
-    {
-        $ratio = $this->_dompdf->getOptions()->getFontHeightRatio();
-        return $this->get_font_height($font, $size) / $ratio;
     }
 
     /**
@@ -1077,7 +1002,7 @@ class CPDF implements Canvas
     {
         if (is_callable($code)) {
             $this->_page_text[] = [
-                "_t"       => "callback",
+                "_t" => "callback",
                 "callback" => $code
             ];
         } else {
@@ -1097,6 +1022,44 @@ class CPDF implements Canvas
         $ret = $this->_pdf->newPage();
         $this->_pages[] = $ret;
         return $ret;
+    }
+
+    /*function get_font_x_height($font, $size) {
+      $this->_pdf->selectFont($font);
+      $ratio = $this->_dompdf->getOptions()->getFontHeightRatio();
+      return $this->_pdf->getFontXHeight($size) * $ratio;
+    }*/
+
+    /**
+     * Streams the PDF to the client.
+     *
+     * @param string $filename The filename to present to the client.
+     * @param array $options Associative array: 'compress' => 1 or 0 (default 1); 'Attachment' => 1 or 0 (default 1).
+     */
+    public function stream($filename = "document.pdf", $options = [])
+    {
+        if (headers_sent()) {
+            die("Unable to stream pdf: headers already sent");
+        }
+
+        if (!isset($options["compress"])) $options["compress"] = true;
+        if (!isset($options["Attachment"])) $options["Attachment"] = true;
+
+        $this->_add_page_text();
+
+        $debug = !$options['compress'];
+        $tmp = ltrim($this->_pdf->output($debug));
+
+        header("Cache-Control: private");
+        header("Content-Type: application/pdf");
+        header("Content-Length: " . mb_strlen($tmp, "8bit"));
+
+        $filename = str_replace(["\n", "'"], "", basename($filename, ".pdf")) . ".pdf";
+        $attachment = $options["Attachment"] ? "attachment" : "inline";
+        header(Helpers::buildContentDispositionHeader($attachment, $filename));
+
+        echo $tmp;
+        flush();
     }
 
     /**
@@ -1148,35 +1111,72 @@ class CPDF implements Canvas
     }
 
     /**
-     * Streams the PDF to the client.
+     * Reopens an existing 'object'
      *
-     * @param string $filename The filename to present to the client.
-     * @param array $options Associative array: 'compress' => 1 or 0 (default 1); 'Attachment' => 1 or 0 (default 1).
+     * @param int $object the ID of a previously opened object
+     * @see CPDF::open_object()
      */
-    public function stream($filename = "document.pdf", $options = [])
+    public function reopen_object($object)
     {
-        if (headers_sent()) {
-            die("Unable to stream pdf: headers already sent");
-        }
+        $this->_pdf->reopenObject($object);
+        $this->_pdf->saveState();
+    }
 
-        if (!isset($options["compress"])) $options["compress"] = true;
-        if (!isset($options["Attachment"])) $options["Attachment"] = true;
+    /**
+     * @param float $x
+     * @param float $y
+     * @param string $text
+     * @param string $font
+     * @param float $size
+     * @param array $color
+     * @param float $word_space
+     * @param float $char_space
+     * @param float $angle
+     */
+    public function text($x, $y, $text, $font, $size, $color = [0, 0, 0], $word_space = 0.0, $char_space = 0.0, $angle = 0.0)
+    {
+        $pdf = $this->_pdf;
 
-        $this->_add_page_text();
+        $this->_set_fill_color($color);
 
-        $debug = !$options['compress'];
-        $tmp = ltrim($this->_pdf->output($debug));
+        $is_font_subsetting = $this->_dompdf->getOptions()->getIsFontSubsettingEnabled();
+        $pdf->selectFont($font . '.afm', '', true, $is_font_subsetting);
 
-        header("Cache-Control: private");
-        header("Content-Type: application/pdf");
-        header("Content-Length: " . mb_strlen($tmp, "8bit"));
+        $pdf->addText($x, $this->y($y) - $pdf->getFontHeight($size), $size, $text, $angle, $word_space, $char_space);
 
-        $filename = str_replace(["\n", "'"], "", basename($filename, ".pdf")) . ".pdf";
-        $attachment = $options["Attachment"] ? "attachment" : "inline";
-        header(Helpers::buildContentDispositionHeader($attachment, $filename));
+        $this->_set_fill_transparency("Normal", $this->_current_opacity);
+    }
 
-        echo $tmp;
-        flush();
+    /**
+     * Canvas implementation
+     *
+     * @param float $x1
+     * @param float $y1
+     * @param float $x2
+     * @param float $y2
+     * @param array $color
+     * @param float $width
+     * @param array $style
+     */
+    public function line($x1, $y1, $x2, $y2, $color, $width, $style = [])
+    {
+        $this->_set_stroke_color($color);
+        $this->_set_line_style($width, "butt", "", $style);
+
+        $this->_pdf->line($x1, $this->y($y1),
+            $x2, $this->y($y2));
+        $this->_set_line_transparency("Normal", $this->_current_opacity);
+    }
+
+    /**
+     * Closes the current 'object'
+     *
+     * @see CPDF::open_object()
+     */
+    public function close_object()
+    {
+        $this->_pdf->restoreState();
+        $this->_pdf->closeObject();
     }
 
     /**

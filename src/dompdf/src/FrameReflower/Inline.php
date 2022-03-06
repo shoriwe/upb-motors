@@ -5,6 +5,7 @@
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\FrameReflower;
 
 use Dompdf\FrameDecorator\Block as BlockFrameDecorator;
@@ -25,51 +26,6 @@ class Inline extends AbstractFrameReflower
     function __construct(InlineFrameDecorator $frame)
     {
         parent::__construct($frame);
-    }
-
-    /**
-     * Handle reflow of empty inline frames.
-     *
-     * Regular inline frames are positioned together with their text (or inline)
-     * children after child reflow. Empty inline frames have no children that
-     * could determine the positioning, so they need to be handled separately.
-     *
-     * @param BlockFrameDecorator $block
-     */
-    protected function reflow_empty(BlockFrameDecorator $block): void
-    {
-        /** @var InlineFrameDecorator */
-        $frame = $this->_frame;
-        $style = $frame->get_style();
-
-        // Resolve width, so the margin width can be checked
-        $style->width = 0;
-
-        $cb = $frame->get_containing_block();
-        $line = $block->get_current_line_box();
-        $width = $frame->get_margin_width();
-
-        if ($width > ($cb["w"] - $line->left - $line->w - $line->right)) {
-            $block->add_line();
-
-            // Find the appropriate inline ancestor to split
-            $child = $frame;
-            $p = $child->get_parent();
-            while ($p instanceof InlineFrameDecorator && !$child->get_prev_sibling()) {
-                $child = $p;
-                $p = $p->get_parent();
-            }
-
-            if ($p instanceof InlineFrameDecorator) {
-                // Split parent and stop current reflow. Reflow continues
-                // via child-reflow loop of split parent
-                $p->split($child);
-                return;
-            }
-        }
-
-        $frame->position();
-        $block->add_frame_to_line($frame);
     }
 
     /**
@@ -171,5 +127,50 @@ class Inline extends AbstractFrameReflower
         if ($block) {
             $block->add_frame_to_line($frame);
         }
+    }
+
+    /**
+     * Handle reflow of empty inline frames.
+     *
+     * Regular inline frames are positioned together with their text (or inline)
+     * children after child reflow. Empty inline frames have no children that
+     * could determine the positioning, so they need to be handled separately.
+     *
+     * @param BlockFrameDecorator $block
+     */
+    protected function reflow_empty(BlockFrameDecorator $block): void
+    {
+        /** @var InlineFrameDecorator */
+        $frame = $this->_frame;
+        $style = $frame->get_style();
+
+        // Resolve width, so the margin width can be checked
+        $style->width = 0;
+
+        $cb = $frame->get_containing_block();
+        $line = $block->get_current_line_box();
+        $width = $frame->get_margin_width();
+
+        if ($width > ($cb["w"] - $line->left - $line->w - $line->right)) {
+            $block->add_line();
+
+            // Find the appropriate inline ancestor to split
+            $child = $frame;
+            $p = $child->get_parent();
+            while ($p instanceof InlineFrameDecorator && !$child->get_prev_sibling()) {
+                $child = $p;
+                $p = $p->get_parent();
+            }
+
+            if ($p instanceof InlineFrameDecorator) {
+                // Split parent and stop current reflow. Reflow continues
+                // via child-reflow loop of split parent
+                $p->split($child);
+                return;
+            }
+        }
+
+        $frame->position();
+        $block->add_frame_to_line($frame);
     }
 }

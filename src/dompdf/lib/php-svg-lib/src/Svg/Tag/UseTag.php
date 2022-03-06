@@ -18,6 +18,39 @@ class UseTag extends AbstractTag
     /** @var AbstractTag */
     protected $reference;
 
+    public function handle($attributes)
+    {
+        parent::handle($attributes);
+
+        if (!$this->reference) {
+            return;
+        }
+
+        $attributes = array_merge($this->reference->attributes, $attributes);
+
+        $this->reference->handle($attributes);
+
+        foreach ($this->reference->children as $_child) {
+            $_attributes = array_merge($_child->attributes, $attributes);
+            $_child->handle($_attributes);
+        }
+    }
+
+    public function handleEnd()
+    {
+        parent::handleEnd();
+
+        if (!$this->reference) {
+            return;
+        }
+
+        $this->reference->handleEnd();
+
+        foreach ($this->reference->children as $_child) {
+            $_child->handleEnd();
+        }
+    }
+
     protected function before($attributes)
     {
         if (isset($attributes['x'])) {
@@ -51,7 +84,8 @@ class UseTag extends AbstractTag
         $surface->translate($this->x, $this->y);
     }
 
-    protected function after() {
+    protected function after()
+    {
         parent::after();
 
         if ($this->reference) {
@@ -59,38 +93,5 @@ class UseTag extends AbstractTag
         }
 
         $this->getDocument()->getSurface()->restore();
-    }
-
-    public function handle($attributes)
-    {
-        parent::handle($attributes);
-
-        if (!$this->reference) {
-            return;
-        }
-
-        $attributes = array_merge($this->reference->attributes, $attributes);
-
-        $this->reference->handle($attributes);
-
-        foreach ($this->reference->children as $_child) {
-            $_attributes = array_merge($_child->attributes, $attributes);
-            $_child->handle($_attributes);
-        }
-    }
-
-    public function handleEnd()
-    {
-        parent::handleEnd();
-
-        if (!$this->reference) {
-            return;
-        }
-
-        $this->reference->handleEnd();
-
-        foreach ($this->reference->children as $_child) {
-            $_child->handleEnd();
-        }
     }
 } 

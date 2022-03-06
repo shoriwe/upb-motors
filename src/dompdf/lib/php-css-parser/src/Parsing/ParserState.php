@@ -75,6 +75,63 @@ class ParserState
     }
 
     /**
+     * @param string $sString
+     *
+     * @return array<int, string>
+     */
+    private function strsplit($sString)
+    {
+        if ($this->oParserSettings->bMultibyteSupport) {
+            if ($this->streql($this->sCharset, 'utf-8')) {
+                return preg_split('//u', $sString, -1, PREG_SPLIT_NO_EMPTY);
+            } else {
+                $iLength = mb_strlen($sString, $this->sCharset);
+                $aResult = [];
+                for ($i = 0; $i < $iLength; ++$i) {
+                    $aResult[] = mb_substr($sString, $i, 1, $this->sCharset);
+                }
+                return $aResult;
+            }
+        } else {
+            if ($sString === '') {
+                return [];
+            } else {
+                return str_split($sString);
+            }
+        }
+    }
+
+    /**
+     * @param string $sString1
+     * @param string $sString2
+     * @param bool $bCaseInsensitive
+     *
+     * @return bool
+     */
+    public function streql($sString1, $sString2, $bCaseInsensitive = true)
+    {
+        if ($bCaseInsensitive) {
+            return $this->strtolower($sString1) === $this->strtolower($sString2);
+        } else {
+            return $sString1 === $sString2;
+        }
+    }
+
+    /**
+     * @param string $sString
+     *
+     * @return string
+     */
+    private function strtolower($sString)
+    {
+        if ($this->oParserSettings->bMultibyteSupport) {
+            return mb_strtolower($sString, $this->sCharset);
+        } else {
+            return strtolower($sString);
+        }
+    }
+
+    /**
      * @return string
      */
     public function getCharset()
@@ -197,33 +254,41 @@ class ParserState
     }
 
     /**
-     * @return array<int, Comment>|void
+     * @param int $iLength
+     * @param int $iOffset
      *
-     * @throws UnexpectedEOFException
-     * @throws UnexpectedTokenException
+     * @return string
      */
-    public function consumeWhiteSpace()
+    public function peek($iLength = 1, $iOffset = 0)
     {
-        $comments = [];
-        do {
-            while (preg_match('/\\s/isSu', $this->peek()) === 1) {
-                $this->consume(1);
-            }
-            if ($this->oParserSettings->bLenientParsing) {
-                try {
-                    $oComment = $this->consumeComment();
-                } catch (UnexpectedEOFException $e) {
-                    $this->iCurrentPosition = $this->iLength;
-                    return;
-                }
-            } else {
-                $oComment = $this->consumeComment();
-            }
-            if ($oComment !== false) {
-                $comments[] = $oComment;
-            }
-        } while ($oComment !== false);
-        return $comments;
+        $iOffset += $this->iCurrentPosition;
+        if ($iOffset >= $this->iLength) {
+            return '';
+        }
+        return $this->substr($iOffset, $iLength);
+    }
+
+    /**
+     * @param int $iStart
+     * @param int $iLength
+     *
+     * @return string
+     */
+    private function substr($iStart, $iLength)
+    {
+        if ($iLength < 0) {
+            $iLength = $this->iLength - $iStart + $iLength;
+        }
+        if ($iStart + $iLength > $this->iLength) {
+            $iLength = $this->iLength - $iStart;
+        }
+        $sResult = '';
+        while ($iLength > 0) {
+            $sResult .= $this->aText[$iStart];
+            $iStart++;
+            $iLength--;
+        }
+        return $sResult;
     }
 
     /**
@@ -238,21 +303,6 @@ class ParserState
         return ($sPeek == '')
             ? false
             : $this->streql($sPeek, $sString, $bCaseInsensitive);
-    }
-
-    /**
-     * @param int $iLength
-     * @param int $iOffset
-     *
-     * @return string
-     */
-    public function peek($iLength = 1, $iOffset = 0)
-    {
-        $iOffset += $this->iCurrentPosition;
-        if ($iOffset >= $this->iLength) {
-            return '';
-        }
-        return $this->substr($iOffset, $iLength);
     }
 
     /**
@@ -287,6 +337,20 @@ class ParserState
     }
 
     /**
+     * @param string $sString
+     *
+     * @return int
+     */
+    public function strlen($sString)
+    {
+        if ($this->oParserSettings->bMultibyteSupport) {
+            return mb_strlen($sString, $this->sCharset);
+        } else {
+            return strlen($sString);
+        }
+    }
+
+    /**
      * @param string $mExpression
      * @param int|null $iMaxLength
      *
@@ -303,6 +367,44 @@ class ParserState
             return $this->consume($aMatches[0][0]);
         }
         throw new UnexpectedTokenException($mExpression, $this->peek(5), 'expression', $this->iLineNo);
+    }
+
+    /**
+     * @return string
+     */
+    private function inputLeft()
+    {
+        return $this->substr($this->iCurrentPosition, -1);
+    }
+
+    /**
+     * @return array<int, Comment>|void
+     *
+     * @throws UnexpectedEOFException
+     * @throws UnexpectedTokenException
+     */
+    public function consumeWhiteSpace()
+    {
+        $comments = [];
+        do {
+            while (preg_match('/\\s/isSu', $this->peek()) === 1) {
+                $this->consume(1);
+            }
+            if ($this->oParserSettings->bLenientParsing) {
+                try {
+                    $oComment = $this->consumeComment();
+                } catch (UnexpectedEOFException $e) {
+                    $this->iCurrentPosition = $this->iLength;
+                    return;
+                }
+            } else {
+                $oComment = $this->consumeComment();
+            }
+            if ($oComment !== false) {
+                $comments[] = $oComment;
+            }
+        } while ($oComment !== false);
+        return $comments;
     }
 
     /**
@@ -330,14 +432,6 @@ class ParserState
         }
 
         return $mComment;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnd()
-    {
-        return $this->iCurrentPosition >= $this->iLength;
     }
 
     /**
@@ -387,27 +481,11 @@ class ParserState
     }
 
     /**
-     * @return string
-     */
-    private function inputLeft()
-    {
-        return $this->substr($this->iCurrentPosition, -1);
-    }
-
-    /**
-     * @param string $sString1
-     * @param string $sString2
-     * @param bool $bCaseInsensitive
-     *
      * @return bool
      */
-    public function streql($sString1, $sString2, $bCaseInsensitive = true)
+    public function isEnd()
     {
-        if ($bCaseInsensitive) {
-            return $this->strtolower($sString1) === $this->strtolower($sString2);
-        } else {
-            return $sString1 === $sString2;
-        }
+        return $this->iCurrentPosition >= $this->iLength;
     }
 
     /**
@@ -418,84 +496,6 @@ class ParserState
     public function backtrack($iAmount)
     {
         $this->iCurrentPosition -= $iAmount;
-    }
-
-    /**
-     * @param string $sString
-     *
-     * @return int
-     */
-    public function strlen($sString)
-    {
-        if ($this->oParserSettings->bMultibyteSupport) {
-            return mb_strlen($sString, $this->sCharset);
-        } else {
-            return strlen($sString);
-        }
-    }
-
-    /**
-     * @param int $iStart
-     * @param int $iLength
-     *
-     * @return string
-     */
-    private function substr($iStart, $iLength)
-    {
-        if ($iLength < 0) {
-            $iLength = $this->iLength - $iStart + $iLength;
-        }
-        if ($iStart + $iLength > $this->iLength) {
-            $iLength = $this->iLength - $iStart;
-        }
-        $sResult = '';
-        while ($iLength > 0) {
-            $sResult .= $this->aText[$iStart];
-            $iStart++;
-            $iLength--;
-        }
-        return $sResult;
-    }
-
-    /**
-     * @param string $sString
-     *
-     * @return string
-     */
-    private function strtolower($sString)
-    {
-        if ($this->oParserSettings->bMultibyteSupport) {
-            return mb_strtolower($sString, $this->sCharset);
-        } else {
-            return strtolower($sString);
-        }
-    }
-
-    /**
-     * @param string $sString
-     *
-     * @return array<int, string>
-     */
-    private function strsplit($sString)
-    {
-        if ($this->oParserSettings->bMultibyteSupport) {
-            if ($this->streql($this->sCharset, 'utf-8')) {
-                return preg_split('//u', $sString, -1, PREG_SPLIT_NO_EMPTY);
-            } else {
-                $iLength = mb_strlen($sString, $this->sCharset);
-                $aResult = [];
-                for ($i = 0; $i < $iLength; ++$i) {
-                    $aResult[] = mb_substr($sString, $i, 1, $this->sCharset);
-                }
-                return $aResult;
-            }
-        } else {
-            if ($sString === '') {
-                return [];
-            } else {
-                return str_split($sString);
-            }
-        }
     }
 
     /**

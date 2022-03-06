@@ -5,16 +5,17 @@
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\Frame;
 
 use Dompdf\Dompdf;
 use Dompdf\Exception;
 use Dompdf\Frame;
 use Dompdf\FrameDecorator\AbstractFrameDecorator;
-use DOMXPath;
 use Dompdf\FrameDecorator\Page as PageFrameDecorator;
 use Dompdf\FrameReflower\Page as PageFrameReflower;
 use Dompdf\Positioner\AbstractPositioner;
+use DOMXPath;
 
 /**
  * Contains frame decorating logic
@@ -30,7 +31,7 @@ use Dompdf\Positioner\AbstractPositioner;
 class Factory
 {
 
-     /**
+    /**
      * Array of positioners for specific frame types
      *
      * @var AbstractPositioner[]
@@ -57,13 +58,13 @@ class Factory
     /**
      * Decorate a Frame
      *
-     * @param Frame $frame   The frame to decorate
+     * @param Frame $frame The frame to decorate
      * @param Dompdf $dompdf The dompdf instance
-     * @param Frame $root    The root of the frame
+     * @param Frame $root The root of the frame
      *
-     * @throws Exception
      * @return AbstractFrameDecorator
      * FIXME: this is admittedly a little smelly...
+     * @throws Exception
      */
     static function decorate_frame(Frame $frame, Dompdf $dompdf, Frame $root = null)
     {
@@ -195,8 +196,8 @@ class Factory
             $reflower = "Image";
         }
 
-        $decorator  = "Dompdf\\FrameDecorator\\$decorator";
-        $reflower   = "Dompdf\\FrameReflower\\$reflower";
+        $decorator = "Dompdf\\FrameDecorator\\$decorator";
+        $reflower = "Dompdf\\FrameReflower\\$reflower";
 
         /** @var AbstractFrameDecorator $deco */
         $deco = new $decorator($frame, $dompdf);
@@ -258,7 +259,7 @@ class Factory
     protected static function getPositionerInstance($type)
     {
         if (!isset(self::$_positioners[$type])) {
-            $class = '\\Dompdf\\Positioner\\'.$type;
+            $class = '\\Dompdf\\Positioner\\' . $type;
             self::$_positioners[$type] = new $class();
         }
         return self::$_positioners[$type];

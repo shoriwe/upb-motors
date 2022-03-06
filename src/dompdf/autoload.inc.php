@@ -12,8 +12,7 @@
 //require_once __DIR__ . '/lib/html5lib/Parser.php';
 
 // Sabberworm
-spl_autoload_register(function($class)
-{
+spl_autoload_register(function ($class) {
     if (strpos($class, 'Sabberworm') !== false) {
         $file = str_replace('\\', DIRECTORY_SEPARATOR, $class);
         $file = realpath(__DIR__ . '/lib/php-css-parser/lib/' . (empty($file) ? '' : DIRECTORY_SEPARATOR) . $file . '.php');

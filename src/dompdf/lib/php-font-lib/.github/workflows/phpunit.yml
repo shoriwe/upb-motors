@@ -28,17 +28,17 @@ jobs:
 
     steps:
 
-        - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-        - name: Install PHP
-          uses: "shivammathur/setup-php@v2"
-          with:
-            php-version: "${{ matrix.php-version }}"
-            coverage: "none"
-            ini-values: "zend.assertions=1"
+      - name: Install PHP
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: "none"
+          ini-values: "zend.assertions=1"
 
-        - name: Install Composer dependencies
-          run: composer install --no-progress --ansi
+      - name: Install Composer dependencies
+        run: composer install --no-progress --ansi
 
-        - name: Run tests ${{ matrix.php-version }}
-          run: SYMFONY_PHPUNIT_REMOVE_RETURN_TYPEHINT=1 bin/simple-phpunit --color=always
+      - name: Run tests ${{ matrix.php-version }}
+        run: SYMFONY_PHPUNIT_REMOVE_RETURN_TYPEHINT=1 bin/simple-phpunit --color=always

@@ -20,12 +20,14 @@ VALUES ('AUTH'),
        ('ERROR'),
        ('LOG');
 
+DELIMITER @@
 CREATE FUNCTION get_log_level(nombre VARCHAR(500)) RETURNS INT
     LANGUAGE SQL
 BEGIN
     SELECT id INTO @resultado FROM niveles_log WHERE niveles_log.nombre = nombre LIMIT 1;
     RETURN @resultado;
 END;
+@@
 
 CREATE TABLE IF NOT EXISTS app_logs
 (
@@ -44,6 +46,7 @@ BEGIN
                           mensaje)
     VALUES (NOW(), get_log_level('AUTH'), CONCAT('COULD NOT LOGIN AS ', correo));
 END;
+@@
 
 CREATE PROCEDURE
     log_login_succeed(IN correo VARCHAR(500))
@@ -53,6 +56,9 @@ BEGIN
                           mensaje)
     VALUES (NOW(), get_log_level('LOG'), CONCAT('LOGIN SUCCEED ', correo));
 END;
+@@
+
+DELIMITER ;
 
 -- -- permisos -- --
 CREATE TABLE IF NOT EXISTS permisos
@@ -69,11 +75,14 @@ VALUES ('GERENTE'),
        ('INVENTARIO'),
        ('ADMIN');
 
+DELIMITER @@
 CREATE FUNCTION get_permisos_id(nombre_permiso VARCHAR(45)) RETURNS INT
 BEGIN
     SELECT id INTO @resultado FROM permisos WHERE nombre = nombre_permiso LIMIT 1;
     RETURN @resultado;
 END;
+@@
+DELIMITER ;
 -- -- empleados -- --
 CREATE TABLE IF NOT EXISTS empleados
 (
@@ -121,39 +130,40 @@ CREATE TABLE IF NOT EXISTS clientes
 -- -- ordenes_compra -- --
 CREATE TABLE IF NOT EXISTS ordenes_compra
 (
-    id              INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    empleados_id    INT NOT NULL,
-    clientes_id     INT NOT NULL,
-    fehca           DATE NOT NULL,
+    id           INT  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    empleados_id INT  NOT NULL,
+    clientes_id  INT  NOT NULL,
+    fehca        DATE NOT NULL,
     CONSTRAINT fk_clientes_id FOREIGN KEY (clientes_id) REFERENCES clientes (id),
     CONSTRAINT fk_empleados_id FOREIGN KEY (empleados_id) REFERENCES empleados (id)
-
-);
-
--- -- detalles_ordenes_compra -- --
-CREATE TABLE IF NOT EXISTS detalles_ordenes_compra
-(
-    id              INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    cantidad        INT NOT NULL,
-    decuento        DOUBLE NOT NULL,
-    valor_total     DOUBLE NOT NULL,
-    productos_id    INT NOT NULL,
-    tipo_pago_id    INT NOT NULL,
-    orden_compra_id INT NOT NULL,
-    CONSTRAINT fk_productos_id FOREIGN KEY (productos_id) REFERENCES inventario (id),
-    CONSTRAINT fk_orden_compra_id FOREIGN KEY (orden_compra_id) REFERENCES ordenes_compra (id),
-    CONSTRAINT fk_tipo_pago_id FOREIGN KEY (tipo_pago_id) REFERENCES tipo_pago (id)
 
 );
 
 -- -- ordenes_compra -- --
 CREATE TABLE IF NOT EXISTS tipo_pago
 (
-    id              INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    tipo            VARCHAR(10) NOT NULL
+    id   INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    tipo VARCHAR(10) NOT NULL
+);
+
+-- -- detalles_ordenes_compra -- --
+CREATE TABLE IF NOT EXISTS detalles_ordenes_compra
+(
+    id              INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    cantidad        INT    NOT NULL,
+    decuento        DOUBLE NOT NULL,
+    valor_total     DOUBLE NOT NULL,
+    productos_id    INT    NOT NULL,
+    tipo_pago_id    INT    NOT NULL,
+    orden_compra_id INT    NOT NULL,
+    CONSTRAINT fk_productos_id FOREIGN KEY (productos_id) REFERENCES inventario (id),
+    CONSTRAINT fk_orden_compra_id FOREIGN KEY (orden_compra_id) REFERENCES ordenes_compra (id),
+    CONSTRAINT fk_tipo_pago_id FOREIGN KEY (tipo_pago_id) REFERENCES tipo_pago (id)
+
 );
 
 -- -- Procesos -- --
+DELIMITER @@
 CREATE PROCEDURE actualizar_contrasena(IN v_id INT, IN hash_nueva_contrasena VARCHAR(500))
 BEGIN
     UPDATE
@@ -161,7 +171,7 @@ BEGIN
     SET empleados.hash_contrasena = hash_nueva_contrasena
     WHERE empleados.id = v_id;
 END;
-
+@@
 CREATE FUNCTION registrar_producto(
     v_cantidad INT,
     v_nombre VARCHAR(255),
@@ -219,7 +229,7 @@ BEGIN
     END IF;
     RETURN true;
 END;
-
+@@
 CREATE FUNCTION registrar_empleado(
     v_permiso_id int,
     v_nombre_completo VARCHAR(100),
@@ -253,7 +263,7 @@ BEGIN
     WHERE cedula = v_cedula;
     RETURN @result > 0;
 END;
-
+@@
 CREATE FUNCTION update_user(
     v_id INT,
     v_permission INT,
@@ -331,7 +341,7 @@ BEGIN
     WHERE id = v_id;
     return true;
 END;
-
+@@
 CREATE FUNCTION update_product(
     v_id INT,
     v_cantidad INT,
@@ -388,7 +398,7 @@ BEGIN
     END IF;
     RETURN true;
 END;
-
+@@
 CREATE FUNCTION registrar_cliente(
     v_nombre_completo VARCHAR(100),
     v_cedula VARCHAR(45),
@@ -416,7 +426,7 @@ BEGIN
     WHERE cedula = v_cedula;
     RETURN @result > 0;
 END;
-
+@@
 CREATE FUNCTION update_client(
     v_id INT,
     v_name VARCHAR(45),
@@ -479,6 +489,7 @@ BEGIN
     WHERE id = v_id;
     return true;
 END;
+@@
 
 CREATE FUNCTION registrar_orden(
     v_empleados_id INT,
@@ -497,3 +508,6 @@ BEGIN
             v_fehca);
     RETURN TRUE;
 END;
+@@
+
+DELIMITER ;

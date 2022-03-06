@@ -18,19 +18,17 @@ use Sabberworm\CSS\Rule\Rule;
 abstract class RuleSet implements Renderable, Commentable
 {
     /**
-     * @var array<string, Rule>
-     */
-    private $aRules;
-
-    /**
      * @var int
      */
     protected $iLineNo;
-
     /**
      * @var array<array-key, Comment>
      */
     protected $aComments;
+    /**
+     * @var array<string, Rule>
+     */
+    private $aRules;
 
     /**
      * @param int $iLineNo
@@ -82,14 +80,6 @@ abstract class RuleSet implements Renderable, Commentable
             }
         }
         $oParserState->consume('}');
-    }
-
-    /**
-     * @return int
-     */
-    public function getLineNo()
-    {
-        return $this->iLineNo;
     }
 
     /**
@@ -169,6 +159,14 @@ abstract class RuleSet implements Renderable, Commentable
             return $first->getLineNo() - $second->getLineNo();
         });
         return $aResult;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLineNo()
+    {
+        return $this->iLineNo;
     }
 
     /**

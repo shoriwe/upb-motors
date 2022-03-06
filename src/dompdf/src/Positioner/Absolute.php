@@ -28,8 +28,8 @@ class Absolute extends AbstractPositioner
 
             // If the `top` value is `auto`, the frame will be repositioned
             // after its height has been resolved
-            $left = (float) $style->length_in_pt($style->left, $cbw);
-            $top = (float) $style->length_in_pt($style->top, $cbh);
+            $left = (float)$style->length_in_pt($style->left, $cbw);
+            $top = (float)$style->length_in_pt($style->top, $cbh);
 
             $frame->set_position($cbx + $left, $cby + $top);
         } else {
@@ -39,7 +39,7 @@ class Absolute extends AbstractPositioner
             $style = $frame->get_style();
             $block_parent = $frame->find_block_parent();
             $current_line = $block_parent->get_current_line_box();
-    
+
             list($x, $y, $w, $h) = $frame->get_containing_block();
             $inflow_x = $block_parent->get_content_box()["x"] + $current_line->left + $current_line->w;
             $inflow_y = $current_line->y;

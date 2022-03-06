@@ -5,6 +5,7 @@
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\Renderer;
 
 use Dompdf\Frame;
@@ -34,10 +35,10 @@ class Block extends AbstractRenderer
 
         if ($node->nodeName === "body") {
             $h = $frame->get_containing_block("h") - (float)$style->length_in_pt([
-                        $style->margin_top,
-                        $style->border_top_width,
-                        $style->border_bottom_width,
-                        $style->margin_bottom],
+                    $style->margin_top,
+                    $style->border_top_width,
+                    $style->border_bottom_width,
+                    $style->margin_bottom],
                     (float)$style->length_in_pt($style->width));
         }
 
@@ -187,7 +188,7 @@ class Block extends AbstractRenderer
     {
         $style = $frame->get_style();
 
-        $width = (float) $style->length_in_pt($style->outline_width);
+        $width = (float)$style->length_in_pt($style->outline_width);
         $outline_style = $style->outline_style;
         $color = $style->outline_color;
 
@@ -195,7 +196,7 @@ class Block extends AbstractRenderer
             return;
         }
 
-        $offset = (float) $style->length_in_pt($style->outline_offset);
+        $offset = (float)$style->length_in_pt($style->outline_offset);
 
         [$x, $y, $w, $h] = $border_box;
         $d = $width + $offset;

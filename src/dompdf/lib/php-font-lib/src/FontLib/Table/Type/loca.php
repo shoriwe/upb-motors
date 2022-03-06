@@ -7,6 +7,7 @@
  */
 
 namespace FontLib\Table\Type;
+
 use FontLib\Table\Table;
 
 /**
@@ -14,67 +15,66 @@ use FontLib\Table\Table;
  *
  * @package php-font-lib
  */
-class loca extends Table {
-  protected function _parse() {
-    $font   = $this->getFont();
-    $offset = $font->pos();
+class loca extends Table
+{
+    function _encode()
+    {
+        $font = $this->getFont();
+        $data = $this->data;
 
-    $indexToLocFormat = $font->getData("head", "indexToLocFormat");
-    $numGlyphs        = $font->getData("maxp", "numGlyphs");
+        $indexToLocFormat = $font->getData("head", "indexToLocFormat");
+        $numGlyphs = $font->getData("maxp", "numGlyphs");
+        $length = 0;
 
-    $font->seek($offset);
-
-    $data = array();
-
-    // 2 bytes
-    if ($indexToLocFormat == 0) {
-      $d   = $font->read(($numGlyphs + 1) * 2);
-      $loc = unpack("n*", $d);
-
-      for ($i = 0; $i <= $numGlyphs; $i++) {
-        $data[] = isset($loc[$i + 1]) ?  $loc[$i + 1] * 2 : 0;
-      }
-    }
-
-    // 4 bytes
-    else {
-      if ($indexToLocFormat == 1) {
-        $d   = $font->read(($numGlyphs + 1) * 4);
-        $loc = unpack("N*", $d);
-
-        for ($i = 0; $i <= $numGlyphs; $i++) {
-          $data[] = isset($loc[$i + 1]) ? $loc[$i + 1] : 0;
+        // 2 bytes
+        if ($indexToLocFormat == 0) {
+            for ($i = 0; $i <= $numGlyphs; $i++) {
+                $length += $font->writeUInt16($data[$i] / 2);
+            }
+        } // 4 bytes
+        else {
+            if ($indexToLocFormat == 1) {
+                for ($i = 0; $i <= $numGlyphs; $i++) {
+                    $length += $font->writeUInt32($data[$i]);
+                }
+            }
         }
-      }
+
+        return $length;
     }
 
-    $this->data = $data;
-  }
+    protected function _parse()
+    {
+        $font = $this->getFont();
+        $offset = $font->pos();
 
-  function _encode() {
-    $font = $this->getFont();
-    $data = $this->data;
+        $indexToLocFormat = $font->getData("head", "indexToLocFormat");
+        $numGlyphs = $font->getData("maxp", "numGlyphs");
 
-    $indexToLocFormat = $font->getData("head", "indexToLocFormat");
-    $numGlyphs        = $font->getData("maxp", "numGlyphs");
-    $length           = 0;
+        $font->seek($offset);
 
-    // 2 bytes
-    if ($indexToLocFormat == 0) {
-      for ($i = 0; $i <= $numGlyphs; $i++) {
-        $length += $font->writeUInt16($data[$i] / 2);
-      }
-    }
+        $data = array();
 
-    // 4 bytes
-    else {
-      if ($indexToLocFormat == 1) {
-        for ($i = 0; $i <= $numGlyphs; $i++) {
-          $length += $font->writeUInt32($data[$i]);
+        // 2 bytes
+        if ($indexToLocFormat == 0) {
+            $d = $font->read(($numGlyphs + 1) * 2);
+            $loc = unpack("n*", $d);
+
+            for ($i = 0; $i <= $numGlyphs; $i++) {
+                $data[] = isset($loc[$i + 1]) ? $loc[$i + 1] * 2 : 0;
+            }
+        } // 4 bytes
+        else {
+            if ($indexToLocFormat == 1) {
+                $d = $font->read(($numGlyphs + 1) * 4);
+                $loc = unpack("N*", $d);
+
+                for ($i = 0; $i <= $numGlyphs; $i++) {
+                    $data[] = isset($loc[$i + 1]) ? $loc[$i + 1] : 0;
+                }
+            }
         }
-      }
-    }
 
-    return $length;
-  }
+        $this->data = $data;
+    }
 }

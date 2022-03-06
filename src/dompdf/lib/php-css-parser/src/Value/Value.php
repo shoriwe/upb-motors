@@ -24,6 +24,28 @@ abstract class Value implements Renderable
     }
 
     /**
+     * @param bool $bIgnoreCase
+     *
+     * @return CSSFunction|string
+     *
+     * @throws UnexpectedEOFException
+     * @throws UnexpectedTokenException
+     */
+    public static function parseIdentifierOrFunction(ParserState $oParserState, $bIgnoreCase = false)
+    {
+        $sResult = $oParserState->parseIdentifier($bIgnoreCase);
+
+        if ($oParserState->comes('(')) {
+            $oParserState->consume('(');
+            $aArguments = Value::parseValue($oParserState, ['=', ' ', ',']);
+            $sResult = new CSSFunction($sResult, $aArguments, ',', $oParserState->currentLine());
+            $oParserState->consume(')');
+        }
+
+        return $sResult;
+    }
+
+    /**
      * @param array<array-key, string> $aListDelimiters
      *
      * @return RuleValueList|CSSFunction|CSSString|LineName|Size|URL|string
@@ -38,7 +60,7 @@ abstract class Value implements Renderable
         $oParserState->consumeWhiteSpace();
         //Build a list of delimiters and parsed values
         while (
-            !($oParserState->comes('}') || $oParserState->comes(';') || $oParserState->comes('!')
+        !($oParserState->comes('}') || $oParserState->comes(';') || $oParserState->comes('!')
             || $oParserState->comes(')')
             || $oParserState->comes('\\'))
         ) {
@@ -89,28 +111,6 @@ abstract class Value implements Renderable
             );
         }
         return $aStack[0];
-    }
-
-    /**
-     * @param bool $bIgnoreCase
-     *
-     * @return CSSFunction|string
-     *
-     * @throws UnexpectedEOFException
-     * @throws UnexpectedTokenException
-     */
-    public static function parseIdentifierOrFunction(ParserState $oParserState, $bIgnoreCase = false)
-    {
-        $sResult = $oParserState->parseIdentifier($bIgnoreCase);
-
-        if ($oParserState->comes('(')) {
-            $oParserState->consume('(');
-            $aArguments = Value::parseValue($oParserState, ['=', ' ', ',']);
-            $sResult = new CSSFunction($sResult, $aArguments, ',', $oParserState->currentLine());
-            $oParserState->consume(')');
-        }
-
-        return $sResult;
     }
 
     /**

@@ -5,12 +5,13 @@
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\FrameReflower;
 
+use Dompdf\Exception;
 use Dompdf\FrameDecorator\Block as BlockFrameDecorator;
 use Dompdf\FrameDecorator\Table as TableFrameDecorator;
 use Dompdf\FrameDecorator\TableRow as TableRowFrameDecorator;
-use Dompdf\Exception;
 
 /**
  * Reflows table rows

@@ -12,24 +12,21 @@ use Sabberworm\CSS\Value\URL;
 class Import implements AtRule
 {
     /**
-     * @var URL
-     */
-    private $oLocation;
-
-    /**
-     * @var string
-     */
-    private $sMediaQuery;
-
-    /**
      * @var int
      */
     protected $iLineNo;
-
     /**
      * @var array<array-key, Comment>
      */
     protected $aComments;
+    /**
+     * @var URL
+     */
+    private $oLocation;
+    /**
+     * @var string
+     */
+    private $sMediaQuery;
 
     /**
      * @param URL $oLocation

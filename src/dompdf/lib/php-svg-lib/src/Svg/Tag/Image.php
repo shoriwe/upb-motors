@@ -16,16 +16,6 @@ class Image extends AbstractTag
     protected $height = 0;
     protected $href = null;
 
-    protected function before($attributes)
-    {
-        parent::before($attributes);
-
-        $surface = $this->document->getSurface();
-        $surface->save();
-
-        $this->applyTransform($attributes);
-    }
-
     public function start($attributes)
     {
         $document = $this->document;
@@ -53,6 +43,16 @@ class Image extends AbstractTag
         $document->getSurface()->transform(1, 0, 0, -1, 0, $height);
 
         $document->getSurface()->drawImage($this->href, $this->x, $this->y, $this->width, $this->height);
+    }
+
+    protected function before($attributes)
+    {
+        parent::before($attributes);
+
+        $surface = $this->document->getSurface();
+        $surface->save();
+
+        $this->applyTransform($attributes);
     }
 
     protected function after()

@@ -6,11 +6,12 @@
  * @author  Helmut Tischer <htischer@weihenstephan.org>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\Renderer;
 
-use Dompdf\Helpers;
 use Dompdf\Frame;
 use Dompdf\FrameDecorator\ListBullet as ListBulletFrameDecorator;
+use Dompdf\Helpers;
 use Dompdf\Image\Cache;
 
 /**
@@ -72,60 +73,6 @@ class ListBullet extends AbstractRenderer
         }
 
         return $cache[$type] = "$text.";
-    }
-
-    /**
-     * @param int $n
-     * @param string $type
-     * @param int|null $pad
-     *
-     * @return string
-     */
-    private function make_counter($n, $type, $pad = null)
-    {
-        $n = intval($n);
-        $text = "";
-        $uppercase = false;
-
-        switch ($type) {
-            case "decimal-leading-zero":
-            case "decimal":
-            case "1":
-                if ($pad) {
-                    $text = str_pad($n, $pad, "0", STR_PAD_LEFT);
-                } else {
-                    $text = $n;
-                }
-                break;
-
-            case "upper-alpha":
-            case "upper-latin":
-            case "A":
-                $uppercase = true;
-            case "lower-alpha":
-            case "lower-latin":
-            case "a":
-                $text = chr((($n - 1) % 26) + ord('a'));
-                break;
-
-            case "upper-roman":
-            case "I":
-                $uppercase = true;
-            case "lower-roman":
-            case "i":
-                $text = Helpers::dec2roman($n);
-                break;
-
-            case "lower-greek":
-                $text = Helpers::unichr($n + 944);
-                break;
-        }
-
-        if ($uppercase) {
-            $text = strtoupper($text);
-        }
-
-        return "$text.";
     }
 
     /**
@@ -212,8 +159,8 @@ class ListBullet extends AbstractRenderer
                         return;
                     }
 
-                    $word_spacing = (float) $style->length_in_pt($style->word_spacing);
-                    $letter_spacing = (float) $style->length_in_pt($style->letter_spacing);
+                    $word_spacing = (float)$style->length_in_pt($style->word_spacing);
+                    $letter_spacing = (float)$style->length_in_pt($style->letter_spacing);
                     $text_width = $this->_dompdf->getFontMetrics()->getTextWidth($text, $font_family, $font_size, $word_spacing, $letter_spacing);
 
                     [$x, $y] = $frame->get_position();
@@ -233,5 +180,59 @@ class ListBullet extends AbstractRenderer
         if (strlen($id) > 0) {
             $this->_canvas->add_named_dest($id);
         }
+    }
+
+    /**
+     * @param int $n
+     * @param string $type
+     * @param int|null $pad
+     *
+     * @return string
+     */
+    private function make_counter($n, $type, $pad = null)
+    {
+        $n = intval($n);
+        $text = "";
+        $uppercase = false;
+
+        switch ($type) {
+            case "decimal-leading-zero":
+            case "decimal":
+            case "1":
+                if ($pad) {
+                    $text = str_pad($n, $pad, "0", STR_PAD_LEFT);
+                } else {
+                    $text = $n;
+                }
+                break;
+
+            case "upper-alpha":
+            case "upper-latin":
+            case "A":
+                $uppercase = true;
+            case "lower-alpha":
+            case "lower-latin":
+            case "a":
+                $text = chr((($n - 1) % 26) + ord('a'));
+                break;
+
+            case "upper-roman":
+            case "I":
+                $uppercase = true;
+            case "lower-roman":
+            case "i":
+                $text = Helpers::dec2roman($n);
+                break;
+
+            case "lower-greek":
+                $text = Helpers::unichr($n + 944);
+                break;
+        }
+
+        if ($uppercase) {
+            $text = strtoupper($text);
+        }
+
+        return "$text.";
     }
 }

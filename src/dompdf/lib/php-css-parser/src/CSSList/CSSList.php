@@ -252,6 +252,36 @@ abstract class CSSList implements Renderable, Commentable
     }
 
     /**
+     * @return array<int, RuleSet|Import|Charset|CSSList>
+     */
+    public function getContents()
+    {
+        return $this->aContents;
+    }
+
+    /**
+     * @param array<array-key, Comment> $aComments
+     *
+     * @return void
+     */
+    public function setComments(array $aComments)
+    {
+        $this->aComments = $aComments;
+    }
+
+    /**
+     * Appends an item to tje list of contents.
+     *
+     * @param RuleSet|CSSList|Import|Charset $oItem
+     *
+     * @return void
+     */
+    public function append($oItem)
+    {
+        $this->aContents[] = $oItem;
+    }
+
+    /**
      * @return int
      */
     public function getLineNo()
@@ -269,18 +299,6 @@ abstract class CSSList implements Renderable, Commentable
     public function prepend($oItem)
     {
         array_unshift($this->aContents, $oItem);
-    }
-
-    /**
-     * Appends an item to tje list of contents.
-     *
-     * @param RuleSet|CSSList|Import|Charset $oItem
-     *
-     * @return void
-     */
-    public function append($oItem)
-    {
-        $this->aContents[] = $oItem;
     }
 
     /**
@@ -442,14 +460,6 @@ abstract class CSSList implements Renderable, Commentable
     abstract public function isRootList();
 
     /**
-     * @return array<int, RuleSet|Import|Charset|CSSList>
-     */
-    public function getContents()
-    {
-        return $this->aContents;
-    }
-
-    /**
      * @param array<array-key, Comment> $aComments
      *
      * @return void
@@ -465,15 +475,5 @@ abstract class CSSList implements Renderable, Commentable
     public function getComments()
     {
         return $this->aComments;
-    }
-
-    /**
-     * @param array<array-key, Comment> $aComments
-     *
-     * @return void
-     */
-    public function setComments(array $aComments)
-    {
-        $this->aComments = $aComments;
     }
 }

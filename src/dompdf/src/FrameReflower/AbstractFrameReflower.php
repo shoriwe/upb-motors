@@ -5,10 +5,10 @@
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\FrameReflower;
 
 use Dompdf\Dompdf;
-use Dompdf\Helpers;
 use Dompdf\Frame;
 use Dompdf\Frame\Factory;
 use Dompdf\FrameDecorator\AbstractFrameDecorator;
@@ -73,6 +73,115 @@ abstract class AbstractFrameReflower
     {
         $this->_min_max_child_cache = null;
         $this->_min_max_cache = null;
+    }
+
+    /**
+     * @param Block|null $block
+     */
+    abstract function reflow(Block $block = null);
+
+    /**
+     * Get the minimum and maximum preferred border-box width of the frame.
+     *
+     * Required for shrink-to-fit width calculation, as used in automatic table
+     * layout, absolute positioning, float and inline-block. This provides a
+     * basic implementation. Child classes should override this or
+     * `get_min_max_content_width` as necessary.
+     *
+     * @return array An array `[0 => min, 1 => max, "min" => min, "max" => max]`
+     *         of min and max width.
+     */
+    public function get_min_max_width(): array
+    {
+        if (!is_null($this->_min_max_cache)) {
+            return $this->_min_max_cache;
+        }
+
+        $style = $this->_frame->get_style();
+        [$min, $max] = $this->get_min_max_content_width();
+
+        // Account for margins, borders, and padding
+        $dims = [
+            $style->padding_left,
+            $style->padding_right,
+            $style->border_left_width,
+            $style->border_right_width,
+            $style->margin_left,
+            $style->margin_right
+        ];
+
+        // The containing block is not defined yet, treat percentages as 0
+        $delta = (float)$style->length_in_pt($dims, 0);
+        $min += $delta;
+        $max += $delta;
+
+        return $this->_min_max_cache = [$min, $max, "min" => $min, "max" => $max];
+    }
+
+    /**
+     * Get the minimum and maximum preferred content-box width of the frame.
+     *
+     * @return array A two-element array of min and max width.
+     */
+    public function get_min_max_content_width(): array
+    {
+        return $this->get_min_max_child_width();
+    }
+
+    /**
+     * Get the minimum and maximum preferred width of the contents of the frame,
+     * as requested by its children.
+     *
+     * @return array A two-element array of min and max width.
+     */
+    public function get_min_max_child_width(): array
+    {
+        if (!is_null($this->_min_max_child_cache)) {
+            return $this->_min_max_child_cache;
+        }
+
+        $low = [];
+        $high = [];
+
+        for ($iter = $this->_frame->get_children()->getIterator(); $iter->valid(); $iter->next()) {
+            $inline_min = 0;
+            $inline_max = 0;
+
+            // Add all adjacent inline widths together to calculate max width
+            while ($iter->valid() && ($iter->current()->is_inline_level() || $iter->current()->get_style()->display === "-dompdf-image")) {
+                $child = $iter->current();
+                $child->get_reflower()->_set_content();
+                $minmax = $child->get_min_max_width();
+
+                if (in_array($child->get_style()->white_space, ["pre", "nowrap"], true)) {
+                    $inline_min += $minmax["min"];
+                } else {
+                    $low[] = $minmax["min"];
+                }
+
+                $inline_max += $minmax["max"];
+                $iter->next();
+            }
+
+            if ($inline_min > 0) {
+                $low[] = $inline_min;
+            }
+            if ($inline_max > 0) {
+                $high[] = $inline_max;
+            }
+
+            // Skip children with absolute position
+            if ($iter->valid() && !$iter->current()->is_absolute()) {
+                $child = $iter->current();
+                $child->get_reflower()->_set_content();
+                list($low[], $high[]) = $child->get_min_max_width();
+            }
+        }
+
+        $min = count($low) ? max($low) : 0;
+        $max = count($high) ? max($high) : 0;
+
+        return $this->_min_max_child_cache = [$min, $max];
     }
 
     /**
@@ -154,7 +263,7 @@ abstract class AbstractFrameReflower
 
         // Collapse vertical margins:
         $n = $frame->get_next_sibling();
-        if ( $n && !($n->is_block_level() && $n->is_in_flow()) ) {
+        if ($n && !($n->is_block_level() && $n->is_in_flow())) {
             while ($n = $n->get_next_sibling()) {
                 if ($n->is_block_level() && $n->is_in_flow()) {
                     break;
@@ -179,7 +288,7 @@ abstract class AbstractFrameReflower
         // Collapse our first child's margin, if there is no border or padding
         if ($style->border_top_width == 0 && $style->length_in_pt($style->padding_top) == 0) {
             $f = $this->_frame->get_first_child();
-            if ( $f && !($f->is_block_level() && $f->is_in_flow()) ) {
+            if ($f && !($f->is_block_level() && $f->is_in_flow())) {
                 while ($f = $f->get_next_sibling()) {
                     if ($f->is_block_level() && $f->is_in_flow()) {
                         break;
@@ -206,7 +315,7 @@ abstract class AbstractFrameReflower
         // Collapse our last child's margin, if there is no border or padding
         if ($style->border_bottom_width == 0 && $style->length_in_pt($style->padding_bottom) == 0) {
             $l = $this->_frame->get_last_child();
-            if ( $l && !($l->is_block_level() && $l->is_in_flow()) ) {
+            if ($l && !($l->is_block_level() && $l->is_in_flow())) {
                 while ($l = $l->get_prev_sibling()) {
                     if ($l->is_block_level() && $l->is_in_flow()) {
                         break;
@@ -245,11 +354,11 @@ abstract class AbstractFrameReflower
         if ($length1 < 0 && $length2 < 0) {
             return min($length1, $length2); // min(x, y) = - max(abs(x), abs(y)), if x < 0 && y < 0
         }
-        
+
         if ($length1 < 0 || $length2 < 0) {
             return $length1 + $length2; // x + y = x - abs(y), if y < 0
         }
-        
+
         return max($length1, $length2);
     }
 
@@ -275,23 +384,18 @@ abstract class AbstractFrameReflower
             if ($left === "auto" && $right === "auto") {
                 $left = 0;
             } elseif ($left === "auto") {
-                $left = -(float) $right;
+                $left = -(float)$right;
             }
 
             if ($top === "auto" && $bottom === "auto") {
                 $top = 0;
             } elseif ($top === "auto") {
-                $top = -(float) $bottom;
+                $top = -(float)$bottom;
             }
 
-            $frame->move((float) $left, (float) $top);
+            $frame->move((float)$left, (float)$top);
         }
     }
-
-    /**
-     * @param Block|null $block
-     */
-    abstract function reflow(Block $block = null);
 
     /**
      * Resolve the `min-width` property.
@@ -374,170 +478,45 @@ abstract class AbstractFrameReflower
     }
 
     /**
-     * Get the minimum and maximum preferred width of the contents of the frame,
-     * as requested by its children.
-     *
-     * @return array A two-element array of min and max width.
+     * Handle counters and set generated content if the frame is a
+     * generated-content frame.
      */
-    public function get_min_max_child_width(): array
+    protected function _set_content(): void
     {
-        if (!is_null($this->_min_max_child_cache)) {
-            return $this->_min_max_child_cache;
+        $frame = $this->_frame;
+
+        if ($frame->content_set) {
+            return;
         }
 
-        $low = [];
-        $high = [];
+        $style = $frame->get_style();
 
-        for ($iter = $this->_frame->get_children()->getIterator(); $iter->valid(); $iter->next()) {
-            $inline_min = 0;
-            $inline_max = 0;
+        if (($reset = $style->counter_reset) !== "none") {
+            $frame->reset_counters($reset);
+        }
 
-            // Add all adjacent inline widths together to calculate max width
-            while ($iter->valid() && ($iter->current()->is_inline_level() || $iter->current()->get_style()->display === "-dompdf-image")) {
-                $child = $iter->current();
-                $child->get_reflower()->_set_content();
-                $minmax = $child->get_min_max_width();
+        if (($increment = $style->counter_increment) !== "none") {
+            $frame->increment_counters($increment);
+        }
 
-                if (in_array($child->get_style()->white_space, ["pre", "nowrap"], true)) {
-                    $inline_min += $minmax["min"];
-                } else {
-                    $low[] = $minmax["min"];
-                }
+        if ($frame->get_node()->nodeName === "dompdf_generated") {
+            $content = $this->_parse_content();
 
-                $inline_max += $minmax["max"];
-                $iter->next();
-            }
+            if ($content !== "") {
+                $node = $frame->get_node()->ownerDocument->createTextNode($content);
 
-            if ($inline_min > 0) {
-                $low[] = $inline_min;
-            }
-            if ($inline_max > 0) {
-                $high[] = $inline_max;
-            }
+                $new_style = $style->get_stylesheet()->create_style();
+                $new_style->inherit($style);
 
-            // Skip children with absolute position
-            if ($iter->valid() && !$iter->current()->is_absolute()) {
-                $child = $iter->current();
-                $child->get_reflower()->_set_content();
-                list($low[], $high[]) = $child->get_min_max_width();
+                $new_frame = new Frame($node);
+                $new_frame->set_style($new_style);
+
+                Factory::decorate_frame($new_frame, $frame->get_dompdf(), $frame->get_root());
+                $frame->append_child($new_frame);
             }
         }
 
-        $min = count($low) ? max($low) : 0;
-        $max = count($high) ? max($high) : 0;
-
-        return $this->_min_max_child_cache = [$min, $max];
-    }
-
-    /**
-     * Get the minimum and maximum preferred content-box width of the frame.
-     *
-     * @return array A two-element array of min and max width.
-     */
-    public function get_min_max_content_width(): array
-    {
-        return $this->get_min_max_child_width();
-    }
-
-    /**
-     * Get the minimum and maximum preferred border-box width of the frame.
-     *
-     * Required for shrink-to-fit width calculation, as used in automatic table
-     * layout, absolute positioning, float and inline-block. This provides a
-     * basic implementation. Child classes should override this or
-     * `get_min_max_content_width` as necessary.
-     *
-     * @return array An array `[0 => min, 1 => max, "min" => min, "max" => max]`
-     *         of min and max width.
-     */
-    public function get_min_max_width(): array
-    {
-        if (!is_null($this->_min_max_cache)) {
-            return $this->_min_max_cache;
-        }
-
-        $style = $this->_frame->get_style();
-        [$min, $max] = $this->get_min_max_content_width();
-
-        // Account for margins, borders, and padding
-        $dims = [
-            $style->padding_left,
-            $style->padding_right,
-            $style->border_left_width,
-            $style->border_right_width,
-            $style->margin_left,
-            $style->margin_right
-        ];
-
-        // The containing block is not defined yet, treat percentages as 0
-        $delta = (float) $style->length_in_pt($dims, 0);
-        $min += $delta;
-        $max += $delta;
-
-        return $this->_min_max_cache = [$min, $max, "min" => $min, "max" => $max];
-    }
-
-    /**
-     * Parses a CSS string containing quotes and escaped hex characters
-     *
-     * @param $string string The CSS string to parse
-     * @param $single_trim
-     * @return string
-     */
-    protected function _parse_string($string, $single_trim = false)
-    {
-        if ($single_trim) {
-            $string = preg_replace('/^[\"\']/', "", $string);
-            $string = preg_replace('/[\"\']$/', "", $string);
-        } else {
-            $string = trim($string, "'\"");
-        }
-
-        $string = str_replace(["\\\n", '\\"', "\\'"],
-            ["", '"', "'"], $string);
-
-        // Convert escaped hex characters into ascii characters (e.g. \A => newline)
-        $string = preg_replace_callback("/\\\\([0-9a-fA-F]{0,6})/",
-            function ($matches) { return \Dompdf\Helpers::unichr(hexdec($matches[1])); },
-            $string);
-        return $string;
-    }
-
-    /**
-     * Parses a CSS "quotes" property
-     *
-     * https://www.w3.org/TR/css-content-3/#quotes
-     *
-     * @return array An array of pairs of quotes
-     */
-    protected function _parse_quotes(): array
-    {
-        $quotes = $this->_frame->get_style()->quotes;
-
-        if ($quotes === "none") {
-            return [];
-        }
-
-        if ($quotes === "auto") {
-            // TODO: Use typographically appropriate quotes for the current
-            // language here
-            return [['"', '"'], ["'", "'"]];
-        }
-
-        // Matches quote types
-        $re = '/(\'[^\']*\')|(\"[^\"]*\")/';
-
-        // Split on spaces, except within quotes
-        if (!preg_match_all($re, $quotes, $matches, PREG_SET_ORDER)) {
-            return [];
-        }
-
-        $quotes_array = [];
-        foreach ($matches as $_quote) {
-            $quotes_array[] = $this->_parse_string($_quote[0], true);
-        }
-
-        return array_chunk($quotes_array, 2);
+        $frame->content_set = true;
     }
 
     /**
@@ -665,44 +644,67 @@ abstract class AbstractFrameReflower
     }
 
     /**
-     * Handle counters and set generated content if the frame is a
-     * generated-content frame.
+     * Parses a CSS "quotes" property
+     *
+     * https://www.w3.org/TR/css-content-3/#quotes
+     *
+     * @return array An array of pairs of quotes
      */
-    protected function _set_content(): void
+    protected function _parse_quotes(): array
     {
-        $frame = $this->_frame;
+        $quotes = $this->_frame->get_style()->quotes;
 
-        if ($frame->content_set) {
-            return;
+        if ($quotes === "none") {
+            return [];
         }
 
-        $style = $frame->get_style();
-
-        if (($reset = $style->counter_reset) !== "none") {
-            $frame->reset_counters($reset);
+        if ($quotes === "auto") {
+            // TODO: Use typographically appropriate quotes for the current
+            // language here
+            return [['"', '"'], ["'", "'"]];
         }
 
-        if (($increment = $style->counter_increment) !== "none") {
-            $frame->increment_counters($increment);
+        // Matches quote types
+        $re = '/(\'[^\']*\')|(\"[^\"]*\")/';
+
+        // Split on spaces, except within quotes
+        if (!preg_match_all($re, $quotes, $matches, PREG_SET_ORDER)) {
+            return [];
         }
 
-        if ($frame->get_node()->nodeName === "dompdf_generated") {
-            $content = $this->_parse_content();
-
-            if ($content !== "") {
-                $node = $frame->get_node()->ownerDocument->createTextNode($content);
-
-                $new_style = $style->get_stylesheet()->create_style();
-                $new_style->inherit($style);
-
-                $new_frame = new Frame($node);
-                $new_frame->set_style($new_style);
-
-                Factory::decorate_frame($new_frame, $frame->get_dompdf(), $frame->get_root());
-                $frame->append_child($new_frame);
-            }
+        $quotes_array = [];
+        foreach ($matches as $_quote) {
+            $quotes_array[] = $this->_parse_string($_quote[0], true);
         }
 
-        $frame->content_set = true;
+        return array_chunk($quotes_array, 2);
+    }
+
+    /**
+     * Parses a CSS string containing quotes and escaped hex characters
+     *
+     * @param $string string The CSS string to parse
+     * @param $single_trim
+     * @return string
+     */
+    protected function _parse_string($string, $single_trim = false)
+    {
+        if ($single_trim) {
+            $string = preg_replace('/^[\"\']/', "", $string);
+            $string = preg_replace('/[\"\']$/', "", $string);
+        } else {
+            $string = trim($string, "'\"");
+        }
+
+        $string = str_replace(["\\\n", '\\"', "\\'"],
+            ["", '"', "'"], $string);
+
+        // Convert escaped hex characters into ascii characters (e.g. \A => newline)
+        $string = preg_replace_callback("/\\\\([0-9a-fA-F]{0,6})/",
+            function ($matches) {
+                return \Dompdf\Helpers::unichr(hexdec($matches[1]));
+            },
+            $string);
+        return $string;
     }
 }

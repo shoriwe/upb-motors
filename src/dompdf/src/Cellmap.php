@@ -5,6 +5,7 @@
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf;
 
 use Dompdf\FrameDecorator\AbstractFrameDecorator;
@@ -28,14 +29,14 @@ class Cellmap
      */
     protected static $_BORDER_STYLE_SCORE = [
         "double" => 8,
-        "solid"  => 7,
+        "solid" => 7,
         "dashed" => 6,
         "dotted" => 5,
-        "ridge"  => 4,
+        "ridge" => 4,
         "outset" => 3,
         "groove" => 2,
-        "inset"  => 1,
-        "none"   => 0
+        "inset" => 1,
+        "none" => 0
     ];
 
     /**
@@ -178,14 +179,6 @@ class Cellmap
     }
 
     /**
-     * @return bool
-     */
-    public function is_layout_fixed()
-    {
-        return $this->_fixed_layout;
-    }
-
-    /**
      * @return int
      */
     public function get_num_rows()
@@ -218,28 +211,6 @@ class Cellmap
     }
 
     /**
-     * @param int $i
-     *
-     * @return mixed
-     */
-    public function &get_column($i)
-    {
-        if (!isset($this->_columns[$i])) {
-            $this->_columns[$i] = [
-                "x"          => 0,
-                "min-width"  => 0,
-                "max-width"  => 0,
-                "used-width" => null,
-                "absolute"   => 0,
-                "percent"    => 0,
-                "auto"       => true,
-            ];
-        }
-
-        return $this->_columns[$i];
-    }
-
-    /**
      * @return array
      */
     public function &get_rows()
@@ -248,21 +219,19 @@ class Cellmap
     }
 
     /**
+     * @param int $i
      * @param int $j
      *
-     * @return mixed
+     * @return array
      */
-    public function &get_row($j)
+    public function get_border_properties($i, $j)
     {
-        if (!isset($this->_rows[$j])) {
-            $this->_rows[$j] = [
-                "y"            => 0,
-                "first-column" => 0,
-                "height"       => null,
-            ];
-        }
-
-        return $this->_rows[$j];
+        return [
+            "top" => $this->get_border($i, $j, "horizontal"),
+            "right" => $this->get_border($i, $j + 1, "vertical"),
+            "bottom" => $this->get_border($i + 1, $j, "horizontal"),
+            "left" => $this->get_border($i, $j, "vertical"),
+        ];
     }
 
     /**
@@ -288,22 +257,6 @@ class Cellmap
         }
 
         return $this->_borders[$i][$j][$h_v];
-    }
-
-    /**
-     * @param int $i
-     * @param int $j
-     *
-     * @return array
-     */
-    public function get_border_properties($i, $j)
-    {
-        return [
-            "top"    => $this->get_border($i, $j, "horizontal"),
-            "right"  => $this->get_border($i, $j + 1, "vertical"),
-            "bottom" => $this->get_border($i + 1, $j, "horizontal"),
-            "left"   => $this->get_border($i, $j, "vertical"),
-        ];
     }
 
     /**
@@ -441,6 +394,28 @@ class Cellmap
 
     /**
      * @param int $i
+     *
+     * @return mixed
+     */
+    public function &get_column($i)
+    {
+        if (!isset($this->_columns[$i])) {
+            $this->_columns[$i] = [
+                "x" => 0,
+                "min-width" => 0,
+                "max-width" => 0,
+                "used-width" => null,
+                "absolute" => 0,
+                "percent" => 0,
+                "auto" => true,
+            ];
+        }
+
+        return $this->_columns[$i];
+    }
+
+    /**
+     * @param int $i
      * @param long $height
      */
     public function set_row_height($i, $height)
@@ -451,6 +426,169 @@ class Cellmap
         }
         $next_row =& $this->get_row($i + 1);
         $next_row["y"] = $row["y"] + $row["height"];
+    }
+
+    /**
+     * @param int $j
+     *
+     * @return mixed
+     */
+    public function &get_row($j)
+    {
+        if (!isset($this->_rows[$j])) {
+            $this->_rows[$j] = [
+                "y" => 0,
+                "first-column" => 0,
+                "height" => null,
+            ];
+        }
+
+        return $this->_rows[$j];
+    }
+
+    /**
+     * @param AbstractFrameDecorator $frame
+     */
+    public function add_frame(Frame $frame): void
+    {
+        $style = $frame->get_style();
+        $display = $style->display;
+
+        $collapse = $this->_table->get_style()->border_collapse === "collapse";
+
+        // Recursively add the frames within the table, its row groups and rows
+        if ($frame === $this->_table
+            || $display === "table-row"
+            || in_array($display, TableFrameDecorator::$ROW_GROUPS, true)
+        ) {
+            $start_row = $this->__row;
+
+            foreach ($frame->get_children() as $child) {
+                $this->add_frame($child);
+            }
+
+            if ($display === "table-row") {
+                $this->add_row();
+            }
+
+            $num_rows = $this->__row - $start_row - 1;
+            $key = $frame->get_id();
+
+            // Row groups always span across the entire table
+            $this->_frames[$key]["columns"] = range(0, max(0, $this->_num_cols - 1));
+            $this->_frames[$key]["rows"] = range($start_row, max(0, $this->__row - 1));
+            $this->_frames[$key]["frame"] = $frame;
+
+            if ($collapse) {
+                $bp = $style->get_border_properties();
+
+                // Resolve vertical borders
+                for ($i = 0; $i < $num_rows + 1; $i++) {
+                    $this->_resolve_border($start_row + $i, 0, "vertical", $bp["left"]);
+                    $this->_resolve_border($start_row + $i, $this->_num_cols, "vertical", $bp["right"]);
+                }
+
+                // Resolve horizontal borders
+                for ($j = 0; $j < $this->_num_cols; $j++) {
+                    $this->_resolve_border($start_row, $j, "horizontal", $bp["top"]);
+                    $this->_resolve_border($this->__row, $j, "horizontal", $bp["bottom"]);
+                }
+
+                if ($frame === $this->_table) {
+                    // Clear borders because the cells are now using them. The
+                    // border width still needs to be set to half the resolved
+                    // width so that the table is positioned properly
+                    [$top, $right, $bottom, $left] = $this->get_resolved_border($frame);
+
+                    $style->set_used("border_top_width", $top["width"] / 2);
+                    $style->set_used("border_right_width", $right["width"] / 2);
+                    $style->set_used("border_bottom_width", $bottom["width"] / 2);
+                    $style->set_used("border_left_width", $left["width"] / 2);
+                    $style->set_used("border_style", "none");
+                } else {
+                    // Clear borders for rows and row groups
+                    $style->set_used("border_width", 0);
+                    $style->set_used("border_style", "none");
+                }
+            }
+
+            if ($frame === $this->_table) {
+                // Apply resolved borders to table cells and calculate column
+                // widths after all frames have been added
+                $this->calculate_column_widths();
+            }
+            return;
+        }
+
+        // Add the frame to the cellmap
+        $key = $frame->get_id();
+        $node = $frame->get_node();
+        $bp = $style->get_border_properties();
+
+        // Determine where this cell is going
+        $colspan = max((int)$node->getAttribute("colspan"), 1);
+        $rowspan = max((int)$node->getAttribute("rowspan"), 1);
+
+        // Find the next available column (fix by Ciro Mondueri)
+        $ac = $this->__col;
+        while (isset($this->_cells[$this->__row][$ac])) {
+            $ac++;
+        }
+
+        $this->__col = $ac;
+
+        // Rows:
+        for ($i = 0; $i < $rowspan; $i++) {
+            $row = $this->__row + $i;
+
+            $this->_frames[$key]["rows"][] = $row;
+
+            for ($j = 0; $j < $colspan; $j++) {
+                $this->_cells[$row][$this->__col + $j] = $frame;
+            }
+
+            if ($collapse) {
+                // Resolve vertical borders
+                $this->_resolve_border($row, $this->__col, "vertical", $bp["left"]);
+                $this->_resolve_border($row, $this->__col + $colspan, "vertical", $bp["right"]);
+            }
+        }
+
+        // Columns:
+        for ($j = 0; $j < $colspan; $j++) {
+            $col = $this->__col + $j;
+            $this->_frames[$key]["columns"][] = $col;
+
+            if ($collapse) {
+                // Resolve horizontal borders
+                $this->_resolve_border($this->__row, $col, "horizontal", $bp["top"]);
+                $this->_resolve_border($this->__row + $rowspan, $col, "horizontal", $bp["bottom"]);
+            }
+        }
+
+        $this->_frames[$key]["frame"] = $frame;
+
+        $this->__col += $colspan;
+        if ($this->__col > $this->_num_cols) {
+            $this->_num_cols = $this->__col;
+        }
+    }
+
+    /**
+     *
+     */
+    public function add_row()
+    {
+        $this->__row++;
+        $this->_num_rows++;
+
+        // Find the next available column
+        $i = 0;
+        while (isset($this->_cells[$this->__row][$i])) {
+            $i++;
+        }
+
+        $this->__col = $i;
     }
 
     /**
@@ -542,134 +680,6 @@ class Cellmap
     }
 
     /**
-     * @param AbstractFrameDecorator $frame
-     */
-    public function add_frame(Frame $frame): void
-    {
-        $style = $frame->get_style();
-        $display = $style->display;
-
-        $collapse = $this->_table->get_style()->border_collapse === "collapse";
-
-        // Recursively add the frames within the table, its row groups and rows
-        if ($frame === $this->_table
-            || $display === "table-row"
-            || in_array($display, TableFrameDecorator::$ROW_GROUPS, true)
-        ) {
-            $start_row = $this->__row;
-
-            foreach ($frame->get_children() as $child) {
-                $this->add_frame($child);
-            }
-
-            if ($display === "table-row") {
-                $this->add_row();
-            }
-
-            $num_rows = $this->__row - $start_row - 1;
-            $key = $frame->get_id();
-
-            // Row groups always span across the entire table
-            $this->_frames[$key]["columns"] = range(0, max(0, $this->_num_cols - 1));
-            $this->_frames[$key]["rows"] = range($start_row, max(0, $this->__row - 1));
-            $this->_frames[$key]["frame"] = $frame;
-
-            if ($collapse) {
-                $bp = $style->get_border_properties();
-
-                // Resolve vertical borders
-                for ($i = 0; $i < $num_rows + 1; $i++) {
-                    $this->_resolve_border($start_row + $i, 0, "vertical", $bp["left"]);
-                    $this->_resolve_border($start_row + $i, $this->_num_cols, "vertical", $bp["right"]);
-                }
-
-                // Resolve horizontal borders
-                for ($j = 0; $j < $this->_num_cols; $j++) {
-                    $this->_resolve_border($start_row, $j, "horizontal", $bp["top"]);
-                    $this->_resolve_border($this->__row, $j, "horizontal", $bp["bottom"]);
-                }
-
-                if ($frame === $this->_table) {
-                    // Clear borders because the cells are now using them. The
-                    // border width still needs to be set to half the resolved
-                    // width so that the table is positioned properly
-                    [$top, $right, $bottom, $left] = $this->get_resolved_border($frame);
-
-                    $style->set_used("border_top_width", $top["width"] / 2);
-                    $style->set_used("border_right_width", $right["width"] / 2);
-                    $style->set_used("border_bottom_width", $bottom["width"] / 2);
-                    $style->set_used("border_left_width", $left["width"] / 2);
-                    $style->set_used("border_style", "none");
-                } else {
-                    // Clear borders for rows and row groups
-                    $style->set_used("border_width", 0);
-                    $style->set_used("border_style", "none");
-                }
-            }
-
-            if ($frame === $this->_table) {
-                // Apply resolved borders to table cells and calculate column
-                // widths after all frames have been added
-                $this->calculate_column_widths();
-            }
-            return;
-        }
-
-        // Add the frame to the cellmap
-        $key = $frame->get_id();
-        $node = $frame->get_node();
-        $bp = $style->get_border_properties();
-
-        // Determine where this cell is going
-        $colspan = max((int) $node->getAttribute("colspan"), 1);
-        $rowspan = max((int) $node->getAttribute("rowspan"), 1);
-
-        // Find the next available column (fix by Ciro Mondueri)
-        $ac = $this->__col;
-        while (isset($this->_cells[$this->__row][$ac])) {
-            $ac++;
-        }
-
-        $this->__col = $ac;
-
-        // Rows:
-        for ($i = 0; $i < $rowspan; $i++) {
-            $row = $this->__row + $i;
-
-            $this->_frames[$key]["rows"][] = $row;
-
-            for ($j = 0; $j < $colspan; $j++) {
-                $this->_cells[$row][$this->__col + $j] = $frame;
-            }
-
-            if ($collapse) {
-                // Resolve vertical borders
-                $this->_resolve_border($row, $this->__col, "vertical", $bp["left"]);
-                $this->_resolve_border($row, $this->__col + $colspan, "vertical", $bp["right"]);
-            }
-        }
-
-        // Columns:
-        for ($j = 0; $j < $colspan; $j++) {
-            $col = $this->__col + $j;
-            $this->_frames[$key]["columns"][] = $col;
-
-            if ($collapse) {
-                // Resolve horizontal borders
-                $this->_resolve_border($this->__row, $col, "horizontal", $bp["top"]);
-                $this->_resolve_border($this->__row + $rowspan, $col, "horizontal", $bp["bottom"]);
-            }
-        }
-
-        $this->_frames[$key]["frame"] = $frame;
-
-        $this->__col += $colspan;
-        if ($this->__col > $this->_num_cols) {
-            $this->_num_cols = $this->__col;
-        }
-    }
-
-    /**
      * Apply resolved borders to table cells and calculate column widths.
      */
     protected function calculate_column_widths(): void
@@ -731,7 +741,7 @@ class Cellmap
             }
 
             $node = $frame->get_node();
-            $colspan = max((int) $node->getAttribute("colspan"), 1);
+            $colspan = max((int)$node->getAttribute("colspan"), 1);
             $first_col = $frame_info["columns"][0];
 
             // Resolve the frame's width
@@ -793,20 +803,33 @@ class Cellmap
     }
 
     /**
-     *
+     * @return bool
      */
-    public function add_row()
+    public function is_layout_fixed()
     {
-        $this->__row++;
-        $this->_num_rows++;
+        return $this->_fixed_layout;
+    }
 
-        // Find the next available column
-        $i = 0;
-        while (isset($this->_cells[$this->__row][$i])) {
-            $i++;
+    /**
+     * Remove a row group from the cellmap.
+     *
+     * @param Frame $group The group to remove
+     */
+    public function remove_row_group(Frame $group)
+    {
+        $key = $group->get_id();
+        if (!isset($this->_frames[$key])) {
+            return; // Presumably this row has already been removed
         }
 
-        $this->__col = $i;
+        $iter = $group->get_first_child();
+        while ($iter) {
+            $this->remove_row($iter);
+            $iter = $iter->get_next_sibling();
+        }
+
+        $this->_frames[$key] = null;
+        unset($this->_frames[$key]);
     }
 
     /**
@@ -858,31 +881,9 @@ class Cellmap
     }
 
     /**
-     * Remove a row group from the cellmap.
-     *
-     * @param Frame $group The group to remove
-     */
-    public function remove_row_group(Frame $group)
-    {
-        $key = $group->get_id();
-        if (!isset($this->_frames[$key])) {
-            return; // Presumably this row has already been removed
-        }
-
-        $iter = $group->get_first_child();
-        while ($iter) {
-            $this->remove_row($iter);
-            $iter = $iter->get_next_sibling();
-        }
-
-        $this->_frames[$key] = null;
-        unset($this->_frames[$key]);
-    }
-
-    /**
      * Update a row group after rows have been removed
      *
-     * @param Frame $group    The group to update
+     * @param Frame $group The group to update
      * @param Frame $last_row The last row in the row group
      */
     public function update_row_group(Frame $group, Frame $last_row)

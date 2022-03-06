@@ -6,11 +6,12 @@
  * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
+
 namespace Dompdf\FrameReflower;
 
-use Dompdf\Helpers;
 use Dompdf\FrameDecorator\Block as BlockFrameDecorator;
 use Dompdf\FrameDecorator\Image as ImageFrameDecorator;
+use Dompdf\Helpers;
 
 /**
  * Image reflower class
@@ -58,26 +59,36 @@ class Image extends AbstractFrameReflower
         }
     }
 
-    public function get_min_max_content_width(): array
+    protected function resolve_dimensions(): void
     {
-        // TODO: While the containing block is not set yet on the frame, it can
-        // already be determined in some cases due to fixed dimensions on the
-        // ancestor forming the containing block. In such cases, percentage
-        // values could be resolved here
-        $style = $this->_frame->get_style();
+        /** @var ImageFrameDecorator */
+        $frame = $this->_frame;
+        $style = $frame->get_style();
 
-        [$width] = $this->calculate_size(null, null);
-        $min_width = $this->resolve_min_width(null);
-        $percent_width = Helpers::is_percent($style->width)
-            || Helpers::is_percent($style->max_width);
+        $debug_png = $this->get_dompdf()->getOptions()->getDebugPng();
 
-        // Use the specified min width as minimum when width or max width depend
-        // on the containing block and cannot be resolved yet. This mimics
-        // browser behavior
-        $min = $percent_width ? $min_width : $width;
-        $max = $width;
+        if ($debug_png) {
+            [$img_width, $img_height] = $frame->get_intrinsic_dimensions();
+            print "resolve_dimensions() " .
+                $frame->get_style()->width . " " .
+                $frame->get_style()->height . ";" .
+                $frame->get_parent()->get_style()->width . " " .
+                $frame->get_parent()->get_style()->height . ";" .
+                $frame->get_parent()->get_parent()->get_style()->width . " " .
+                $frame->get_parent()->get_parent()->get_style()->height . ";" .
+                $img_width . " " .
+                $img_height . "|";
+        }
 
-        return [$min, $max];
+        [, , $cbw, $cbh] = $frame->get_containing_block();
+        [$width, $height] = $this->calculate_size($cbw, $cbh);
+
+        if ($debug_png) {
+            print $width . " " . $height . ";";
+        }
+
+        $style->width = $width;
+        $style->height = $height;
     }
 
     /**
@@ -140,54 +151,22 @@ class Image extends AbstractFrameReflower
         } elseif ($height === "auto") {
             // Width is fixed, scale height according to aspect ratio
             [$img_width, $img_height] = $frame->get_intrinsic_dimensions();
-            $width = Helpers::clamp((float) $width, $min_width, $max_width);
+            $width = Helpers::clamp((float)$width, $min_width, $max_width);
             $height = $width * ($img_height / $img_width);
             $height = Helpers::clamp($height, $min_height, $max_height);
         } elseif ($width === "auto") {
             // Height is fixed, scale width according to aspect ratio
             [$img_width, $img_height] = $frame->get_intrinsic_dimensions();
-            $height = Helpers::clamp((float) $height, $min_height, $max_height);
+            $height = Helpers::clamp((float)$height, $min_height, $max_height);
             $width = $height * ($img_width / $img_height);
             $width = Helpers::clamp($width, $min_width, $max_width);
         } else {
             // Width and height are fixed
-            $width = Helpers::clamp((float) $width, $min_width, $max_width);
-            $height = Helpers::clamp((float) $height, $min_height, $max_height);
+            $width = Helpers::clamp((float)$width, $min_width, $max_width);
+            $height = Helpers::clamp((float)$height, $min_height, $max_height);
         }
 
         return [$width, $height];
-    }
-
-    protected function resolve_dimensions(): void
-    {
-        /** @var ImageFrameDecorator */
-        $frame = $this->_frame;
-        $style = $frame->get_style();
-
-        $debug_png = $this->get_dompdf()->getOptions()->getDebugPng();
-
-        if ($debug_png) {
-            [$img_width, $img_height] = $frame->get_intrinsic_dimensions();
-            print "resolve_dimensions() " .
-                $frame->get_style()->width . " " .
-                $frame->get_style()->height . ";" .
-                $frame->get_parent()->get_style()->width . " " .
-                $frame->get_parent()->get_style()->height . ";" .
-                $frame->get_parent()->get_parent()->get_style()->width . " " .
-                $frame->get_parent()->get_parent()->get_style()->height . ";" .
-                $img_width . " " .
-                $img_height . "|";
-        }
-
-        [, , $cbw, $cbh] = $frame->get_containing_block();
-        [$width, $height] = $this->calculate_size($cbw, $cbh);
-
-        if ($debug_png) {
-            print $width . " " . $height . ";";
-        }
-
-        $style->width = $width;
-        $style->height = $height;
     }
 
     protected function resolve_margins(): void
@@ -209,5 +188,27 @@ class Image extends AbstractFrameReflower
         if ($style->margin_bottom === "auto") {
             $style->margin_bottom = 0;
         }
+    }
+
+    public function get_min_max_content_width(): array
+    {
+        // TODO: While the containing block is not set yet on the frame, it can
+        // already be determined in some cases due to fixed dimensions on the
+        // ancestor forming the containing block. In such cases, percentage
+        // values could be resolved here
+        $style = $this->_frame->get_style();
+
+        [$width] = $this->calculate_size(null, null);
+        $min_width = $this->resolve_min_width(null);
+        $percent_width = Helpers::is_percent($style->width)
+            || Helpers::is_percent($style->max_width);
+
+        // Use the specified min width as minimum when width or max width depend
+        // on the containing block and cannot be resolved yet. This mimics
+        // browser behavior
+        $min = $percent_width ? $min_width : $width;
+        $max = $width;
+
+        return [$min, $max];
     }
 }

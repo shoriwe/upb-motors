@@ -73,6 +73,54 @@ class FontMetrics
     }
 
     /**
+     * Loads the stored font family cache
+     *
+     * @see FontMetrics::saveFontFamilies()
+     */
+    public function loadFontFamilies()
+    {
+        $fontDir = $this->options->getFontDir();
+        $rootDir = $this->options->getRootDir();
+
+        // FIXME: temporarily define constants for cache files <= v0.6.2
+        if (!defined("DOMPDF_DIR")) {
+            define("DOMPDF_DIR", $rootDir);
+        }
+        if (!defined("DOMPDF_FONT_DIR")) {
+            define("DOMPDF_FONT_DIR", $fontDir);
+        }
+
+        $file = $rootDir . "/lib/fonts/dompdf_font_family_cache.dist.php";
+        $distFontsClosure = require $file;
+        $distFonts = is_array($distFontsClosure) ? $distFontsClosure : $distFontsClosure($rootDir);
+        if (!is_readable($this->getCacheFile())) {
+            $this->fontLookup = $distFonts;
+            return;
+        }
+
+        $cacheDataClosure = require $this->getCacheFile();
+        $cacheData = is_array($cacheDataClosure) ? $cacheDataClosure : $cacheDataClosure($fontDir, $rootDir);
+
+        $this->fontLookup = [];
+        if (is_array($this->fontLookup)) {
+            foreach ($cacheData as $key => $value) {
+                $this->fontLookup[stripslashes($key)] = $value;
+            }
+        }
+
+        // Merge provided fonts
+        $this->fontLookup += $distFonts;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheFile()
+    {
+        return $this->options->getFontDir() . '/' . self::CACHE_FILE;
+    }
+
+    /**
      * @deprecated
      */
     public function save_font_families()
@@ -115,42 +163,6 @@ class FontMetrics
     public function load_font_families()
     {
         $this->loadFontFamilies();
-    }
-
-    /**
-     * Loads the stored font family cache
-     *
-     * @see FontMetrics::saveFontFamilies()
-     */
-    public function loadFontFamilies()
-    {
-        $fontDir = $this->options->getFontDir();
-        $rootDir = $this->options->getRootDir();
-
-        // FIXME: temporarily define constants for cache files <= v0.6.2
-        if (!defined("DOMPDF_DIR")) { define("DOMPDF_DIR", $rootDir); }
-        if (!defined("DOMPDF_FONT_DIR")) { define("DOMPDF_FONT_DIR", $fontDir); }
-
-        $file = $rootDir . "/lib/fonts/dompdf_font_family_cache.dist.php";
-        $distFontsClosure = require $file;
-        $distFonts = is_array($distFontsClosure) ? $distFontsClosure : $distFontsClosure($rootDir);
-        if (!is_readable($this->getCacheFile())) {
-            $this->fontLookup = $distFonts;
-            return;
-        }
-
-        $cacheDataClosure = require $this->getCacheFile();
-        $cacheData = is_array($cacheDataClosure) ? $cacheDataClosure : $cacheDataClosure($fontDir, $rootDir);
-
-        $this->fontLookup = [];
-        if (is_array($this->fontLookup)) {
-            foreach ($cacheData as $key => $value) {
-                $this->fontLookup[stripslashes($key)] = $value;
-            }
-        }
-
-        // Merge provided fonts
-        $this->fontLookup += $distFonts;
     }
 
     /**
@@ -206,7 +218,7 @@ class FontMetrics
         }
 
         $cacheEntry = $localFile;
-        $localFile .= ".".strtolower(pathinfo(parse_url($remoteFile, PHP_URL_PATH), PATHINFO_EXTENSION));
+        $localFile .= "." . strtolower(pathinfo(parse_url($remoteFile, PHP_URL_PATH), PATHINFO_EXTENSION));
 
         $entry[$styleString] = $cacheEntry;
 
@@ -264,14 +276,14 @@ class FontMetrics
 
         unlink($localTempFile);
 
-        if ( !file_exists("$cacheEntry.ufm") ) {
+        if (!file_exists("$cacheEntry.ufm")) {
             return false;
         }
 
         // Save the changes
         file_put_contents($localFile, $remoteFileContent);
 
-        if ( !file_exists($localFile) ) {
+        if (!file_exists($localFile)) {
             unlink("$cacheEntry.ufm");
             return false;
         }
@@ -280,6 +292,52 @@ class FontMetrics
         $this->saveFontFamilies();
 
         return true;
+    }
+
+    /**
+     * Returns the current font lookup table
+     *
+     * @return array
+     */
+    public function getFontFamilies()
+    {
+        return $this->fontLookup;
+    }
+
+    /**
+     * @param string $type
+     * @return string
+     */
+    public function getType($type)
+    {
+        if (preg_match('/bold/i', $type)) {
+            $weight = 700;
+        } elseif (preg_match('/([1-9]00)/', $type, $match)) {
+            $weight = (int)$match[0];
+        } else {
+            $weight = 400;
+        }
+        $weight = $weight === 400 ? 'normal' : $weight;
+        $weight = $weight === 700 ? 'bold' : $weight;
+
+        $style = preg_match('/italic|oblique/i', $type) ? 'italic' : null;
+
+        if ($weight === 'normal' && $style !== null) {
+            return $style;
+        }
+
+        return $style === null
+            ? $weight
+            : $weight . '_' . $style;
+    }
+
+    /**
+     * @param string $fontname
+     * @param mixed $entry
+     */
+    public function setFontFamily($fontname, $entry)
+    {
+        $this->fontLookup[mb_strtolower($fontname)] = $entry;
     }
 
     /**
@@ -302,12 +360,12 @@ class FontMetrics
      *
      * @param string $text the text to be sized
      * @param string $font the desired font
-     * @param float $size  the desired font size
+     * @param float $size the desired font size
      * @param float $wordSpacing
      * @param float $charSpacing
      *
-     * @internal param float $spacing word spacing, if any
      * @return float
+     * @internal param float $spacing word spacing, if any
      */
     public function getTextWidth($text, $font, $size, $wordSpacing = 0.0, $charSpacing = 0.0)
     {
@@ -498,49 +556,12 @@ class FontMetrics
     }
 
     /**
-     * @param string $type
-     * @return string
-     */
-    public function getType($type)
-    {
-        if (preg_match('/bold/i', $type)) {
-            $weight = 700;
-        } elseif (preg_match('/([1-9]00)/', $type, $match)) {
-            $weight = (int)$match[0];
-        } else {
-            $weight = 400;
-        }
-        $weight = $weight === 400 ? 'normal' : $weight;
-        $weight = $weight === 700 ? 'bold' : $weight;
-
-        $style = preg_match('/italic|oblique/i', $type) ? 'italic' : null;
-
-        if ($weight === 'normal' && $style !== null) {
-            return $style;
-        }
-
-        return $style === null
-            ? $weight
-            : $weight.'_'.$style;
-    }
-
-    /**
      * @return array
      * @deprecated
      */
     public function get_font_families()
     {
         return $this->getFontFamilies();
-    }
-
-    /**
-     * Returns the current font lookup table
-     *
-     * @return array
-     */
-    public function getFontFamilies()
-    {
-        return $this->fontLookup;
     }
 
     /**
@@ -554,20 +575,11 @@ class FontMetrics
     }
 
     /**
-     * @param string $fontname
-     * @param mixed $entry
+     * @return Options
      */
-    public function setFontFamily($fontname, $entry)
+    public function getOptions()
     {
-        $this->fontLookup[mb_strtolower($fontname)] = $entry;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCacheFile()
-    {
-        return $this->options->getFontDir() . '/' . self::CACHE_FILE;
+        return $this->options;
     }
 
     /**
@@ -581,11 +593,11 @@ class FontMetrics
     }
 
     /**
-     * @return Options
+     * @return Canvas
      */
-    public function getOptions()
+    public function getCanvas()
     {
-        return $this->options;
+        return $this->canvas;
     }
 
     /**
@@ -598,13 +610,5 @@ class FontMetrics
         // Still write deprecated pdf for now. It might be used by a parent class.
         $this->pdf = $canvas;
         return $this;
-    }
-
-    /**
-     * @return Canvas
-     */
-    public function getCanvas()
-    {
-        return $this->canvas;
     }
 }

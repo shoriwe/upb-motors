@@ -16,19 +16,17 @@ use Sabberworm\CSS\OutputFormat;
 class Charset implements AtRule
 {
     /**
-     * @var string
-     */
-    private $sCharset;
-
-    /**
      * @var int
      */
     protected $iLineNo;
-
     /**
      * @var array<array-key, Comment>
      */
     protected $aComments;
+    /**
+     * @var string
+     */
+    private $sCharset;
 
     /**
      * @param string $sCharset

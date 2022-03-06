@@ -1,42 +1,9 @@
 <?php
+
 namespace Dompdf;
 
 class Helpers
 {
-    /**
-     * print_r wrapper for html/cli output
-     *
-     * Wraps print_r() output in < pre > tags if the current sapi is not 'cli'.
-     * Returns the output string instead of displaying it if $return is true.
-     *
-     * @param mixed $mixed variable or expression to display
-     * @param bool $return
-     *
-     * @return string|null
-     */
-    public static function pre_r($mixed, $return = false)
-    {
-        if ($return) {
-            return "<pre>" . print_r($mixed, true) . "</pre>";
-        }
-
-        if (php_sapi_name() !== "cli") {
-            echo "<pre>";
-        }
-
-        print_r($mixed);
-
-        if (php_sapi_name() !== "cli") {
-            echo "</pre>";
-        } else {
-            echo "\n";
-        }
-
-        flush();
-
-        return null;
-    }
-
     /**
      * builds a full url given a protocol, hostname, base path and url
      *
@@ -109,20 +76,21 @@ class Helpers
         $parsed_url = parse_url($ret);
 
         // reproduced from https://www.php.net/manual/en/function.parse-url.php#106731
-        $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
-        $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
-        $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
-        $user     = isset($parsed_url['user']) ? $parsed_url['user'] : '';
-        $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
-        $pass     = ($user || $pass) ? "$pass@" : '';
-        $path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
-        $query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
+        $scheme = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
+        $host = isset($parsed_url['host']) ? $parsed_url['host'] : '';
+        $port = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+        $user = isset($parsed_url['user']) ? $parsed_url['user'] : '';
+        $pass = isset($parsed_url['pass']) ? ':' . $parsed_url['pass'] : '';
+        $pass = ($user || $pass) ? "$pass@" : '';
+        $path = isset($parsed_url['path']) ? $parsed_url['path'] : '';
+        $query = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
         $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
-        
+
         // partially reproduced from https://stackoverflow.com/a/1243431/264628
         /* replace '//' or '/./' or '/foo/../' with '/' */
         $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
-        for ($n=1; $n>0; $path=preg_replace($re, '/', $path, -1, $n)) {}
+        for ($n = 1; $n > 0; $path = preg_replace($re, '/', $path, -1, $n)) {
+        }
 
         $ret = "$scheme$user$pass$host$port$path$query$fragment";
 
@@ -166,8 +134,8 @@ class Helpers
      *
      * @param int|string $num
      *
-     * @throws Exception
      * @return string
+     * @throws Exception
      */
     public static function dec2roman($num): string
     {
@@ -182,7 +150,7 @@ class Helpers
         }
 
         if ($num >= 4000 || $num <= 0) {
-            return (string) $num;
+            return (string)$num;
         }
 
         $num = strrev((string)$num);
@@ -261,161 +229,271 @@ class Helpers
     }
 
     /**
-     * Encodes a Uniform Resource Identifier (URI) by replacing non-alphanumeric
-     * characters with a percent (%) sign followed by two hex digits, excepting
-     * characters in the URI reserved character set.
+     * Print debug messages
      *
-     * Assumes that the URI is a complete URI, so does not encode reserved
-     * characters that have special meaning in the URI.
-     *
-     * Simulates the encodeURI function available in JavaScript
-     * https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/encodeURI
-     *
-     * Source: http://stackoverflow.com/q/4929584/264628
-     *
-     * @param string $uri The URI to encode
-     * @return string The original URL with special characters encoded
+     * @param string $type The type of debug messages to print
+     * @param string $msg The message to show
      */
-    public static function encodeURI($uri) {
-        $unescaped = [
-            '%2D'=>'-','%5F'=>'_','%2E'=>'.','%21'=>'!', '%7E'=>'~',
-            '%2A'=>'*', '%27'=>"'", '%28'=>'(', '%29'=>')'
-        ];
-        $reserved = [
-            '%3B'=>';','%2C'=>',','%2F'=>'/','%3F'=>'?','%3A'=>':',
-            '%40'=>'@','%26'=>'&','%3D'=>'=','%2B'=>'+','%24'=>'$'
-        ];
-        $score = [
-            '%23'=>'#'
-        ];
-        return strtr(rawurlencode(rawurldecode($uri)), array_merge($reserved, $unescaped, $score));
+    public static function dompdf_debug($type, $msg)
+    {
+        global $_DOMPDF_DEBUG_TYPES, $_dompdf_show_warnings, $_dompdf_debug;
+        if (isset($_DOMPDF_DEBUG_TYPES[$type]) && ($_dompdf_show_warnings || $_dompdf_debug)) {
+            $arr = debug_backtrace();
+
+            echo basename($arr[0]["file"]) . " (" . $arr[0]["line"] . "): " . $arr[1]["function"] . ": ";
+            Helpers::pre_r($msg);
+        }
     }
 
     /**
-     * Decoder for RLE8 compression in windows bitmaps
-     * http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/bitmaps_6x0u.asp
+     * print_r wrapper for html/cli output
      *
-     * @param string $str Data to decode
-     * @param int $width Image width
+     * Wraps print_r() output in < pre > tags if the current sapi is not 'cli'.
+     * Returns the output string instead of displaying it if $return is true.
      *
-     * @return string
+     * @param mixed $mixed variable or expression to display
+     * @param bool $return
+     *
+     * @return string|null
      */
-    public static function rle8_decode($str, $width)
+    public static function pre_r($mixed, $return = false)
     {
-        $lineWidth = $width + (3 - ($width - 1) % 4);
-        $out = '';
-        $cnt = strlen($str);
-
-        for ($i = 0; $i < $cnt; $i++) {
-            $o = ord($str[$i]);
-            switch ($o) {
-                case 0: # ESCAPE
-                    $i++;
-                    switch (ord($str[$i])) {
-                        case 0: # NEW LINE
-                            $padCnt = $lineWidth - strlen($out) % $lineWidth;
-                            if ($padCnt < $lineWidth) {
-                                $out .= str_repeat(chr(0), $padCnt); # pad line
-                            }
-                            break;
-                        case 1: # END OF FILE
-                            $padCnt = $lineWidth - strlen($out) % $lineWidth;
-                            if ($padCnt < $lineWidth) {
-                                $out .= str_repeat(chr(0), $padCnt); # pad line
-                            }
-                            break 3;
-                        case 2: # DELTA
-                            $i += 2;
-                            break;
-                        default: # ABSOLUTE MODE
-                            $num = ord($str[$i]);
-                            for ($j = 0; $j < $num; $j++) {
-                                $out .= $str[++$i];
-                            }
-                            if ($num % 2) {
-                                $i++;
-                            }
-                    }
-                    break;
-                default:
-                    $out .= str_repeat($str[++$i], $o);
-            }
+        if ($return) {
+            return "<pre>" . print_r($mixed, true) . "</pre>";
         }
-        return $out;
+
+        if (php_sapi_name() !== "cli") {
+            echo "<pre>";
+        }
+
+        print_r($mixed);
+
+        if (php_sapi_name() !== "cli") {
+            echo "</pre>";
+        } else {
+            echo "\n";
+        }
+
+        flush();
+
+        return null;
     }
 
     /**
-     * Decoder for RLE4 compression in windows bitmaps
-     * see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/bitmaps_6x0u.asp
+     * Stores warnings in an array for display later
+     * This function allows warnings generated by the DomDocument parser
+     * and CSS loader ({@link Stylesheet}) to be captured and displayed
+     * later.  Without this function, errors are displayed immediately and
+     * PDF streaming is impossible.
+     * @see http://www.php.net/manual/en/function.set-error_handler.php
      *
-     * @param string $str Data to decode
-     * @param int $width Image width
+     * @param int $errno
+     * @param string $errstr
+     * @param string $errfile
+     * @param string $errline
      *
-     * @return string
+     * @throws Exception
      */
-    public static function rle4_decode($str, $width)
+    public static function record_warnings($errno, $errstr, $errfile, $errline)
     {
-        $w = floor($width / 2) + ($width % 2);
-        $lineWidth = $w + (3 - (($width - 1) / 2) % 4);
-        $pixels = [];
-        $cnt = strlen($str);
-        $c = 0;
+        // Not a warning or notice
+        if (!($errno & (E_WARNING | E_NOTICE | E_USER_NOTICE | E_USER_WARNING | E_STRICT | E_DEPRECATED | E_USER_DEPRECATED))) {
+            throw new Exception($errstr . " $errno");
+        }
 
-        for ($i = 0; $i < $cnt; $i++) {
-            $o = ord($str[$i]);
-            switch ($o) {
-                case 0: # ESCAPE
-                    $i++;
-                    switch (ord($str[$i])) {
-                        case 0: # NEW LINE
-                            while (count($pixels) % $lineWidth != 0) {
-                                $pixels[] = 0;
-                            }
-                            break;
-                        case 1: # END OF FILE
-                            while (count($pixels) % $lineWidth != 0) {
-                                $pixels[] = 0;
-                            }
-                            break 3;
-                        case 2: # DELTA
-                            $i += 2;
-                            break;
-                        default: # ABSOLUTE MODE
-                            $num = ord($str[$i]);
-                            for ($j = 0; $j < $num; $j++) {
-                                if ($j % 2 == 0) {
-                                    $c = ord($str[++$i]);
-                                    $pixels[] = ($c & 240) >> 4;
-                                } else {
-                                    $pixels[] = $c & 15;
-                                }
-                            }
+        global $_dompdf_warnings;
+        global $_dompdf_show_warnings;
 
-                            if ($num % 2 == 0) {
-                                $i++;
-                            }
-                    }
-                    break;
-                default:
-                    $c = ord($str[++$i]);
-                    for ($j = 0; $j < $o; $j++) {
-                        $pixels[] = ($j % 2 == 0 ? ($c & 240) >> 4 : $c & 15);
-                    }
+        if ($_dompdf_show_warnings) {
+            echo $errstr . "\n";
+        }
+
+        $_dompdf_warnings[] = $errstr;
+    }
+
+    /**
+     * @param $c
+     * @return bool|string
+     */
+    public static function unichr($c)
+    {
+        if ($c <= 0x7F) {
+            return chr($c);
+        } else if ($c <= 0x7FF) {
+            return chr(0xC0 | $c >> 6) . chr(0x80 | $c & 0x3F);
+        } else if ($c <= 0xFFFF) {
+            return chr(0xE0 | $c >> 12) . chr(0x80 | $c >> 6 & 0x3F)
+                . chr(0x80 | $c & 0x3F);
+        } else if ($c <= 0x10FFFF) {
+            return chr(0xF0 | $c >> 18) . chr(0x80 | $c >> 12 & 0x3F)
+                . chr(0x80 | $c >> 6 & 0x3F)
+                . chr(0x80 | $c & 0x3F);
+        }
+        return false;
+    }
+
+    /**
+     * Converts a CMYK color to RGB
+     *
+     * @param float|float[] $c
+     * @param float $m
+     * @param float $y
+     * @param float $k
+     *
+     * @return float[]
+     */
+    public static function cmyk_to_rgb($c, $m = null, $y = null, $k = null)
+    {
+        if (is_array($c)) {
+            [$c, $m, $y, $k] = $c;
+        }
+
+        $c *= 255;
+        $m *= 255;
+        $y *= 255;
+        $k *= 255;
+
+        $r = (1 - round(2.55 * ($c + $k)));
+        $g = (1 - round(2.55 * ($m + $k)));
+        $b = (1 - round(2.55 * ($y + $k)));
+
+        if ($r < 0) {
+            $r = 0;
+        }
+        if ($g < 0) {
+            $g = 0;
+        }
+        if ($b < 0) {
+            $b = 0;
+        }
+
+        return [
+            $r, $g, $b,
+            "r" => $r, "g" => $g, "b" => $b
+        ];
+    }
+
+    /**
+     * getimagesize doesn't give a good size for 32bit BMP image v5
+     *
+     * @param string $filename
+     * @param resource $context
+     * @return array An array of three elements: width and height as
+     *         `float|int`, and image type as `string|null`.
+     */
+    public static function dompdf_getimagesize($filename, $context = null)
+    {
+        static $cache = [];
+
+        if (isset($cache[$filename])) {
+            return $cache[$filename];
+        }
+
+        [$width, $height, $type] = getimagesize($filename);
+
+        // Custom types
+        $types = [
+            IMAGETYPE_JPEG => "jpeg",
+            IMAGETYPE_GIF => "gif",
+            IMAGETYPE_BMP => "bmp",
+            IMAGETYPE_PNG => "png",
+            IMAGETYPE_WEBP => "webp",
+        ];
+
+        $type = $types[$type] ?? null;
+
+        if ($width == null || $height == null) {
+            [$data] = Helpers::getFileContent($filename, $context);
+
+            if ($data !== null) {
+                if (substr($data, 0, 2) === "BM") {
+                    $meta = unpack("vtype/Vfilesize/Vreserved/Voffset/Vheadersize/Vwidth/Vheight", $data);
+                    $width = (int)$meta["width"];
+                    $height = (int)$meta["height"];
+                    $type = "bmp";
+                } elseif (strpos($data, "<svg") !== false) {
+                    $doc = new \Svg\Document();
+                    $doc->loadFile($filename);
+
+                    [$width, $height] = $doc->getDimensions();
+                    $width = (float)$width;
+                    $height = (float)$height;
+                    $type = "svg";
+                }
             }
         }
 
-        $out = '';
-        if (count($pixels) % 2) {
-            $pixels[] = 0;
+        return $cache[$filename] = [$width ?? 0, $height ?? 0, $type];
+    }
+
+    /**
+     * Gets the content of the file at the specified path using one of
+     * the following methods, in preferential order:
+     *  - file_get_contents: if allow_url_fopen is true or the file is local
+     *  - curl: if allow_url_fopen is false and curl is available
+     *
+     * @param string $uri
+     * @param resource $context (ignored if curl is used)
+     * @param int $offset
+     * @param int $maxlen (ignored if curl is used)
+     * @return string[]
+     */
+    public static function getFileContent($uri, $context = null, $offset = 0, $maxlen = null)
+    {
+        $content = null;
+        $headers = null;
+        [$protocol] = Helpers::explode_url($uri);
+        $is_local_path = ($protocol === "" || $protocol === "file://");
+
+        set_error_handler([self::class, 'record_warnings']);
+
+        try {
+            if ($is_local_path || ini_get('allow_url_fopen')) {
+                if ($is_local_path === false) {
+                    $uri = Helpers::encodeURI($uri);
+                }
+                if (isset($maxlen)) {
+                    $result = file_get_contents($uri, false, $context, $offset, $maxlen);
+                } else {
+                    $result = file_get_contents($uri, false, $context, $offset);
+                }
+                if ($result !== false) {
+                    $content = $result;
+                }
+                if (isset($http_response_header)) {
+                    $headers = $http_response_header;
+                }
+
+            } elseif (function_exists('curl_exec')) {
+                $curl = curl_init($uri);
+
+                //TODO: use $context to define additional curl options
+                curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+                curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($curl, CURLOPT_HEADER, true);
+                if ($offset > 0) {
+                    curl_setopt($curl, CURLOPT_RESUME_FROM, $offset);
+                }
+
+                $data = curl_exec($curl);
+
+                if ($data !== false && !curl_errno($curl)) {
+                    switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
+                        case 200:
+                            $raw_headers = substr($data, 0, curl_getinfo($curl, CURLINFO_HEADER_SIZE));
+                            $headers = preg_split("/[\n\r]+/", trim($raw_headers));
+                            $content = substr($data, curl_getinfo($curl, CURLINFO_HEADER_SIZE));
+                            break;
+                    }
+                }
+                curl_close($curl);
+            }
+        } finally {
+            restore_error_handler();
         }
 
-        $cnt = count($pixels) / 2;
-
-        for ($i = 0; $i < $cnt; $i++) {
-            $out .= chr(16 * $pixels[2 * $i] + $pixels[2 * $i + 1]);
-        }
-
-        return $out;
+        return [$content, $headers];
     }
 
     /**
@@ -433,7 +511,7 @@ class Helpers
         $file = "";
 
         $arr = parse_url($url);
-        if ( isset($arr["scheme"]) ) {
+        if (isset($arr["scheme"])) {
             $arr["scheme"] = mb_strtolower($arr["scheme"]);
         }
 
@@ -520,167 +598,35 @@ class Helpers
     }
 
     /**
-     * Print debug messages
+     * Encodes a Uniform Resource Identifier (URI) by replacing non-alphanumeric
+     * characters with a percent (%) sign followed by two hex digits, excepting
+     * characters in the URI reserved character set.
      *
-     * @param string $type The type of debug messages to print
-     * @param string $msg The message to show
+     * Assumes that the URI is a complete URI, so does not encode reserved
+     * characters that have special meaning in the URI.
+     *
+     * Simulates the encodeURI function available in JavaScript
+     * https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/encodeURI
+     *
+     * Source: http://stackoverflow.com/q/4929584/264628
+     *
+     * @param string $uri The URI to encode
+     * @return string The original URL with special characters encoded
      */
-    public static function dompdf_debug($type, $msg)
+    public static function encodeURI($uri)
     {
-        global $_DOMPDF_DEBUG_TYPES, $_dompdf_show_warnings, $_dompdf_debug;
-        if (isset($_DOMPDF_DEBUG_TYPES[$type]) && ($_dompdf_show_warnings || $_dompdf_debug)) {
-            $arr = debug_backtrace();
-
-            echo basename($arr[0]["file"]) . " (" . $arr[0]["line"] . "): " . $arr[1]["function"] . ": ";
-            Helpers::pre_r($msg);
-        }
-    }
-
-    /**
-     * Stores warnings in an array for display later
-     * This function allows warnings generated by the DomDocument parser
-     * and CSS loader ({@link Stylesheet}) to be captured and displayed
-     * later.  Without this function, errors are displayed immediately and
-     * PDF streaming is impossible.
-     * @see http://www.php.net/manual/en/function.set-error_handler.php
-     *
-     * @param int $errno
-     * @param string $errstr
-     * @param string $errfile
-     * @param string $errline
-     *
-     * @throws Exception
-     */
-    public static function record_warnings($errno, $errstr, $errfile, $errline)
-    {
-        // Not a warning or notice
-        if (!($errno & (E_WARNING | E_NOTICE | E_USER_NOTICE | E_USER_WARNING | E_STRICT | E_DEPRECATED | E_USER_DEPRECATED))) {
-            throw new Exception($errstr . " $errno");
-        }
-
-        global $_dompdf_warnings;
-        global $_dompdf_show_warnings;
-
-        if ($_dompdf_show_warnings) {
-            echo $errstr . "\n";
-        }
-
-        $_dompdf_warnings[] = $errstr;
-    }
-
-    /**
-     * @param $c
-     * @return bool|string
-     */
-    public static function unichr($c)
-    {
-        if ($c <= 0x7F) {
-            return chr($c);
-        } else if ($c <= 0x7FF) {
-            return chr(0xC0 | $c >> 6) . chr(0x80 | $c & 0x3F);
-        } else if ($c <= 0xFFFF) {
-            return chr(0xE0 | $c >> 12) . chr(0x80 | $c >> 6 & 0x3F)
-            . chr(0x80 | $c & 0x3F);
-        } else if ($c <= 0x10FFFF) {
-            return chr(0xF0 | $c >> 18) . chr(0x80 | $c >> 12 & 0x3F)
-            . chr(0x80 | $c >> 6 & 0x3F)
-            . chr(0x80 | $c & 0x3F);
-        }
-        return false;
-    }
-
-    /**
-     * Converts a CMYK color to RGB
-     *
-     * @param float|float[] $c
-     * @param float $m
-     * @param float $y
-     * @param float $k
-     *
-     * @return float[]
-     */
-    public static function cmyk_to_rgb($c, $m = null, $y = null, $k = null)
-    {
-        if (is_array($c)) {
-            [$c, $m, $y, $k] = $c;
-        }
-
-        $c *= 255;
-        $m *= 255;
-        $y *= 255;
-        $k *= 255;
-
-        $r = (1 - round(2.55 * ($c + $k)));
-        $g = (1 - round(2.55 * ($m + $k)));
-        $b = (1 - round(2.55 * ($y + $k)));
-
-        if ($r < 0) {
-            $r = 0;
-        }
-        if ($g < 0) {
-            $g = 0;
-        }
-        if ($b < 0) {
-            $b = 0;
-        }
-
-        return [
-            $r, $g, $b,
-            "r" => $r, "g" => $g, "b" => $b
+        $unescaped = [
+            '%2D' => '-', '%5F' => '_', '%2E' => '.', '%21' => '!', '%7E' => '~',
+            '%2A' => '*', '%27' => "'", '%28' => '(', '%29' => ')'
         ];
-    }
-
-    /**
-     * getimagesize doesn't give a good size for 32bit BMP image v5
-     *
-     * @param string $filename
-     * @param resource $context
-     * @return array An array of three elements: width and height as
-     *         `float|int`, and image type as `string|null`.
-     */
-    public static function dompdf_getimagesize($filename, $context = null)
-    {
-        static $cache = [];
-
-        if (isset($cache[$filename])) {
-            return $cache[$filename];
-        }
-
-        [$width, $height, $type] = getimagesize($filename);
-
-        // Custom types
-        $types = [
-            IMAGETYPE_JPEG => "jpeg",
-            IMAGETYPE_GIF  => "gif",
-            IMAGETYPE_BMP  => "bmp",
-            IMAGETYPE_PNG  => "png",
-            IMAGETYPE_WEBP => "webp",
+        $reserved = [
+            '%3B' => ';', '%2C' => ',', '%2F' => '/', '%3F' => '?', '%3A' => ':',
+            '%40' => '@', '%26' => '&', '%3D' => '=', '%2B' => '+', '%24' => '$'
         ];
-
-        $type = $types[$type] ?? null;
-
-        if ($width == null || $height == null) {
-            [$data] = Helpers::getFileContent($filename, $context);
-
-            if ($data !== null) {
-                if (substr($data, 0, 2) === "BM") {
-                    $meta = unpack("vtype/Vfilesize/Vreserved/Voffset/Vheadersize/Vwidth/Vheight", $data);
-                    $width = (int) $meta["width"];
-                    $height = (int) $meta["height"];
-                    $type = "bmp";
-                } elseif (strpos($data, "<svg") !== false) {
-                    $doc = new \Svg\Document();
-                    $doc->loadFile($filename);
-
-                    [$width, $height] = $doc->getDimensions();
-                    $width = (float) $width;
-                    $height = (float) $height;
-                    $type = "svg";
-                }
-            }
-        }
-
-        return $cache[$filename] = [$width ?? 0, $height ?? 0, $type];
+        $score = [
+            '%23' => '#'
+        ];
+        return strtr(rawurlencode(rawurldecode($uri)), array_merge($reserved, $unescaped, $score));
     }
 
     /**
@@ -862,73 +808,130 @@ class Helpers
     }
 
     /**
-     * Gets the content of the file at the specified path using one of
-     * the following methods, in preferential order:
-     *  - file_get_contents: if allow_url_fopen is true or the file is local
-     *  - curl: if allow_url_fopen is false and curl is available
+     * Decoder for RLE8 compression in windows bitmaps
+     * http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/bitmaps_6x0u.asp
      *
-     * @param string $uri
-     * @param resource $context (ignored if curl is used)
-     * @param int $offset
-     * @param int $maxlen (ignored if curl is used)
-     * @return string[]
+     * @param string $str Data to decode
+     * @param int $width Image width
+     *
+     * @return string
      */
-    public static function getFileContent($uri, $context = null, $offset = 0, $maxlen = null)
+    public static function rle8_decode($str, $width)
     {
-        $content = null;
-        $headers = null;
-        [$protocol] = Helpers::explode_url($uri);
-        $is_local_path = ($protocol === "" || $protocol === "file://");
+        $lineWidth = $width + (3 - ($width - 1) % 4);
+        $out = '';
+        $cnt = strlen($str);
 
-        set_error_handler([self::class, 'record_warnings']);
-
-        try {
-            if ($is_local_path || ini_get('allow_url_fopen')) {
-                if ($is_local_path === false) {
-                    $uri = Helpers::encodeURI($uri);
-                }
-                if (isset($maxlen)) {
-                    $result = file_get_contents($uri, false, $context, $offset, $maxlen);
-                } else {
-                    $result = file_get_contents($uri, false, $context, $offset);
-                }
-                if ($result !== false) {
-                    $content = $result;
-                }
-                if (isset($http_response_header)) {
-                    $headers = $http_response_header;
-                }
-
-            } elseif (function_exists('curl_exec')) {
-                $curl = curl_init($uri);
-
-                //TODO: use $context to define additional curl options
-                curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-                curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($curl, CURLOPT_HEADER, true);
-                if ($offset > 0) {
-                    curl_setopt($curl, CURLOPT_RESUME_FROM, $offset);
-                }
-
-                $data = curl_exec($curl);
-
-                if ($data !== false && !curl_errno($curl)) {
-                    switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
-                        case 200:
-                            $raw_headers = substr($data, 0, curl_getinfo($curl, CURLINFO_HEADER_SIZE));
-                            $headers = preg_split("/[\n\r]+/", trim($raw_headers));
-                            $content = substr($data, curl_getinfo($curl, CURLINFO_HEADER_SIZE));
+        for ($i = 0; $i < $cnt; $i++) {
+            $o = ord($str[$i]);
+            switch ($o) {
+                case 0: # ESCAPE
+                    $i++;
+                    switch (ord($str[$i])) {
+                        case 0: # NEW LINE
+                            $padCnt = $lineWidth - strlen($out) % $lineWidth;
+                            if ($padCnt < $lineWidth) {
+                                $out .= str_repeat(chr(0), $padCnt); # pad line
+                            }
                             break;
+                        case 1: # END OF FILE
+                            $padCnt = $lineWidth - strlen($out) % $lineWidth;
+                            if ($padCnt < $lineWidth) {
+                                $out .= str_repeat(chr(0), $padCnt); # pad line
+                            }
+                            break 3;
+                        case 2: # DELTA
+                            $i += 2;
+                            break;
+                        default: # ABSOLUTE MODE
+                            $num = ord($str[$i]);
+                            for ($j = 0; $j < $num; $j++) {
+                                $out .= $str[++$i];
+                            }
+                            if ($num % 2) {
+                                $i++;
+                            }
                     }
-                }
-                curl_close($curl);
+                    break;
+                default:
+                    $out .= str_repeat($str[++$i], $o);
             }
-        } finally {
-            restore_error_handler();
+        }
+        return $out;
+    }
+
+    /**
+     * Decoder for RLE4 compression in windows bitmaps
+     * see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/bitmaps_6x0u.asp
+     *
+     * @param string $str Data to decode
+     * @param int $width Image width
+     *
+     * @return string
+     */
+    public static function rle4_decode($str, $width)
+    {
+        $w = floor($width / 2) + ($width % 2);
+        $lineWidth = $w + (3 - (($width - 1) / 2) % 4);
+        $pixels = [];
+        $cnt = strlen($str);
+        $c = 0;
+
+        for ($i = 0; $i < $cnt; $i++) {
+            $o = ord($str[$i]);
+            switch ($o) {
+                case 0: # ESCAPE
+                    $i++;
+                    switch (ord($str[$i])) {
+                        case 0: # NEW LINE
+                            while (count($pixels) % $lineWidth != 0) {
+                                $pixels[] = 0;
+                            }
+                            break;
+                        case 1: # END OF FILE
+                            while (count($pixels) % $lineWidth != 0) {
+                                $pixels[] = 0;
+                            }
+                            break 3;
+                        case 2: # DELTA
+                            $i += 2;
+                            break;
+                        default: # ABSOLUTE MODE
+                            $num = ord($str[$i]);
+                            for ($j = 0; $j < $num; $j++) {
+                                if ($j % 2 == 0) {
+                                    $c = ord($str[++$i]);
+                                    $pixels[] = ($c & 240) >> 4;
+                                } else {
+                                    $pixels[] = $c & 15;
+                                }
+                            }
+
+                            if ($num % 2 == 0) {
+                                $i++;
+                            }
+                    }
+                    break;
+                default:
+                    $c = ord($str[++$i]);
+                    for ($j = 0; $j < $o; $j++) {
+                        $pixels[] = ($j % 2 == 0 ? ($c & 240) >> 4 : $c & 15);
+                    }
+            }
         }
 
-        return [$content, $headers];
+        $out = '';
+        if (count($pixels) % 2) {
+            $pixels[] = 0;
+        }
+
+        $cnt = count($pixels) / 2;
+
+        for ($i = 0; $i < $cnt; $i++) {
+            $out .= chr(16 * $pixels[2 * $i] + $pixels[2 * $i + 1]);
+        }
+
+        return $out;
     }
 
     /**
@@ -964,6 +967,14 @@ class Helpers
     }
 
     /**
+     * Check `$a < $b`, accounting for inaccuracies in float computation.
+     */
+    public static function lengthLess(float $a, float $b): bool
+    {
+        return $a < $b && !self::lengthEqual($a, $b);
+    }
+
+    /**
      * Check whether two lengths should be considered equal, accounting for
      * inaccuracies in float computation.
      *
@@ -992,14 +1003,6 @@ class Helpers
         }
 
         return $diff < $epsilon * max(abs($a), abs($b));
-    }
-
-    /**
-     * Check `$a < $b`, accounting for inaccuracies in float computation.
-     */
-    public static function lengthLess(float $a, float $b): bool
-    {
-        return $a < $b && !self::lengthEqual($a, $b);
     }
 
     /**

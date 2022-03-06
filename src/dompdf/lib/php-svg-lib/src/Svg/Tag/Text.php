@@ -53,9 +53,9 @@ class Text extends Shape
         $surface->fillText($this->getText(), $x, $y);
     }
 
-    protected function after()
+    public function getText()
     {
-        $this->document->getSurface()->restore();
+        return trim($this->text);
     }
 
     public function appendText($text)
@@ -63,8 +63,8 @@ class Text extends Shape
         $this->text .= $text;
     }
 
-    public function getText()
+    protected function after()
     {
-        return trim($this->text);
+        $this->document->getSurface()->restore();
     }
 } 

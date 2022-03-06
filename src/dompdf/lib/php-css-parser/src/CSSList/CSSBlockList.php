@@ -27,22 +27,6 @@ abstract class CSSBlockList extends CSSList
     }
 
     /**
-     * @param array<int, DeclarationBlock> $aResult
-     *
-     * @return void
-     */
-    protected function allDeclarationBlocks(array &$aResult)
-    {
-        foreach ($this->aContents as $mContent) {
-            if ($mContent instanceof DeclarationBlock) {
-                $aResult[] = $mContent;
-            } elseif ($mContent instanceof CSSBlockList) {
-                $mContent->allDeclarationBlocks($aResult);
-            }
-        }
-    }
-
-    /**
      * @param array<int, RuleSet> $aResult
      *
      * @return void
@@ -137,6 +121,22 @@ abstract class CSSBlockList extends CSSList
                         $aResult[] = $oSelector;
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * @param array<int, DeclarationBlock> $aResult
+     *
+     * @return void
+     */
+    protected function allDeclarationBlocks(array &$aResult)
+    {
+        foreach ($this->aContents as $mContent) {
+            if ($mContent instanceof DeclarationBlock) {
+                $aResult[] = $mContent;
+            } elseif ($mContent instanceof CSSBlockList) {
+                $mContent->allDeclarationBlocks($aResult);
             }
         }
     }

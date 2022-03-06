@@ -10,7 +10,7 @@ function agregar_fila(id) {
     var celda_2 = fila.insertCell(1);
     var elemetos_2 = document.getElementById('productos');
     var copia_elemento_2 = document.createElement('select');
-    copia_elemento_2.innerHTML = copia_elemento_2.innerHTML+elemetos_2.innerHTML;
+    copia_elemento_2.innerHTML = copia_elemento_2.innerHTML + elemetos_2.innerHTML;
 
     celda_2.appendChild(copia_elemento_2);
 
@@ -22,26 +22,25 @@ function agregar_fila(id) {
 }
 
 
-
 function eliminar_fila(id) {
     try {
         var tabla = document.getElementById(id);
         var count_filas = tabla.rows.length;
-        for(var i=0; i<count_filas; i++) {
+        for (var i = 0; i < count_filas; i++) {
             var fila = tabla.rows[i];
             var check_box = fila.cells[0].childNodes[0];
-            if(null != check_box && true == check_box.checked) {
+            if (null != check_box && true == check_box.checked) {
                 tabla.deleteRow(i);
                 count_filas--;
                 i--;
             }
         }
-    }catch(e) {
+    } catch (e) {
         alert(e);
     }
 }
 
-$(document).ready(function (){
+$(document).ready(function () {
     $('#ok').click(function () {
 
 
@@ -52,15 +51,15 @@ $(document).ready(function (){
                 empleado: get_empleado(),
                 cliente: get_cliente(),
             },
-            success: function(response){
+            success: function (response) {
                 console.log(response);
             }
         });
 
         $('#details tr').each(function () {
-            var  id_carro=$(this).find('select').val();
-            var  cantidad=$(this).find('input[type="number"]').val();
-            alert(id_carro+' '+cantidad);
+            var id_carro = $(this).find('select').val();
+            var cantidad = $(this).find('input[type="number"]').val();
+            alert(id_carro + ' ' + cantidad);
         })
     })
 })
@@ -68,7 +67,7 @@ $(document).ready(function (){
 function get_cliente() {
     var id;
     $('#clientes').each(function () {
-        var clientes=$(this).find('#clientes').val();
+        var clientes = $(this).find('#clientes').val();
         id = clientes;
 
     })
@@ -78,7 +77,7 @@ function get_cliente() {
 function get_empleado() {
     var id;
     $('#empleados').each(function () {
-        var  empleados=$(this).find('#empleados').val();
+        var empleados = $(this).find('#empleados').val();
         id = empleados;
     })
     return id;
