@@ -4,21 +4,21 @@
 
 ### Docker container
 
-- Update `config.json`:
+1. Update `config.json`:
 
-- Build the image:
+2. Build the image:
 
 ```shell
 docker build -t upb-motors:latest /path/to/repository
 ```
 
-- Create the container:
+3. Create the container:
 
 ```shell
-docker create -p 80:80 --restart unless-stopped --name upb-motors-production upb-motors:latest
+docker create -p 80:80 -p 443:443 --restart unless-stopped --name upb-motors-production upb-motors:latest
 ```
 
-- Start the container:
+4. Start the container:
 
 ```shell
 docker start upb-motors-production

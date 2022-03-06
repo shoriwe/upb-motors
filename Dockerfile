@@ -32,6 +32,8 @@ RUN php-fpm8.1
 WORKDIR /var/www/matriz
 COPY src/ /var/www/matriz
 COPY nginx-http.conf /etc/nginx/sites-available/matriz-http
+RUN openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+COPY ssl-params.conf /etc/nginx/snippets/ssl-params.conf
 RUN ln -s /etc/nginx/sites-available/matriz-http /etc/nginx/sites-enabled/matriz-http
 RUN rm /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
