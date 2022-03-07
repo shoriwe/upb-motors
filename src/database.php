@@ -88,6 +88,8 @@ interface iDatabase
     public function register_user(int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password): bool;
 
     public function register_client(string $name, string $personal_id, string $address, string $phone, string $email): bool;
+
+    public function cancel_purchase(int $o_cliente_id,int $o_empleado_id,string $fecha, bool $o_enabled ):bool;
 }
 
 
@@ -282,6 +284,14 @@ class TestDatabase implements iDatabase
         // TODO: Implement registrar_orden() method.
         return false;
     }
+
+    public function cancel_purchase(int $o_cliente_id,int $o_empleado_id,string $fecha,bool $o_enabled ):bool
+    {
+        // TODO: Implement cancel_purchase() method.
+        return false;
+    }
+
+
 }
 
 class MySQL implements iDatabase
@@ -769,6 +779,26 @@ class MySQL implements iDatabase
             $result = $records->fetch(PDO::FETCH_ASSOC);
             if (count($result) !== 0) {
                 return $result["result"];
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function cancel_purchase(int $o_cliente_id,int $o_empleado_id,string $fecha,bool $o_enabled):bool
+    {
+        $records = $this->database->prepare('SELECT cancel_purchase(:o_cliente_id, :o_empleado_id, :fecha, :o_enabled)');
+        $records->bindParam(':o_cliente_id',$o_cliente_id);
+        $records->bindParam(':o_empleado_id',$o_empleado_id);
+        $records->bindParam(':fecha',$fecha);
+        $records->bindParam(':o_enabled',$o_enabled);
+
+        try {
+            $records->execute();
+            $result = $records->fetch(PDO::FETCH_ASSOC);
+            if (count($result) !== 0) {
+                return $result;
             }
             return false;
         } catch (Exception $e) {

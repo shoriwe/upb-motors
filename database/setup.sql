@@ -130,10 +130,18 @@ CREATE TABLE IF NOT EXISTS clientes
 -- -- ordenes_compra -- --
 CREATE TABLE IF NOT EXISTS ordenes_compra
 (
+<<<<<<< Updated upstream
     id           INT  NOT NULL PRIMARY KEY AUTO_INCREMENT,
     empleados_id INT  NOT NULL,
     clientes_id  INT  NOT NULL,
     fehca        DATE NOT NULL,
+=======
+    id              INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    empleados_id    INT NOT NULL,
+    clientes_id     INT NOT NULL,
+    fehca           DATE NOT NULL,
+    habilitado      BOOLEAN NOT NULL DEFAULT TRUE,
+>>>>>>> Stashed changes
     CONSTRAINT fk_clientes_id FOREIGN KEY (clientes_id) REFERENCES clientes (id),
     CONSTRAINT fk_empleados_id FOREIGN KEY (empleados_id) REFERENCES empleados (id)
 
@@ -508,6 +516,31 @@ BEGIN
             v_fehca);
     RETURN TRUE;
 END;
+<<<<<<< Updated upstream
 @@
 
 DELIMITER ;
+=======
+
+
+CREATE FUNCTION cancel_purchase(
+    o_id INT,
+    o_enabled BOOLEAN
+)
+    RETURNS BOOLEAN
+	LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    SELECT id,
+           empleados_id,
+           clientes_id,
+           fehca
+    FROM ordenes_compra
+    WHERE id = o_id;
+    UPDATE
+        ordenes_compra
+    SET habilitado = o_enabled
+    WHERE id = o_id;
+    return true;
+END;
+>>>>>>> Stashed changes
