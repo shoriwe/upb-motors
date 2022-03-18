@@ -113,6 +113,34 @@ CREATE TABLE IF NOT EXISTS inventario
     CONSTRAINT unique_producto UNIQUE (nombre)
 );
 
+CREATE TABLE IF NOT EXISTS historial_precios
+(
+    id            INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    inventario_id INT    NOT NULL,
+    precio        DOUBLE NOT NULL,
+    CONSTRAINT fk_inventario_id_inventario FOREIGN KEY (inventario_id) REFERENCES inventario (id)
+);
+
+CREATE TRIGGER insertar_producto
+    AFTER INSERT
+    ON inventario
+    FOR EACH ROW
+    INSERT INTO historial_precios (inventario_id, precio)
+    VALUES (NEW.id, NEW.precio);
+
+DELIMITER @@
+CREATE TRIGGER actualizar_product
+    AFTER UPDATE
+    ON inventario
+    FOR EACH ROW
+BEGIN
+    IF OLD.precio != NEW.precio THEN
+        INSERT INTO historial_precios (inventario_id, precio) VALUES (NEW.id, NEW.precio);
+    END IF;
+END;
+@@
+DELIMITER ;
+
 -- -- Clientes -- --
 CREATE TABLE IF NOT EXISTS clientes
 (
@@ -130,11 +158,11 @@ CREATE TABLE IF NOT EXISTS clientes
 -- -- ordenes_compra -- --
 CREATE TABLE IF NOT EXISTS ordenes_compra
 (
-    id              INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    empleados_id    INT NOT NULL,
-    clientes_id     INT NOT NULL,
-    fehca           DATE NOT NULL,
-    habilitado      BOOLEAN NOT NULL DEFAULT TRUE,
+    id           INT     NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    empleados_id INT     NOT NULL,
+    clientes_id  INT     NOT NULL,
+    fehca        DATE    NOT NULL,
+    habilitado   BOOLEAN NOT NULL DEFAULT TRUE,
     CONSTRAINT fk_clientes_id FOREIGN KEY (clientes_id) REFERENCES clientes (id),
     CONSTRAINT fk_empleados_id FOREIGN KEY (empleados_id) REFERENCES empleados (id)
 
@@ -508,7 +536,8 @@ BEGIN
             v_clientes_id,
             v_fehca);
     RETURN TRUE;
-END; @@
+END;
+@@
 
 CREATE FUNCTION cancel_purchase(
     o_id INT,
@@ -521,7 +550,8 @@ BEGIN
     SELECT id,
            empleados_id,
            clientes_id,
-           fehca INTO @r_id, @r_empleados_id, @r_clientes_id
+           fehca
+    INTO @r_id, @r_empleados_id, @r_clientes_id
     FROM ordenes_compra
     WHERE id = o_id;
     IF @r_id IS NULL THEN
@@ -532,6 +562,7 @@ BEGIN
     SET habilitado = o_enabled
     WHERE id = o_id;
     return true;
-END; @@
+END;
+@@
 
 DELIMITER ;
