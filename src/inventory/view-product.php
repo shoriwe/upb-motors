@@ -45,9 +45,22 @@ if ($product === null) {
             echo "<p class='black-text' style='margin-top: 0.5%; padding: 1vh 1vw; box-shadow: 1px 1px 5px 0 black;'>$product->descripcion</p>";
             ?>
         </div>
-        <?php
-        ?>
-
+        <h3 class="purple-text">Historial de precios</h3>
+        <div class="list-container">
+            <?php
+            $old_prices = connect()->database->get_price_history($product->id);
+            foreach ($old_prices as $price) {
+                $price_date = date('Y-m-d H:i:s', $price->modification_date);
+                echo "
+<div class='list-entry'>
+    <h3 class='black-text'>$price_date</h3>
+    <pre style='min-width: 15vw;'></pre>
+    <h3 class='black-text'>$$price->precio</h3>
+</div>
+";
+            }
+            ?>
+        </div>
     </div>
 </div>
 </body>

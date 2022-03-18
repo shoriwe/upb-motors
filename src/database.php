@@ -90,6 +90,8 @@ interface iDatabase
     public function register_client(string $name, string $personal_id, string $address, string $phone, string $email): bool;
 
     public function cancel_purchase(int $o_cliente_id,int $o_empleado_id,string $fecha, bool $o_enabled ):bool;
+
+    public function get_price_history(int $product_id): ?array;
 }
 
 
@@ -292,6 +294,11 @@ class TestDatabase implements iDatabase
     }
 
 
+    public function get_price_history(int $product_id): ?array
+    {
+        // TODO: Implement get_price_history() method.
+        return null;
+    }
 }
 
 class MySQL implements iDatabase
@@ -804,5 +811,19 @@ class MySQL implements iDatabase
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    public function get_price_history(int $product_id): ?array
+    {
+        $records = $this->database->prepare('SELECT id, modification_date, inventario_id, precio FROM historial_precios ORDER BY id DESC;');
+        $records->execute();
+        $precios = array();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $precios[] = new PriceHistory($row["id"], strtotime($row["modification_date"]), $row["inventario_id"], $row["precio"]);
+        }
+        return $precios;
     }
 }

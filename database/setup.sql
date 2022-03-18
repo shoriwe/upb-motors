@@ -115,9 +115,10 @@ CREATE TABLE IF NOT EXISTS inventario
 
 CREATE TABLE IF NOT EXISTS historial_precios
 (
-    id            INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    inventario_id INT    NOT NULL,
-    precio        DOUBLE NOT NULL,
+    id                INT      NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    modification_date DATETIME NOT NULL DEFAULT NOW(),
+    inventario_id     INT      NOT NULL,
+    precio            DOUBLE   NOT NULL,
     CONSTRAINT fk_inventario_id_inventario FOREIGN KEY (inventario_id) REFERENCES inventario (id)
 );
 

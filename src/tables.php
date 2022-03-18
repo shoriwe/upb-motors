@@ -100,6 +100,28 @@ class Lis_Product
     }
 }
 
+class PriceHistory {
+    public int $id;
+    public int $modification_date;
+    public int $inventario_id;
+    public float $precio;
+
+    /**
+     * @param int $id
+     * @param int $modification_date
+     * @param int $inventario_id
+     * @param float $precio
+     */
+    public function __construct(int $id, int $modification_date, int $inventario_id, float $precio)
+    {
+        $this->id = $id;
+        $this->modification_date = $modification_date;
+        $this->inventario_id = $inventario_id;
+        $this->precio = $precio;
+    }
+
+}
+
 class Lis_Clients
 {
     public ?int $id = null;
