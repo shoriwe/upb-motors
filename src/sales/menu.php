@@ -14,7 +14,7 @@ require_once '../navbar.php';
 </head>
 <br>
 <div class="centered-flex-container">
-    <a class="blue-button" href="#">Listar ordenes pendientes</a>
+    <a class="blue-button" href="/sales/buscar-ordenes.php">Buscar ordenes de Compra</a>
     <pre style="width: 1vw;"></pre>
-    <a class="blue-button" href="#">Crear orden de compra</a>
+    <a class="blue-button" href="/sales/add-orden.php">Crear orden de compra</a>
 </div>

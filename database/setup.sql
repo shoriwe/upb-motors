@@ -615,4 +615,18 @@ BEGIN
 END;
 @@
 
+CREATE FUNCTION close_orden(
+    v_id INT
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    UPDATE ordenes_compra
+    SET abierta = 0
+    WHERE id = v_id;
+    RETURN TRUE;
+END;
+@@
+
 DELIMITER ;

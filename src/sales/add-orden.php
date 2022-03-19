@@ -1,5 +1,6 @@
 <?php
 require_once '../navbar.php';
+require 'menu.php';
 ?>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -16,20 +17,15 @@ require_once '../navbar.php';
     <script src="/js/addrow.js"></script>
 </head>
 
-<div class="centered-container-for-input" style="margin-top: 10vh" >
-    <h1 class="purple-text" style="margin-top: 0.5%;">Crear Orden de compra</h1>
-    <br>
-    <div class="centered-flex-container">
-        <a class="blue-button" href="#">Lista de ordenes de Compra</a>
-        <pre style="width: 1vw;"></pre>
-        <a class="blue-button" href="/sales/add-orden.php">Crear orden de compra</a>
+<div class="centered-container">
+    <div class="centered-container-for-input" style="margin-top: 10vh" >
+        <h1 class="purple-text" style="margin-top: 0.5%;">Crear Orden de compra</h1>
     </div>
 </div>
-
 <div class="centered-container" style="margin-top: 10vh" id="empleados">
         <?php
         $empleados = connect()->database->lista_empleados();
-        echo "<select id='empleados' name='empleados'>";
+        echo "<select id='empleados' name='empleados' class='select-menu'>";
         echo "<option value=null selected='selected'>Seleccionar Empleado</option>";
         foreach ($empleados as $empleado) {
             echo "<option value=$empleado->id>$empleado->nombre</option>";
@@ -41,7 +37,7 @@ require_once '../navbar.php';
 <div class="centered-container" style="margin-top: 10vh" id="clientes">
         <?php
         $clientes = connect()->database->lista_clientes();
-        echo "<select id='clientes'>";
+        echo "<select id='clientes' class='select-menu'>";
         echo "<option value=null selected='selected'>Seleccionar cliente</option>";
         foreach ($clientes as $cliente) {
             echo "<option value=$cliente->id>$cliente->nombre</option>";
@@ -53,7 +49,7 @@ require_once '../navbar.php';
 <div class="centered-container" style="margin-top: 10vh" id="pagos">
         <?php
         $pagos = connect()->database->lista_pagos();
-        echo "<select id = 'pagos'>";
+        echo "<select id = 'pagos' class='select-menu'>";
         echo "<option value='' selected='selected'>Seleccionar Tipo de pago</option>";
         foreach ($pagos as $pago) {
             echo "<option value=$pago->id>$pago->pago</option>";
@@ -84,7 +80,7 @@ require_once '../navbar.php';
             <td class="itemRow">
                 <?php
                 $products = connect()->database->lista_productos();
-                echo "<select id = 'productos'>";
+                echo "<select id = 'productos' class='select-menu'>";
                 echo "<option value=null selected='selected '>Seleccionar Producto</option>";
                 foreach ($products as $product) {
                     echo "<option value=$product->id>$product->nombre</option>";
