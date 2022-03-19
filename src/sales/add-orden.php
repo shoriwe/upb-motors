@@ -1,8 +1,10 @@
 <?php
 require_once '../navbar.php';
 ?>
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 
 <head>
     <title>Ventas</title>
@@ -14,60 +16,85 @@ require_once '../navbar.php';
     <script src="/js/addrow.js"></script>
 </head>
 
+<div class="centered-container-for-input" style="margin-top: 10vh" >
+    <h1 class="purple-text" style="margin-top: 0.5%;">Crear Orden de compra</h1>
+    <br>
+    <div class="centered-flex-container">
+        <a class="blue-button" href="#">Lista de ordenes de Compra</a>
+        <pre style="width: 1vw;"></pre>
+        <a class="blue-button" href="/sales/add-orden.php">Crear orden de compra</a>
+    </div>
+</div>
 
 <div class="centered-container" style="margin-top: 10vh" id="empleados">
-    <div>
         <?php
         $empleados = connect()->database->lista_empleados();
         echo "<select id='empleados' name='empleados'>";
-        echo "<option value=null>Seleccionar Empleado</option>";
+        echo "<option value=null selected='selected'>Seleccionar Empleado</option>";
         foreach ($empleados as $empleado) {
             echo "<option value=$empleado->id>$empleado->nombre</option>";
         }
         echo "</select>";
         ?>
-    </div>
 </div>
 
-
 <div class="centered-container" style="margin-top: 10vh" id="clientes">
-    <div>
         <?php
         $clientes = connect()->database->lista_clientes();
         echo "<select id='clientes'>";
-        echo "<option value=null>Seleccionar cliente</option>";
+        echo "<option value=null selected='selected'>Seleccionar cliente</option>";
         foreach ($clientes as $cliente) {
             echo "<option value=$cliente->id>$cliente->nombre</option>";
         }
         echo "</select>";
         ?>
-    </div>
+</div>
+
+<div class="centered-container" style="margin-top: 10vh" id="pagos">
+        <?php
+        $pagos = connect()->database->lista_pagos();
+        echo "<select id = 'pagos'>";
+        echo "<option value='' selected='selected'>Seleccionar Tipo de pago</option>";
+        foreach ($pagos as $pago) {
+            echo "<option value=$pago->id>$pago->pago</option>";
+        }
+        echo "</select>";
+        ?>
 </div>
 
 <div class="centered-container" style="margin-top: 10vh">
-    <table id="dataTable">
+        <input type="number" name="descuento[]" id="descuento_1" min="0" class="basic-text-input" placeholder="Descuento"
+               value=null onkeypress="return solo_numeros(event)" style="width: 75%;">
+</div>
+
+<div class="centered-container" style="margin-top: 10vh">
+    <table id="dataTable" class="table table-striped">
         <thead>
         <tr>
             <th>Check</th>
-            <th>Nombre Producto</th>
+            <th>Producto</th>
             <th>Cantidad</th>
         </tr>
         </thead>
         <tbody id="details">
         <tr name="tabla">
-            <td><input type="checkbox" name="chk"/></td>
+            <td>
+                <input type="checkbox" name="chk"/>
+            </td>
             <td class="itemRow">
                 <?php
                 $products = connect()->database->lista_productos();
                 echo "<select id = 'productos'>";
-                echo "<option value=null>Seleccionar</option>";
+                echo "<option value=null selected='selected '>Seleccionar Producto</option>";
                 foreach ($products as $product) {
                     echo "<option value=$product->id>$product->nombre</option>";
                 }
                 echo "</select>";
                 ?>
             </td>
-            <td><input type="number" name="quantity[]" id="quantity_1" class="form-control quantity" autocomplete="off">
+            <td>
+                <input type="number" name="quantity[]" min="1" id="quantity_1" class="basic-text-input" placeholder="Cantidad"
+                       onkeypress="return solo_numeros(event)" style="width: 75%;">
             </td>
         </tr>
         </tbody>
@@ -75,12 +102,12 @@ require_once '../navbar.php';
 </div>
 
 <div class="centered-container" style="margin-top: 10vh">
-    <input class="blue-button" type="button" value="Add Row" onclick="agregar_fila('dataTable');"/>
-    <p>&nbsp</p>
-    <input class="blue-button" type="button" value="Delete Row" onclick="eliminar_fila('dataTable');"/>
+    <input class="blue-button" type="button" value="Añadir Fila" onclick="agregar_fila('dataTable');"/>
+    <pre style="width: 1vw;"></pre>
+    <input class="blue-button" type="button" value="Eliminar Fila" onclick="eliminar_fila('dataTable');"/>
 </div>
 <div class="centered-container" style="margin-top: 10vh">
-    <input id="ok" class="blue-button" type="button" value="Guardar"/>
+    <input id="ok" class="blue-button" type="button" value="Crear Orden de Compra"/>
 </div>
 
 

@@ -145,3 +145,15 @@ class Lis_Empleados
         $this->nombre = $nombre;
     }
 }
+
+class Lis_tipo_pago
+{
+    public ?int $id = null;
+    public ?string $pago = null;
+
+    public function __construct(int $id, string $pago)
+    {
+        $this->id = $id;
+        $this->pago = $pago;
+    }
+}

@@ -281,7 +281,7 @@ class TestDatabase implements iDatabase
         return array();
     }
 
-    public function registrar_orden(int $empleado, int $cliente, string $hoy): bool
+    public function registrar_orden(int $empleado, int $cliente, string $hoy, float $descuento): bool
     {
         // TODO: Implement registrar_orden() method.
         return false;
@@ -298,6 +298,36 @@ class TestDatabase implements iDatabase
     {
         // TODO: Implement get_price_history() method.
         return null;
+    }
+
+    public function id_orden(int $empleado, int $cliente): ?int
+    {
+        // TODO: Implement id_orden() method.
+        return null;
+    }
+
+    public function lista_pagos(): array
+    {
+        // TODO: Implement lista_productos() method.
+        return array();
+    }
+
+    public function registrar_orden_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool
+    {
+        // TODO: Implement registrar_orden() method.
+        return false;
+    }
+
+    public function delete_erorr_orden(int $id): bool
+    {
+        // TODO: Implement id_orden() method.
+        return false;
+    }
+
+    public function delete_erorr_detalles_orden(int $id): bool
+    {
+        // TODO: Implement id_orden() method.
+        return false;
     }
 }
 
@@ -770,17 +800,18 @@ class MySQL implements iDatabase
             if (count($row) === 0) {
                 break;
             }
-            $empleados[] = new Lis_Clients($row["id"], $row["nombre_completo"]);
+            $empleados[] = new Lis_Empleados($row["id"], $row["nombre_completo"]);
         }
         return $empleados;
     }
 
-    public function registrar_orden(int $empleado, int $cliente, string $hoy): bool
+    public function registrar_orden(int $empleado, int $cliente, string $hoy, float $descuento): bool
     {
-        $records = $this->database->prepare('SELECT registrar_orden(:empleado, :cliente, :hoy) AS result');
+        $records = $this->database->prepare('SELECT registrar_orden(:empleado, :cliente, :hoy,:descuento) AS result');
         $records->bindParam(':empleado', $empleado);
         $records->bindParam(':cliente', $cliente);
         $records->bindParam(':hoy', $hoy);
+        $records->bindParam(':descuento', $descuento);
         try {
             $records->execute();
             $result = $records->fetch(PDO::FETCH_ASSOC);
@@ -796,10 +827,10 @@ class MySQL implements iDatabase
     public function cancel_purchase(int $o_cliente_id,int $o_empleado_id,string $fecha,bool $o_enabled):bool
     {
         $records = $this->database->prepare('SELECT cancel_purchase(:o_cliente_id, :o_empleado_id, :fecha, :o_enabled)');
-        $records->bindParam(':o_cliente_id',$o_cliente_id);
-        $records->bindParam(':o_empleado_id',$o_empleado_id);
-        $records->bindParam(':fecha',$fecha);
-        $records->bindParam(':o_enabled',$o_enabled);
+        $records->bindParam(':o_cliente_id', $o_cliente_id);
+        $records->bindParam(':o_empleado_id', $o_empleado_id);
+        $records->bindParam(':fecha', $fecha);
+        $records->bindParam(':o_enabled', $o_enabled);
 
         try {
             $records->execute();
@@ -807,10 +838,95 @@ class MySQL implements iDatabase
             if (count($result) !== 0) {
                 return $result;
             }
+        }catch (Exception $e) {
+            return false;
+        }
+        return false;
+    }
+
+    public function id_orden(int $empleado, int $cliente): int
+    {
+        $records = $this->database->prepare('SELECT id FROM ordenes_compra WHERE empleados_id = :empleado AND clientes_id = :cliente;');
+        $records->bindParam(':empleado', $empleado);
+        $records->bindParam(':cliente', $cliente);
+        $records->execute();
+        $id = 0;
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $id = $row["id"];
+        }
+        return $id;
+    }
+
+    public function lista_pagos(): array
+    {
+        $records = $this->database->prepare('SELECT id,pago FROM tipo_pago_orden;');
+        $records->execute();
+        $pago = array();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $pago[] = new Lis_tipo_pago($row["id"], $row["pago"]);
+        }
+        return $pago;
+    }
+
+    public function registrar_orden_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool
+    {
+        $detalles_producto = $this->database->prepare('SELECT cantidad,precio,activo FROM inventario WHERE id = :id_producto;');
+        $detalles_producto->bindParam(':id_producto', $producto);
+        $detalles_producto->execute();
+        $row_producto = $detalles_producto->fetch(PDO::FETCH_ASSOC);
+        $cantidad_actual_producto = $row_producto['cantidad'];
+        $precio_producto = $row_producto['precio'];
+        $activo_producto = $row_producto['activo'];
+
+        if ($activo_producto == 1){
+
+            if($cantidad_actual_producto>=$cantidad){
+                $nueva_cantidad = $cantidad_actual_producto - $cantidad;
+                $total = $cantidad*$precio_producto;
+                $actualizar_producto = $this->database->prepare('SELECT actualizar_cantidad_orden(:producto, :cantidad)');
+                $actualizar_producto->bindParam(':producto', $producto);
+                $actualizar_producto->bindParam(':cantidad', $nueva_cantidad);
+                $actualizar_producto->execute();
+                $insertar = $this->database->prepare('SELECT registrar_detalles_orden(:cantidad, :total,:producto, :pagos, :orden) AS result');
+                $insertar->bindParam(':cantidad', $cantidad);
+                $insertar->bindParam(':total', $total);
+                $insertar->bindParam(':producto', $producto);
+                $insertar->bindParam(':pagos', $pagos);
+                $insertar->bindParam(':orden', $id_orden);
+                try {
+                    $insertar->execute();
+                    $result = $insertar->fetch(PDO::FETCH_ASSOC);
+                    if (count($result) !== 0) {
+                        return $result["result"];
+                    }
+                    return false;
+                } catch (Exception $e) {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    public function delete_erorr_orden(int $id): bool
+    {
+        $records = $this->database->prepare('DELETE FROM ordenes_compra WHERE id = :id;');
+        $records->bindParam(':id', $id);
+        $records->execute();
+        try {
+            $records->execute();
+
             return false;
         } catch (Exception $e) {
             return false;
         }
+
     }
 
     public function get_price_history(int $product_id): ?array
@@ -825,5 +941,21 @@ class MySQL implements iDatabase
             $precios[] = new PriceHistory($row["id"], strtotime($row["modification_date"]), $row["inventario_id"], $row["precio"]);
         }
         return $precios;
+
+        return false;
+    }
+
+    public function delete_erorr_detalles_orden(int $id): bool
+    {
+        $records = $this->database->prepare('DELETE FROM detalles_ordenes_compra WHERE orden_compra_id = :id;');
+        $records->bindParam(':id', $id);
+        $records->execute();
+        try {
+            $records->execute();
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+        return false;
     }
 }

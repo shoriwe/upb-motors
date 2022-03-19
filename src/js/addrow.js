@@ -1,3 +1,6 @@
+let ciclo = 0;
+
+
 function agregar_fila(id) {
     var tabla = document.getElementById(id);
     var count_filas = tabla.rows.length;
@@ -11,13 +14,13 @@ function agregar_fila(id) {
     var elemetos_2 = document.getElementById('productos');
     var copia_elemento_2 = document.createElement('select');
     copia_elemento_2.innerHTML = copia_elemento_2.innerHTML + elemetos_2.innerHTML;
-
     celda_2.appendChild(copia_elemento_2);
 
     var celda_3 = fila.insertCell(2);
-    var elemento_3 = document.createElement("input");
-    elemento_3.type = "number";
-    celda_3.appendChild(elemento_3);
+    //var elemetos_3 = document.getElementById('quantity_1');
+    var elemetos_3 = document.querySelector('#quantity_1');
+    var copia_elemento_3 = elemetos_3.cloneNode(true);
+    celda_3.appendChild(copia_elemento_3);
 
 }
 
@@ -43,6 +46,8 @@ function eliminar_fila(id) {
 $(document).ready(function () {
     $('#ok').click(function () {
 
+        let descuento = document.getElementById("descuento_1").value;
+
 
         $.ajax({
             method: "POST",
@@ -50,17 +55,72 @@ $(document).ready(function () {
             data: {
                 empleado: get_empleado(),
                 cliente: get_cliente(),
+                descuento: descuento
             },
             success: function (response) {
                 console.log(response);
             }
         });
-
+        let rowCount = $("#details tr").length;
         $('#details tr').each(function () {
             var id_carro = $(this).find('select').val();
             var cantidad = $(this).find('input[type="number"]').val();
-            alert(id_carro + ' ' + cantidad);
+
+
+
+            /*if (rowCount == 0){
+                document.getElementById('descuento_1').value = '';
+                document.getElementById('quantity_1').value = '';
+                $('#empleados option').prop('selected', function () {
+                    return this.defaultSelected;
+                });
+                $('#pagos option').prop('selected', function () {
+                    return this.defaultSelected;
+                });
+                $('#clientes option').prop('selected', function () {
+                    return this.defaultSelected;
+                });
+                $('#details option').prop('selected', function () {
+                    return this.defaultSelected;
+                });
+                window.location.reload();
+            };*/
+            rowCount = rowCount - 1
+            $.ajax({
+                method: "POST",
+                url: 'save_product_orden_compra.php',
+                data: {
+                    empleado: get_empleado(),
+                    cliente: get_cliente(),
+                    producto: id_carro,
+                    cantidad: cantidad,
+                    pagos: get_pago(),
+                },
+                success: function (response) {
+                    console.log(response);
+                }
+            });
+
         })
+        function restart(){
+            document.getElementById('descuento_1').value = '';
+            document.getElementById('quantity_1').value = '';
+            $('#empleados option').prop('selected', function () {
+                return this.defaultSelected;
+            });
+            $('#pagos option').prop('selected', function () {
+                return this.defaultSelected;
+            });
+            $('#clientes option').prop('selected', function () {
+                return this.defaultSelected;
+            });
+            $('#details option').prop('selected', function () {
+                return this.defaultSelected;
+            });
+            window.location.reload();
+        }
+
+        setTimeout(restart, 4000);
     })
 })
 
@@ -81,5 +141,30 @@ function get_empleado() {
         id = empleados;
     })
     return id;
+}
+
+function get_pago() {
+    var id;
+    $('#pagos').each(function () {
+        var pagos = $(this).find('#pagos').val();
+        id = pagos;
+    })
+    return id;
+}
+
+function get_descuento() {
+    var descuento;
+    $('#descuento_1').each(function () {
+        var descuentos = $(this).find('#descuento_1').val();
+        descuento = descuentos;
+    })
+    return descuento;
+}
+
+function solo_numeros(evento) {
+    var code = (evento.which) ? evento.which : evento.keyCode
+    if (code > 31 && (code < 48 || code > 57))
+        return false;
+    return true;
 }
 

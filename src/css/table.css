@@ -1,12 +1,23 @@
 table {
-    width: 50%;
-    border: 1px solid #000;
+    width: 70%;
+    border-collapse: collapse;
 }
-
-th, td {
-    width: 50%;
+table,
+th,
+td {
+    border: 1px solid black;
+}
+thead {
+    background-color: #1c87c9;
+    color: #ffffff;
+}
+th {
     text-align: center;
-    vertical-align: center;
-    border: 0.5px solid #000;
-    border-spacing: 0;
+    height: 50px;
+}
+tbody tr:nth-child(odd) {
+    background: #ffffff;
+}
+tbody tr:nth-child(even) {
+    background: #f4f4f4;
 }

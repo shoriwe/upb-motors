@@ -15,10 +15,6 @@ require_once '../navbar.php';
             <a class="blue-button" href="#">Lista de ordenes de Compra</a>
             <pre style="width: 1vw;"></pre>
             <a class="blue-button" href="/sales/add-orden.php">Crear orden de compra</a>
-            <pre style="width: 1vw;"></pre>
-            <a class="blue-button" href="/sales/cancel_orden.php">Cancelar orden de compra</a>
-            <pre style="width: 1vw;"></pre>
-            <a class="blue-button" href="#">Entregar orden de compra</a>
         </div>
     </div>
 </div>

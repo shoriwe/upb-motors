@@ -17,8 +17,4 @@ require_once '../navbar.php';
     <a class="blue-button" href="#">Listar ordenes pendientes</a>
     <pre style="width: 1vw;"></pre>
     <a class="blue-button" href="#">Crear orden de compra</a>
-    <pre style="width: 1vw;"></pre>
-    <a class="blue-button" href="#">Cancelar orden de compra</a>
-    <pre style="width: 1vw;"></pre>
-    <a class="blue-button" href="#">Entregar orden de compra</a>
 </div>
