@@ -94,6 +94,11 @@ docker create -p 80:80 -p 443:443 --restart unless-stopped --name upb-motors-pro
 docker start upb-motors-production
 ```
 
+### Mail
+
+1. Install `.NET framework 3.5 (includes .NET 2.0 and 3.0)` feature
+2. Install `hMailServer`
+
 ## Development
 
 ### `php.ini`
