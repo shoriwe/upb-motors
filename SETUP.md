@@ -1,5 +1,16 @@
 # Setup
 
+## Default Emails
+
+| User       | Domain        |
+| ---------- | ------------- |
+| aplicacion | upb-motors.co |
+| admin      | upb-motors.co |
+| gerente    | upb-motors.co |
+| inventario | upb-motors.co |
+| rh         | upb-motors.co |
+| ventas     | upb-motors.co |
+
 ## Production
 
 ### FTP(S)
