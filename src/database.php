@@ -118,6 +118,18 @@ interface iDatabase
     public function get_tipo_pago(int $id): ?string;
 
     public function close_orden(int $id): bool;
+
+    public function registrar_factura(int $empleado, int $cliente, string $hoy, float $descuento): bool;
+
+    public function id_factura(int $empleado, int $cliente): ?int;
+
+    public function registrar_factura_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool;
+
+    public function delete_erorr_factura(int $id): bool;
+
+    public function delete_erorr_detalles_factura(int $id): bool;
+
+    public function registrar_orden(int $empleado, int $cliente, string $hoy, float $descuento): bool;
 }
 
 
@@ -401,6 +413,36 @@ class TestDatabase implements iDatabase
     public function close_orden(int $id): bool
     {
         // TODO: Implement close_orden() method.
+        return false;
+    }
+
+    public function registrar_factura(int $empleado, int $cliente, string $hoy, float $descuento): bool
+    {
+        // TODO: Implement registrar_orden() method.
+        return false;
+    }
+
+    public function id_factura(int $empleado, int $cliente): ?int
+    {
+        // TODO: Implement id_factura() method.
+        return null;
+    }
+
+    public function registrar_factura_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool
+    {
+        // TODO: Implement registrar_factura_producto() method.
+        return false;
+    }
+
+    public function delete_erorr_factura(int $id): bool
+    {
+        // TODO: Implement delete_erorr_factura() method.
+        return false;
+    }
+
+    public function delete_erorr_detalles_factura(int $id): bool
+    {
+        // TODO: Implement delete_erorr_detalles_factura() method.
         return false;
     }
 
@@ -1188,6 +1230,111 @@ class MySQL implements iDatabase
             }
         }
         return $ordenes;
+    }
+
+    public function registrar_factura(int $empleado, int $cliente, string $hoy, float $descuento): bool
+    {
+        $records = $this->database->prepare('SELECT registrar_factura(:empleado, :cliente, :hoy,:descuento) AS result');
+        $records->bindParam(':empleado', $empleado);
+        $records->bindParam(':cliente', $cliente);
+        $records->bindParam(':hoy', $hoy);
+        $records->bindParam(':descuento', $descuento);
+        try {
+            $records->execute();
+            $result = $records->fetch(PDO::FETCH_ASSOC);
+            if (count($result) !== 0) {
+                return $result["result"];
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function id_factura(int $empleado, int $cliente): int
+    {
+        $records = $this->database->prepare('SELECT id FROM facturas WHERE empleados_id = :empleado AND clientes_id = :cliente;');
+        $records->bindParam(':empleado', $empleado);
+        $records->bindParam(':cliente', $cliente);
+        $records->execute();
+        $id = 0;
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $id = $row["id"];
+        }
+        return $id;
+    }
+
+    public function registrar_factura_producto(int $producto, int $cantidad,int $id_factura,int $pagos): bool
+    {
+        $detalles_producto = $this->database->prepare('SELECT cantidad,precio,activo FROM inventario WHERE id = :id_producto;');
+        $detalles_producto->bindParam(':id_producto', $producto);
+        $detalles_producto->execute();
+        $row_producto = $detalles_producto->fetch(PDO::FETCH_ASSOC);
+        $cantidad_actual_producto = $row_producto['cantidad'];
+        $precio_producto = $row_producto['precio'];
+        $activo_producto = $row_producto['activo'];
+
+        if ($activo_producto == 1){
+
+            if($cantidad_actual_producto>=$cantidad){
+                $nueva_cantidad = $cantidad_actual_producto - $cantidad;
+                $total = $cantidad*$precio_producto;
+                $actualizar_producto = $this->database->prepare('SELECT actualizar_cantidad_orden(:producto, :cantidad)');
+                $actualizar_producto->bindParam(':producto', $producto);
+                $actualizar_producto->bindParam(':cantidad', $nueva_cantidad);
+                $actualizar_producto->execute();
+                $insertar_factura = $this->database->prepare('SELECT registrar_detalles_factura(:cantidad, :total,:producto, :pagos, :factura) AS result');
+                $insertar_factura->bindParam(':cantidad', $cantidad);
+                $insertar_factura->bindParam(':total', $total);
+                $insertar_factura->bindParam(':producto', $producto);
+                $insertar_factura->bindParam(':pagos', $pagos);
+                $insertar_factura->bindParam(':factura', $id_factura);
+                try {
+                    $insertar_factura->execute();
+                    $result = $insertar_factura->fetch(PDO::FETCH_ASSOC);
+                    if (count($result) !== 0) {
+                        return $result["result"];
+                    }
+                    return false;
+                } catch (Exception $e) {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    public function delete_erorr_factura(int $id): bool
+    {
+        $records = $this->database->prepare('DELETE FROM facturas WHERE id = :id;');
+        $records->bindParam(':id', $id);
+        $records->execute();
+        try {
+            $records->execute();
+
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+
+    }
+
+
+    public function delete_erorr_detalles_factura(int $id): bool
+    {
+        $records = $this->database->prepare('DELETE FROM detalles_facturas WHERE facturas_id = :id;');
+        $records->bindParam(':id', $id);
+        $records->execute();
+        try {
+            $records->execute();
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+        return false;
     }
 
 }

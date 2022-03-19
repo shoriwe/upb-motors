@@ -172,7 +172,7 @@ CREATE TABLE IF NOT EXISTS ordenes_compra
 
 );
 
--- -- tipo pago ordenes compra -- --
+-- -- tipo pago -- --
 CREATE TABLE IF NOT EXISTS tipo_pago_orden
 (
     id   INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -195,6 +195,37 @@ CREATE TABLE IF NOT EXISTS detalles_ordenes_compra
     CONSTRAINT fk_productos_id FOREIGN KEY (productos_id) REFERENCES inventario (id),
     CONSTRAINT fk_orden_compra_id FOREIGN KEY (orden_compra_id) REFERENCES ordenes_compra (id),
     CONSTRAINT fk_tipo_pago_id FOREIGN KEY (tipo_pago_id) REFERENCES tipo_pago_orden (id)
+
+);
+
+-- -- facturas -- --
+CREATE TABLE IF NOT EXISTS facturas
+(
+
+    id           INT  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    empleados_id INT  NOT NULL,
+    clientes_id  INT  NOT NULL,
+    fehca        DATE NOT NULL,
+    decuento     DOUBLE NOT NULL,
+    abierta      BOOLEAN NOT NULL DEFAULT true,
+
+    CONSTRAINT fk_facturas_clientes_id FOREIGN KEY (clientes_id) REFERENCES clientes (id),
+    CONSTRAINT fk_facturas_empleados_id FOREIGN KEY (empleados_id) REFERENCES empleados (id)
+
+);
+
+-- -- detalles_facturas -- --
+CREATE TABLE IF NOT EXISTS detalles_facturas
+(
+    id              INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    cantidad        INT    NOT NULL,
+    valor_total     DOUBLE NOT NULL,
+    productos_id    INT    NOT NULL,
+    tipo_pago_id    INT    NOT NULL,
+    facturas_id     INT    NOT NULL,
+    CONSTRAINT FOREIGN KEY (productos_id) REFERENCES inventario (id),
+    CONSTRAINT FOREIGN KEY (facturas_id) REFERENCES facturas (id),
+    CONSTRAINT FOREIGN KEY (tipo_pago_id) REFERENCES tipo_pago_orden (id)
 
 );
 
@@ -628,5 +659,53 @@ BEGIN
     RETURN TRUE;
 END;
 @@
+
+CREATE FUNCTION registrar_factura(
+    v_empleados_id INT,
+    v_clientes_id INT,
+    v_fehca VARCHAR(10),
+    v_descuento DOUBLE
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    INSERT INTO facturas (empleados_id,
+                                clientes_id,
+                                fehca,
+                                decuento)
+    VALUES (v_empleados_id,
+            v_clientes_id,
+            v_fehca,
+            v_descuento);
+    RETURN TRUE;
+END;
+@@
+
+CREATE FUNCTION registrar_detalles_factura(
+    v_cantidad INT,
+    v_total INT,
+    v_productos INT,
+    v_tipo_pago INT,
+    v_factura INT
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    INSERT INTO detalles_facturas (cantidad,
+                                         valor_total,
+                                         productos_id,
+                                         tipo_pago_id,
+                                         facturas_id)
+    VALUES (v_cantidad,
+            v_total,
+            v_productos,
+            v_tipo_pago,
+            v_factura);
+    RETURN TRUE;
+END;
+@@
+
 
 DELIMITER ;
