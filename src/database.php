@@ -144,6 +144,12 @@ interface iDatabase
     public function details_view_factura(int $factura_id): array;
 
     public function close_factura(int $id): bool;
+
+    public function buscar_factura_cliente(string $cliente): array;
+
+    public function registrar_gasto(int $valor, string $razon): bool;
+
+    public function lista_gastos(): array;
 }
 
 
@@ -499,6 +505,21 @@ class TestDatabase implements iDatabase
     public function list_dependencies(): array
     {
         // TODO: Implement list_dependencies() method.
+        return array();
+    }
+
+    public function buscar_factura_cliente(string $cliente): array{
+        // TODO: Implement buscar_factura_cliente() method.
+        return array();
+    }
+
+    public function registrar_gasto(int $valor, string $razon): bool{
+        // TODO: Implement registrar_gasto() method.
+        return false;
+    }
+
+    public function lista_gastos(): array{
+        // TODO: Implement lista_gastos() method.
         return array();
     }
 }
@@ -1516,5 +1537,36 @@ class MySQL implements iDatabase
             $dependencies[] = new Dependency($row["id"], $row["nombre"]);;
         }
         return $dependencies;
+    }
+
+    public function registrar_gasto(int $valor, string $razon): bool{
+        $records = $this->database->prepare('SELECT registrar_gasto(:valor, :razon) AS result');
+        $records->bindParam(':valor', $valor);
+        $records->bindParam(':razon', $razon);
+        try {
+            $records->execute();
+            $result = $records->fetch(PDO::FETCH_ASSOC);
+            if (count($result) !== 0) {
+                return $result["result"];
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function lista_gastos(): array{
+
+        $gastos = $this->database->prepare('SELECT id,valor,razon FROM gastos;');
+        $gastos->execute();
+        $lista = array();
+        while ($rowOrd = $gastos->fetch(PDO::FETCH_ASSOC)) {
+            if (count($rowOrd) === 0) {
+                break;
+            }
+            $lista[] = new gastos($rowOrd["id"], $rowOrd["valor"], $rowOrd["razon"]);;
+        }
+
+        return $lista;
     }
 }

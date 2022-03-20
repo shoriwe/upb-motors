@@ -253,3 +253,17 @@ class factura_detalles
         $this->orden_compra_id = $orden_compra_id;
     }
 }
+
+class gastos
+{
+    public ?int $id = null;
+    public ?int $valor = null;
+    public ?string $razon = null;
+
+    public function __construct(int $id, int $valor, string $razon)
+    {
+        $this->id = $id;
+        $this->valor = $valor;
+        $this->razon = $razon;
+    }
+}

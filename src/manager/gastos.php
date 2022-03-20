@@ -1,5 +1,4 @@
 <?php
-require_once '../ensure_login.php';
 require_once '../navbar.php';
 ?>
 
@@ -11,11 +10,11 @@ require_once '../navbar.php';
 </head>
 <div class="centered-container" style="margin-top: 10vh">
     <div class="centered-container-for-input">
-            <h1 class="purple-text">Informes</h1>
+        <h1 class="purple-text">Gastos</h1>
         <div class="centered-flex-container">
-            <a class="blue-button" href="/manager/ordenes-de-compra.php">Informe de perdidas y Ganancias</a>
+            <a class="blue-button" href="/manager/add-gastos.php">Agregar gastos</a>
             <pre style="width: 1vw;"></pre>
-            <a class="blue-button" href="/manager/facturas.php">Informe de Inventario</a>
+            <a class="blue-button" href="/manager/view-gastos.php">Ver gastos</a>
         </div>
     </div>
 </div>

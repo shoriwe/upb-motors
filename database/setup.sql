@@ -272,9 +272,17 @@ CREATE TABLE IF NOT EXISTS costos_inventario
 (
     id              INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
     productos_id    INT    NOT NULL,
-    costo    		  DOUBLE    NOT NULL DEFAULT 0,
+    costo    		DOUBLE    NOT NULL DEFAULT 0,
+    cantidad        INT    NOT NULL DEFAULT 0,
     CONSTRAINT FOREIGN KEY (productos_id) REFERENCES inventario (id)
 
+);
+
+-- -- gastos generales -- --
+CREATE TABLE IF NOT EXISTS gastos(
+    id              INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    valor           INT    NOT NULL,
+    razon    	    VARCHAR(100)
 );
 
 -- -- Procesos -- --
@@ -794,8 +802,9 @@ CREATE TRIGGER costos_carros
 BEGIN
 
     SET @id_carro = NEW.id;
+    SET @cantidad = NEW.cantidad;
     SET @costo = (NEW.precio*100)/125;
-    INSERT INTO costos_inventario (productos_id,costo) VALUES (@id_carro,@costo);
+    INSERT INTO costos_inventario (productos_id,costo,cantidad) VALUES (@id_carro,@costo,@cantidad);
 
 END;
 @@
@@ -810,6 +819,22 @@ BEGIN
     SET @costo = (NEW.precio*100)/125;
     UPDATE costos_inventario SET costo = @costo WHERE productos_id = @id_carro;
 
+END;
+@@
+
+CREATE FUNCTION registrar_gasto(
+    v_valor INT,
+    v_razon VARCHAR(100)
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    INSERT INTO gastos (valor,
+                        razon)
+    VALUES (v_valor,
+            v_razon);
+    RETURN TRUE;
 END;
 @@
 
