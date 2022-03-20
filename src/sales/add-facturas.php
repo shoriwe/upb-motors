@@ -103,5 +103,5 @@ require 'menu-factura.php';
     <input class="blue-button" type="button" value="Eliminar Fila" onclick="eliminar_fila('dataTable');"/>
 </div>
 <div class="centered-container" style="margin-top: 10vh">
-    <input id="ok" class="blue-button" type="button" value="Crear Orden de Compra"/>
+    <input id="ok" class="blue-button" type="button" value="Crear Factura"/>
 </div>

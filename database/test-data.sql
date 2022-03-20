@@ -67,3 +67,5 @@ SET @_ = registrar_producto(
         NULL,
         1
     );
+
+INSERT INTO clientes(nombre_completo,cedula,direccion,telefono,correo) VALUES('pepito',100453,'calale',36455,'correos');

@@ -25,6 +25,7 @@ if (session_status() === PHP_SESSION_NONE) {
         echo '<a class="blue-button" href="/clients/home.php">Clientes</a><pre style="width: 1vw;"></pre>';
     } else if (connect()->database->is_gerente($_SESSION["user-id"])) {
         echo '<a class="blue-button" href="/manager/home.php">Inventario</a><pre style="width: 1vw;"></pre>';
+        echo '<a class="blue-button" href="/manager/informes.php">Informes</a><pre style="width: 1vw;"></pre>';
     } else if (connect()->database->is_admin($_SESSION["user-id"])) {
         echo '<a class="blue-button" href="/admin/home.php">Admin</a><pre style="width: 1vw;"></pre>';
     }
