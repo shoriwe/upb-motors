@@ -47,80 +47,91 @@ $(document).ready(function () {
     $('#ok').click(function () {
 
         let descuento = document.getElementById("descuento_1").value;
+        if (descuento != ''){
+            if(get_empleado() != 'null'){
+                if (get_cliente() != 'null'){
+                    if (get_pago() != ''){
+                        $.ajax({
+                        method: "POST",
+                        url: 'save_orden_compra.php',
+                        data: {
+                            empleado: get_empleado(),
+                            cliente: get_cliente(),
+                            descuento: descuento
+                        },
+                        success: function (response) {
+                            console.log(response);
+                        }
+                        });
+                        let rowCount = $("#details tr").length;
+                        $('#details tr').each(function () {
+                            var id_carro = $(this).find('select').val();
+                            var cantidad = $(this).find('input[type="number"]').val();
 
+                            if (id_carro != 'null'){
+                                if (cantidad != ''){
+                                    rowCount = rowCount - 1
+                                    $.ajax({
+                                         method: "POST",
+                                         url: 'save_product_orden_compra.php',
+                                         data: {
+                                             empleado: get_empleado(),
+                                             cliente: get_cliente(),
+                                             producto: id_carro,
+                                             cantidad: cantidad,
+                                             pagos: get_pago(),
+                                         },
+                                         success: function (response) {
+                                             console.log(response);
+                                         }
+                                     });
+                                }
+                                else {
+                                    alert("Debe llenar en todas las filas la cantidad");
+                                }
+                            }
+                            else {
+                                alert("Debe seleccionar en todas las filas un carro");
+                            }
 
-        $.ajax({
-            method: "POST",
-            url: 'save_orden_compra.php',
-            data: {
-                empleado: get_empleado(),
-                cliente: get_cliente(),
-                descuento: descuento
-            },
-            success: function (response) {
-                console.log(response);
-            }
-        });
-        let rowCount = $("#details tr").length;
-        $('#details tr').each(function () {
-            var id_carro = $(this).find('select').val();
-            var cantidad = $(this).find('input[type="number"]').val();
+                        })
+                        function restart(){
+                            document.getElementById('descuento_1').value = '';
+                            document.getElementById('quantity_1').value = '';
+                            $('#empleados option').prop('selected', function () {
+                                return this.defaultSelected;
+                            });
+                            $('#pagos option').prop('selected', function () {
+                                return this.defaultSelected;
+                            });
+                            $('#clientes option').prop('selected', function () {
+                                return this.defaultSelected;
+                            });
+                            $('#details option').prop('selected', function () {
+                                return this.defaultSelected;
+                            });
+                            window.location.reload();
+                        }
 
+                        setTimeout(restart, 4000);
+                    }
+                    else{
+                        alert("Debe seleccionar un metodo de pago")
+                    }
 
-
-            /*if (rowCount == 0){
-                document.getElementById('descuento_1').value = '';
-                document.getElementById('quantity_1').value = '';
-                $('#empleados option').prop('selected', function () {
-                    return this.defaultSelected;
-                });
-                $('#pagos option').prop('selected', function () {
-                    return this.defaultSelected;
-                });
-                $('#clientes option').prop('selected', function () {
-                    return this.defaultSelected;
-                });
-                $('#details option').prop('selected', function () {
-                    return this.defaultSelected;
-                });
-                window.location.reload();
-            };*/
-            rowCount = rowCount - 1
-            $.ajax({
-                method: "POST",
-                url: 'save_product_orden_compra.php',
-                data: {
-                    empleado: get_empleado(),
-                    cliente: get_cliente(),
-                    producto: id_carro,
-                    cantidad: cantidad,
-                    pagos: get_pago(),
-                },
-                success: function (response) {
-                    console.log(response);
                 }
-            });
-
-        })
-        function restart(){
-            document.getElementById('descuento_1').value = '';
-            document.getElementById('quantity_1').value = '';
-            $('#empleados option').prop('selected', function () {
-                return this.defaultSelected;
-            });
-            $('#pagos option').prop('selected', function () {
-                return this.defaultSelected;
-            });
-            $('#clientes option').prop('selected', function () {
-                return this.defaultSelected;
-            });
-            $('#details option').prop('selected', function () {
-                return this.defaultSelected;
-            });
-            window.location.reload();
+                else {
+                    alert("Debe seleccionar a un cliente");
+                }
+            }
+            else {
+                alert("Debe elegir a un empleado");
+            }
+        }
+        else {
+            alert("Debe llenar el campo descuento");
         }
 
-        setTimeout(restart, 4000);
     })
 })
 
