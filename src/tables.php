@@ -66,6 +66,23 @@ class Employee
     }
 }
 
+class Dependency
+{
+    public ?int $id = null;
+    public ?string $name = null;
+
+    /**
+     * @param int|null $id
+     * @param string|null $name
+     */
+    public function __construct(int $id, string $name)
+    {
+        $this->id = $id;
+        $this->name = $name;
+    }
+
+}
+
 class Product
 {
     public ?int $id = null;
@@ -75,8 +92,9 @@ class Product
     public ?float $precio = null;
     public ?bool $activo = null;
     public ?string $imagen = null;
+    public ?int $dependencia = null;
 
-    public function __construct(int $id, int $cantidad, string $nombre, string $descripcion, float $precio, bool $activo, ?string $imagen)
+    public function __construct(int $id, int $cantidad, string $nombre, string $descripcion, float $precio, bool $activo, ?string $imagen, int $dependencia)
     {
         $this->id = $id;
         $this->cantidad = $cantidad;
@@ -85,6 +103,7 @@ class Product
         $this->precio = $precio;
         $this->activo = $activo;
         $this->imagen = $imagen;
+        $this->dependencia = $dependencia;
     }
 }
 
@@ -100,7 +119,8 @@ class Lis_Product
     }
 }
 
-class PriceHistory {
+class PriceHistory
+{
     public int $id;
     public int $modification_date;
     public int $inventario_id;
@@ -167,7 +187,7 @@ class Lista_ordenes
     public ?float $descuento = null;
     public ?bool $estado = null;
 
-    public function __construct(int $id, string $fecha, string $empleado, string $cliente, float $descuento,bool $estado)
+    public function __construct(int $id, string $fecha, string $empleado, string $cliente, float $descuento, bool $estado)
     {
         $this->id = $id;
         $this->fecha = $fecha;
@@ -186,7 +206,7 @@ class orden_detalles
     public ?int $tipo_pago_id = null;
     public ?int $orden_compra_id = null;
 
-    public function __construct(int $cantidad, int $valor_total, int $productos_id, int $tipo_pago_id,int $orden_compra_id)
+    public function __construct(int $cantidad, int $valor_total, int $productos_id, int $tipo_pago_id, int $orden_compra_id)
     {
         $this->cantidad = $cantidad;
         $this->valor_total = $valor_total;
@@ -205,7 +225,7 @@ class Lista_facturas
     public ?float $descuento = null;
     public ?bool $estado = null;
 
-    public function __construct(int $id, string $fecha, string $empleado, string $cliente, float $descuento,bool $estado)
+    public function __construct(int $id, string $fecha, string $empleado, string $cliente, float $descuento, bool $estado)
     {
         $this->id = $id;
         $this->fecha = $fecha;
@@ -224,7 +244,7 @@ class factura_detalles
     public ?int $tipo_pago_id = null;
     public ?int $orden_compra_id = null;
 
-    public function __construct(int $cantidad, int $valor_total, int $productos_id, int $tipo_pago_id,int $orden_compra_id)
+    public function __construct(int $cantidad, int $valor_total, int $productos_id, int $tipo_pago_id, int $orden_compra_id)
     {
         $this->cantidad = $cantidad;
         $this->valor_total = $valor_total;

@@ -100,16 +100,54 @@ CREATE TABLE IF NOT EXISTS empleados
     CONSTRAINT fk_permisos_empleados_permisos_id FOREIGN KEY (permisos_id) REFERENCES permisos (id)
 );
 
+-- -- Dependencias -- --
+CREATE TABLE IF NOT EXISTS dependencias
+(
+    id     INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(255) NOT NULL,
+    CONSTRAINT nombre_unique UNIQUE (nombre)
+);
+
+INSERT INTO dependencias (nombre)
+VALUES ('Bucaramanaga'),
+       ('Bogota'),
+       ('Cali');
+
+DELIMITER @@
+CREATE FUNCTION get_dependencia_name(v_id_dependencia INT)
+    RETURNS VARCHAR(255)
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    SELECT nombre INTO @result FROM dependencias WHERE id = v_id_dependencia;
+    return @result;
+END;
+@@
+
+CREATE FUNCTION get_dependencia_id(v_nombre_dependencia VARCHAR(255))
+    RETURNS INT
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    SELECT id INTO @result FROM dependencias WHERE nombre = v_nombre_dependencia;
+    return @result;
+END;
+@@
+
+DELIMITER ;
+
 -- -- Inventario -- --
 CREATE TABLE IF NOT EXISTS inventario
 (
-    id          INT            NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    cantidad    INT            NOT NULL DEFAULT 0,
-    nombre      VARCHAR(255)   NOT NULL,
-    descripcion VARCHAR(10000) NOT NULL,
-    precio      DOUBLE         NOT NULL,
-    activo      BOOLEAN        NOT NULL DEFAULT true,
-    imagen      LONGBLOB,
+    id             INT            NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    cantidad       INT            NOT NULL DEFAULT 0,
+    nombre         VARCHAR(255)   NOT NULL,
+    descripcion    VARCHAR(10000) NOT NULL,
+    precio         DOUBLE         NOT NULL,
+    activo         BOOLEAN        NOT NULL DEFAULT true,
+    dependencia_id INT            NOT NULL,
+    imagen         LONGBLOB,
+    CONSTRAINT fk_id_dependencias FOREIGN KEY (dependencia_id) REFERENCES dependencias (id),
     CONSTRAINT unique_producto UNIQUE (nombre)
 );
 
@@ -160,11 +198,11 @@ CREATE TABLE IF NOT EXISTS clientes
 CREATE TABLE IF NOT EXISTS ordenes_compra
 (
 
-    id           INT  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    empleados_id INT  NOT NULL,
-    clientes_id  INT  NOT NULL,
-    fehca        DATE NOT NULL,
-    decuento     DOUBLE NOT NULL,
+    id           INT     NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    empleados_id INT     NOT NULL,
+    clientes_id  INT     NOT NULL,
+    fehca        DATE    NOT NULL,
+    decuento     DOUBLE  NOT NULL,
     abierta      BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT fk_clientes_id FOREIGN KEY (clientes_id) REFERENCES clientes (id),
@@ -180,8 +218,8 @@ CREATE TABLE IF NOT EXISTS tipo_pago_orden
 );
 
 INSERT INTO tipo_pago_orden (pago)
-    VALUES ('Efectivo'),
-           ('Tarjeta');
+VALUES ('Efectivo'),
+       ('Tarjeta');
 
 -- -- detalles_ordenes_compra -- --
 CREATE TABLE IF NOT EXISTS detalles_ordenes_compra
@@ -202,11 +240,11 @@ CREATE TABLE IF NOT EXISTS detalles_ordenes_compra
 CREATE TABLE IF NOT EXISTS facturas
 (
 
-    id           INT  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    empleados_id INT  NOT NULL,
-    clientes_id  INT  NOT NULL,
-    fehca        DATE NOT NULL,
-    decuento     DOUBLE NOT NULL,
+    id           INT     NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    empleados_id INT     NOT NULL,
+    clientes_id  INT     NOT NULL,
+    fehca        DATE    NOT NULL,
+    decuento     DOUBLE  NOT NULL,
     abierta      BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT fk_facturas_clientes_id FOREIGN KEY (clientes_id) REFERENCES clientes (id),
@@ -217,12 +255,12 @@ CREATE TABLE IF NOT EXISTS facturas
 -- -- detalles_facturas -- --
 CREATE TABLE IF NOT EXISTS detalles_facturas
 (
-    id              INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    cantidad        INT    NOT NULL,
-    valor_total     DOUBLE NOT NULL,
-    productos_id    INT    NOT NULL,
-    tipo_pago_id    INT    NOT NULL,
-    facturas_id     INT    NOT NULL,
+    id           INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    cantidad     INT    NOT NULL,
+    valor_total  DOUBLE NOT NULL,
+    productos_id INT    NOT NULL,
+    tipo_pago_id INT    NOT NULL,
+    facturas_id  INT    NOT NULL,
     CONSTRAINT FOREIGN KEY (productos_id) REFERENCES inventario (id),
     CONSTRAINT FOREIGN KEY (facturas_id) REFERENCES facturas (id),
     CONSTRAINT FOREIGN KEY (tipo_pago_id) REFERENCES tipo_pago_orden (id)
@@ -244,7 +282,8 @@ CREATE FUNCTION registrar_producto(
     v_nombre VARCHAR(255),
     v_descripcion VARCHAR(10000),
     v_precio FLOAT,
-    v_imagen LONGBLOB
+    v_imagen LONGBLOB,
+    v_dependencia_id INT
 )
     RETURNS BOOLEAN
     LANGUAGE SQL
@@ -254,8 +293,9 @@ BEGIN
            cantidad,
            descripcion,
            precio,
-           imagen
-    INTO @id_producto, @cantidad_producto, @descripcion_producto, @precio_producto, @imagen_producto
+           imagen,
+           dependencia_id
+    INTO @id_producto, @cantidad_producto, @descripcion_producto, @precio_producto, @imagen_producto, @id_dependencia
     FROM inventario
     WHERE nombre = v_nombre
     LIMIT 1;
@@ -282,17 +322,25 @@ BEGIN
             SET imagen = v_imagen
             WHERE id = @id_producto;
         END IF;
+        IF @id_dependencia != v_dependencia_id THEN
+            UPDATE
+                inventario
+            SET dependencia_id = v_dependencia_id
+            WHERE id = @id_producto;
+        END IF;
     ELSE
         INSERT INTO inventario (cantidad,
                                 nombre,
                                 descripcion,
                                 precio,
-                                imagen)
+                                imagen,
+                                dependencia_id)
         VALUES (v_cantidad,
                 v_nombre,
                 v_descripcion,
                 v_precio,
-                v_imagen);
+                v_imagen,
+                v_dependencia_id);
     END IF;
     RETURN true;
 END;
@@ -415,7 +463,8 @@ CREATE FUNCTION update_product(
     v_nombre VARCHAR(45),
     v_descripcion VARCHAR(10000),
     v_precio FLOAT,
-    v_activo BOOLEAN
+    v_activo BOOLEAN,
+    v_dependencia_id INT
 )
     RETURNS BOOLEAN
     LANGUAGE SQL
@@ -426,8 +475,9 @@ BEGIN
            nombre,
            descripcion,
            precio,
-           activo
-    INTO @id_producto, @cantidad_producto, @nombre_producto, @descripcion_producto, @precio_producto, @activo_producto
+           activo,
+           dependencia_id
+    INTO @id_producto, @cantidad_producto, @nombre_producto, @descripcion_producto, @precio_producto, @activo_producto, @id_dependencia
     FROM inventario
     WHERE id = v_id;
     IF @id_producto IS NULL THEN
@@ -461,6 +511,12 @@ BEGIN
         UPDATE
             inventario
         SET activo = v_activo
+        WHERE id = v_id;
+    END IF;
+    IF @id_dependencia != v_dependencia_id THEN
+        UPDATE
+            inventario
+        SET dependencia_id = v_dependencia_id
         WHERE id = v_id;
     END IF;
     RETURN true;
@@ -592,10 +648,10 @@ CREATE FUNCTION registrar_detalles_orden(
     NOT DETERMINISTIC
 BEGIN
     INSERT INTO detalles_ordenes_compra (cantidad,
-                                valor_total,
-                                productos_id,
-                                tipo_pago_id,
-                                orden_compra_id)
+                                         valor_total,
+                                         productos_id,
+                                         tipo_pago_id,
+                                         orden_compra_id)
     VALUES (v_cantidad,
             v_total,
             v_productos,
@@ -614,8 +670,8 @@ CREATE FUNCTION actualizar_cantidad_orden(
     NOT DETERMINISTIC
 BEGIN
     UPDATE inventario
-        SET cantidad = v_cantidad
-        WHERE id = v_producto;
+    SET cantidad = v_cantidad
+    WHERE id = v_producto;
     RETURN TRUE;
 END;
 @@
@@ -640,7 +696,7 @@ BEGIN
     END IF;
     UPDATE
         ordenes_compra
-    SET habilitado = o_enabled
+    SET abierta = o_enabled
     WHERE id = o_id;
     return true;
 END;
@@ -671,9 +727,9 @@ CREATE FUNCTION registrar_factura(
     NOT DETERMINISTIC
 BEGIN
     INSERT INTO facturas (empleados_id,
-                                clientes_id,
-                                fehca,
-                                decuento)
+                          clientes_id,
+                          fehca,
+                          decuento)
     VALUES (v_empleados_id,
             v_clientes_id,
             v_fehca,
@@ -694,10 +750,10 @@ CREATE FUNCTION registrar_detalles_factura(
     NOT DETERMINISTIC
 BEGIN
     INSERT INTO detalles_facturas (cantidad,
-                                         valor_total,
-                                         productos_id,
-                                         tipo_pago_id,
-                                         facturas_id)
+                                   valor_total,
+                                   productos_id,
+                                   tipo_pago_id,
+                                   facturas_id)
     VALUES (v_cantidad,
             v_total,
             v_productos,

@@ -45,6 +45,12 @@ interface iDatabase
      */
     public function search_products(string $product_name): array;
 
+    public function get_dependency_id(string $dependency_name): int;
+
+    public function get_dependency_name(int $dependency_id): string;
+
+    public function list_dependencies(): array;
+
     public function search_employees(string $employee_name, string $employee_personal_id): array;
 
     public function search_clients(string $client_name, string $employee_personal_id): array;
@@ -59,9 +65,9 @@ interface iDatabase
 
     public function view_product(int $id): ?Product;
 
-    public function update_product(int $id, int $amount, string $name, string $description, float $price, bool $active): bool;
+    public function update_product(int $id, int $amount, string $name, string $description, float $price, bool $active, int $dependencia): bool;
 
-    public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file): bool;
+    public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file, int $dependencia): bool;
 
     public function is_gerente(int $user_id): bool;
 
@@ -89,7 +95,7 @@ interface iDatabase
 
     public function register_client(string $name, string $personal_id, string $address, string $phone, string $email): bool;
 
-    public function cancel_purchase(int $o_cliente_id,int $o_empleado_id,string $fecha, bool $o_enabled ):bool;
+    public function cancel_purchase(int $o_cliente_id, int $o_empleado_id, string $fecha, bool $o_enabled): bool;
 
     public function get_price_history(int $product_id): ?array;
 
@@ -97,7 +103,7 @@ interface iDatabase
 
     public function lista_pagos(): array;
 
-    public function registrar_orden_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool;
+    public function registrar_orden_producto(int $producto, int $cantidad, int $id_orden, int $pagos): bool;
 
     public function delete_erorr_orden(int $id): bool;
 
@@ -123,7 +129,7 @@ interface iDatabase
 
     public function id_factura(int $empleado, int $cliente): ?int;
 
-    public function registrar_factura_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool;
+    public function registrar_factura_producto(int $producto, int $cantidad, int $id_orden, int $pagos): bool;
 
     public function delete_erorr_factura(int $id): bool;
 
@@ -237,7 +243,7 @@ class TestDatabase implements iDatabase
         return array();
     }
 
-    public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file): bool
+    public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file, int $dependencia): bool
     {
         // TODO: Implement add_inventory() method.
         return false;
@@ -279,7 +285,7 @@ class TestDatabase implements iDatabase
         return false;
     }
 
-    public function update_product(int $id, int $amount, string $name, string $description, float $price, bool $active): bool
+    public function update_product(int $id, int $amount, string $name, string $description, float $price, bool $active, int $dependencia): bool
     {
         // TODO: Implement update_product() method.
         return false;
@@ -333,7 +339,7 @@ class TestDatabase implements iDatabase
         return false;
     }
 
-    public function cancel_purchase(int $o_cliente_id,int $o_empleado_id,string $fecha,bool $o_enabled ):bool
+    public function cancel_purchase(int $o_cliente_id, int $o_empleado_id, string $fecha, bool $o_enabled): bool
     {
         // TODO: Implement cancel_purchase() method.
         return false;
@@ -358,7 +364,7 @@ class TestDatabase implements iDatabase
         return array();
     }
 
-    public function registrar_orden_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool
+    public function registrar_orden_producto(int $producto, int $cantidad, int $id_orden, int $pagos): bool
     {
         // TODO: Implement registrar_orden_producto() method.
         return false;
@@ -436,7 +442,7 @@ class TestDatabase implements iDatabase
         return null;
     }
 
-    public function registrar_factura_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool
+    public function registrar_factura_producto(int $producto, int $cantidad, int $id_orden, int $pagos): bool
     {
         // TODO: Implement registrar_factura_producto() method.
         return false;
@@ -478,6 +484,23 @@ class TestDatabase implements iDatabase
         return false;
     }
 
+    public function get_dependency_id(string $dependency_name): int
+    {
+        // TODO: Implement get_dependency_id() method.
+        return 0;
+    }
+
+    public function get_dependency_name(int $dependency_id): string
+    {
+        // TODO: Implement get_dependency_name() method.
+        return "";
+    }
+
+    public function list_dependencies(): array
+    {
+        // TODO: Implement list_dependencies() method.
+        return array();
+    }
 }
 
 class MySQL implements iDatabase
@@ -620,7 +643,7 @@ class MySQL implements iDatabase
     public function search_products(string $product_name): array
     {
         $product_name = "%" . $product_name . "%";
-        $records = $this->database->prepare('SELECT id, cantidad, nombre, descripcion, precio, activo FROM inventario WHERE LOWER(nombre) LIKE :name;');
+        $records = $this->database->prepare('SELECT id, cantidad, nombre, descripcion, precio, activo, dependencia_id FROM inventario WHERE LOWER(nombre) LIKE :name;');
         $records->bindParam(':name', $product_name);
         $records->execute();
         $products = array();
@@ -628,20 +651,21 @@ class MySQL implements iDatabase
             if (count($row) === 0) {
                 break;
             }
-            $products[] = new Product($row["id"], $row["cantidad"], $row["nombre"], $row["descripcion"], $row["precio"], $row["activo"], null);
+            $products[] = new Product($row["id"], $row["cantidad"], $row["nombre"], $row["descripcion"], $row["precio"], $row["activo"], null, $row["dependencia_id"]);
         }
         return $products;
     }
 
-    public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file): bool
+    public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file, int $dependencia): bool
     {
         $file = fopen($image_file, 'rb');
-        $records = $this->database->prepare('SELECT registrar_producto(:amount, :name, :description, :price, :image) AS exito;');
+        $records = $this->database->prepare('SELECT registrar_producto(:amount, :name, :description, :price, :image, :dependencia) AS exito;');
         $records->bindParam(':amount', $product_amount);
         $records->bindParam(':name', $product_name);
         $records->bindParam(':description', $product_description);
         $records->bindParam(':price', $product_price);
         $records->bindParam(':image', $file, PDO::PARAM_LOB);
+        $records->bindParam(':dependencia', $dependencia);
         $records->execute();
         $results = $records->fetch(PDO::FETCH_ASSOC);
         if ($results) {
@@ -654,12 +678,12 @@ class MySQL implements iDatabase
 
     public function view_product(int $id): ?Product
     {
-        $records = $this->database->prepare('SELECT cantidad, nombre, descripcion, precio, activo, imagen FROM inventario WHERE id = :v_id;');
+        $records = $this->database->prepare('SELECT cantidad, nombre, descripcion, precio, activo, imagen, dependencia_id FROM inventario WHERE id = :v_id;');
         $records->bindParam(':v_id', $id);
         $records->execute();
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if (count($result) !== 0) {
-            return new Product($id, $result["cantidad"], $result["nombre"], $result["descripcion"], $result["precio"], $result["activo"], $result["imagen"]);
+            return new Product($id, $result["cantidad"], $result["nombre"], $result["descripcion"], $result["precio"], $result["activo"], $result["imagen"], $result["dependencia_id"]);
         }
         return null;
     }
@@ -786,15 +810,16 @@ class MySQL implements iDatabase
         return false;
     }
 
-    public function update_product(int $id, int $amount, string $name, string $description, float $price, bool $active): bool
+    public function update_product(int $id, int $amount, string $name, string $description, float $price, bool $active, int $dependencia): bool
     {
-        $records = $this->database->prepare('SELECT update_product(:id, :amount, :name, :description, :price, :active) AS result;');
+        $records = $this->database->prepare('SELECT update_product(:id, :amount, :name, :description, :price, :active, :dependencia) AS result;');
         $records->bindParam(':id', $id);
         $records->bindParam(':amount', $amount);
         $records->bindParam(':name', $name);
         $records->bindParam(':description', $description);
         $records->bindParam(':price', $price);
         $records->bindParam(':active', $active, PDO::PARAM_BOOL);
+        $records->bindParam(':dependencia', $dependencia);
         $records->execute();
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if ($result) {
@@ -973,7 +998,7 @@ class MySQL implements iDatabase
         }
     }
 
-    public function cancel_purchase(int $o_cliente_id,int $o_empleado_id,string $fecha,bool $o_enabled):bool
+    public function cancel_purchase(int $o_cliente_id, int $o_empleado_id, string $fecha, bool $o_enabled): bool
     {
         $records = $this->database->prepare('SELECT cancel_purchase(:o_cliente_id, :o_empleado_id, :fecha, :o_enabled)');
         $records->bindParam(':o_cliente_id', $o_cliente_id);
@@ -987,7 +1012,7 @@ class MySQL implements iDatabase
             if (count($result) !== 0) {
                 return $result;
             }
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
         return false;
@@ -1023,7 +1048,7 @@ class MySQL implements iDatabase
         return $pago;
     }
 
-    public function registrar_orden_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool
+    public function registrar_orden_producto(int $producto, int $cantidad, int $id_orden, int $pagos): bool
     {
         $detalles_producto = $this->database->prepare('SELECT cantidad,precio,activo FROM inventario WHERE id = :id_producto;');
         $detalles_producto->bindParam(':id_producto', $producto);
@@ -1033,11 +1058,11 @@ class MySQL implements iDatabase
         $precio_producto = $row_producto['precio'];
         $activo_producto = $row_producto['activo'];
 
-        if ($activo_producto == 1){
+        if ($activo_producto == 1) {
 
-            if($cantidad_actual_producto>=$cantidad){
+            if ($cantidad_actual_producto >= $cantidad) {
                 $nueva_cantidad = $cantidad_actual_producto - $cantidad;
-                $total = $cantidad*$precio_producto;
+                $total = $cantidad * $precio_producto;
                 $insertar = $this->database->prepare('SELECT registrar_detalles_orden(:cantidad, :total,:producto, :pagos, :orden) AS result');
                 $insertar->bindParam(':cantidad', $cantidad);
                 $insertar->bindParam(':total', $total);
@@ -1076,7 +1101,8 @@ class MySQL implements iDatabase
 
     public function get_price_history(int $product_id): ?array
     {
-        $records = $this->database->prepare('SELECT id, modification_date, inventario_id, precio FROM historial_precios ORDER BY id DESC;');
+        $records = $this->database->prepare('SELECT id, modification_date, inventario_id, precio FROM historial_precios WHERE inventario_id = :product_id ORDER BY id DESC;');
+        $records->bindParam(':product_id', $product_id);
         $records->execute();
         $precios = array();
         while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
@@ -1086,8 +1112,6 @@ class MySQL implements iDatabase
             $precios[] = new PriceHistory($row["id"], strtotime($row["modification_date"]), $row["inventario_id"], $row["precio"]);
         }
         return $precios;
-
-        return false;
     }
 
     public function delete_erorr_detalles_orden(int $id): bool
@@ -1106,7 +1130,7 @@ class MySQL implements iDatabase
 
     public function buscar_orden_empleado(string $empleado): array
     {
-        $empleados = $this->search_employees($empleado,"");
+        $empleados = $this->search_employees($empleado, "");
         $ordenes = array();
         foreach ($empleados as $empleado) {
             $orden = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM ordenes_compra WHERE empleados_id LIKE :empleados_id;');
@@ -1116,7 +1140,7 @@ class MySQL implements iDatabase
                 if (count($rowOrd) === 0) {
                     break;
                 }
-                $ordenes[] = new Lista_ordenes($rowOrd["id"], $rowOrd["fehca"],$rowOrd["empleados_id"],$rowOrd["clientes_id"],$rowOrd["decuento"],$rowOrd["abierta"]);;
+                $ordenes[] = new Lista_ordenes($rowOrd["id"], $rowOrd["fehca"], $rowOrd["empleados_id"], $rowOrd["clientes_id"], $rowOrd["decuento"], $rowOrd["abierta"]);;
             }
         }
         return $ordenes;
@@ -1198,7 +1222,7 @@ class MySQL implements iDatabase
 
     public function get_product(int $id): ?Product
     {
-        $records = $this->database->prepare('SELECT cantidad, nombre, descripcion, precio, activo, imagen FROM inventario WHERE id = :id;');
+        $records = $this->database->prepare('SELECT cantidad, nombre, descripcion, precio, activo, imagen, dependencia_id FROM inventario WHERE id = :id;');
         $records->bindParam(':id', $id);
         $records->execute();
         $result = $records->fetch(PDO::FETCH_ASSOC);
@@ -1210,14 +1234,16 @@ class MySQL implements iDatabase
                     $result["descripcion"],
                     $result["precio"],
                     $result["activo"],
-                    $result["imagen"]
+                    $result["imagen"],
+                    $result["dependencia_id"],
                 );
             }
         }
         return null;
     }
 
-    public function get_tipo_pago(int $id): ?string{
+    public function get_tipo_pago(int $id): ?string
+    {
         $tipo_pago = $this->database->prepare('SELECT pago FROM tipo_pago_orden WHERE id = :id;');
         $tipo_pago->bindParam(':id', $id);
         $tipo_pago->execute();
@@ -1244,7 +1270,7 @@ class MySQL implements iDatabase
 
     public function buscar_orden_cliente(string $cliente): array
     {
-        $clientes = $this->search_clients($cliente,"");
+        $clientes = $this->search_clients($cliente, "");
         $ordenes = array();
         foreach ($clientes as $cliente) {
             $orden = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM ordenes_compra WHERE clientes_id LIKE :clientes_id;');
@@ -1254,7 +1280,7 @@ class MySQL implements iDatabase
                 if (count($rowOrd) === 0) {
                     break;
                 }
-                $ordenes[] = new Lista_ordenes($rowOrd["id"], $rowOrd["fehca"],$rowOrd["empleados_id"],$rowOrd["clientes_id"],$rowOrd["decuento"],$rowOrd["abierta"]);;
+                $ordenes[] = new Lista_ordenes($rowOrd["id"], $rowOrd["fehca"], $rowOrd["empleados_id"], $rowOrd["clientes_id"], $rowOrd["decuento"], $rowOrd["abierta"]);;
             }
         }
         return $ordenes;
@@ -1295,7 +1321,7 @@ class MySQL implements iDatabase
         return $id;
     }
 
-    public function registrar_factura_producto(int $producto, int $cantidad,int $id_factura,int $pagos): bool
+    public function registrar_factura_producto(int $producto, int $cantidad, int $id_factura, int $pagos): bool
     {
         $detalles_producto = $this->database->prepare('SELECT cantidad,precio,activo FROM inventario WHERE id = :id_producto;');
         $detalles_producto->bindParam(':id_producto', $producto);
@@ -1305,11 +1331,11 @@ class MySQL implements iDatabase
         $precio_producto = $row_producto['precio'];
         $activo_producto = $row_producto['activo'];
 
-        if ($activo_producto == 1){
+        if ($activo_producto == 1) {
 
-            if($cantidad_actual_producto>=$cantidad){
+            if ($cantidad_actual_producto >= $cantidad) {
                 $nueva_cantidad = $cantidad_actual_producto - $cantidad;
-                $total = $cantidad*$precio_producto;
+                $total = $cantidad * $precio_producto;
                 $actualizar_producto = $this->database->prepare('SELECT actualizar_cantidad_orden(:producto, :cantidad)');
                 $actualizar_producto->bindParam(':producto', $producto);
                 $actualizar_producto->bindParam(':cantidad', $nueva_cantidad);
@@ -1367,7 +1393,7 @@ class MySQL implements iDatabase
 
     public function buscar_factura_empleado(string $empleado): array
     {
-        $empleados = $this->search_employees($empleado,"");
+        $empleados = $this->search_employees($empleado, "");
         $facturas = array();
         foreach ($empleados as $empleado) {
             $factura = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE empleados_id LIKE :empleados_id;');
@@ -1377,7 +1403,7 @@ class MySQL implements iDatabase
                 if (count($rowOrd) === 0) {
                     break;
                 }
-                $facturas[] = new Lista_facturas($rowOrd["id"], $rowOrd["fehca"],$rowOrd["empleados_id"],$rowOrd["clientes_id"],$rowOrd["decuento"],$rowOrd["abierta"]);;
+                $facturas[] = new Lista_facturas($rowOrd["id"], $rowOrd["fehca"], $rowOrd["empleados_id"], $rowOrd["clientes_id"], $rowOrd["decuento"], $rowOrd["abierta"]);;
             }
         }
         return $facturas;
@@ -1438,7 +1464,7 @@ class MySQL implements iDatabase
 
     public function buscar_factura_cliente(string $cliente): array
     {
-        $clientes = $this->search_clients($cliente,"");
+        $clientes = $this->search_clients($cliente, "");
         $facturas = array();
         foreach ($clientes as $cliente) {
             $factura = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE clientes_id LIKE :clientes_id;');
@@ -1448,10 +1474,47 @@ class MySQL implements iDatabase
                 if (count($row) === 0) {
                     break;
                 }
-                $facturas[] = new Lista_facturas($row["id"], $row["fehca"],$row["empleados_id"],$row["clientes_id"],$row["decuento"],$row["abierta"]);;
+                $facturas[] = new Lista_facturas($row["id"], $row["fehca"], $row["empleados_id"], $row["clientes_id"], $row["decuento"], $row["abierta"]);;
             }
         }
         return $facturas;
     }
 
+    public function get_dependency_id(string $dependency_name): int
+    {
+        $records = $this->database->prepare('SELECT get_dependencia_id(:name) AS name');
+        $records->bindParam(':name', $dependency_name);
+        $records->execute();
+        $result = $records->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            return $result["name"];
+        }
+        return -1;
+    }
+
+    public function get_dependency_name(int $dependency_id): string
+    {
+        $records = $this->database->prepare('SELECT get_dependencia_name(:id) AS id');
+        $records->bindParam(':id', $dependency_id);
+        $records->execute();
+        $result = $records->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            return $result["id"];
+        }
+        return "NOT FOUND";
+    }
+
+    public function list_dependencies(): array
+    {
+        $dependencies = array();
+        $factura = $this->database->prepare('SELECT id,nombre FROM dependencias;');
+        $factura->execute();
+        while ($row = $factura->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $dependencies[] = new Dependency($row["id"], $row["nombre"]);;
+        }
+        return $dependencies;
+    }
 }

@@ -22,6 +22,7 @@ require 'menu.php';
                 if (isset($_POST["enabled"])) {
                     $is_enabled = true;
                 }
+
                 $succeed = connect()->database->update_product(
                     $_GET["id"],
                     $_POST["amount"],
@@ -29,6 +30,7 @@ require 'menu.php';
                     $_POST["description"],
                     $_POST["price"],
                     isset($_POST["enabled"]),
+                    $_POST["dependency"]
                 );
                 if (!$succeed) {
                     echo "<h3 class='error-block'>No se pudo actualizar al usuario</h3>";
@@ -42,6 +44,21 @@ require 'menu.php';
             <form method="post">
                 <?php
                 echo "<label class='black-text' for='name' >Nombre</label><input class='basic-text-input' name='name' type='text' id='name' style='margin-top: 0.5%;' value='$product->nombre' placeholder='$product->nombre'><br>";
+                ?>
+
+                <label class="black-text" for="dependency">Dependencia</label>
+                <select name="dependency" id="dependency">
+                    <?php
+                    foreach (connect()->database->list_dependencies() as $dependency) {
+                        if ($dependency->id == $product->dependencia) {
+                            echo "<option value='$dependency->id' selected='selected'>$dependency->name</option>";
+                        } else {
+                            echo "<option value='$dependency->id'>$dependency->name</option>";
+                        }
+                    }
+                    ?>
+                </select><br>
+                <?php
                 echo "<label class='black-text' for='amount' >Cantidad</label><input type='number' class='basic-text-input' name='amount' id='amount' style='margin-top: 0.5%;' value='$product->cantidad' placeholder='$product->cantidad'><br>";
                 echo "<label class='black-text' for='price' >Precio</label><input type='number' class='basic-text-input' name='price' id='price' style='margin-top: 0.5%;' value='$product->precio' placeholder='$product->precio'><br>";
                 if ($product->activo) {

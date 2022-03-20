@@ -18,7 +18,8 @@ if (!connect()->database->is_inventario($_SESSION["user-id"])) {
                 $_POST["product_amount"],
                 $_POST["product_description"],
                 $_POST["product_price"],
-                $_FILES["product_image"]["tmp_name"]
+                $_FILES["product_image"]["tmp_name"],
+                $_POST["dependency"],
             );
             if ($succeed) {
                 echo "<h3 class='green-text'>Producto agregado con exito</h3>";
@@ -32,6 +33,14 @@ if (!connect()->database->is_inventario($_SESSION["user-id"])) {
                 <input required class="basic-text-input" type="text" placeholder="Nombre del producto"
                        name="product_name"
                        style="width: 75%;">
+                <br><label class="black-text" for="dependency">Dependencia</label>
+                <select name="dependency" id="dependency">
+                    <?php
+                    foreach (connect()->database->list_dependencies() as $dependency) {
+                        echo "<option value='$dependency->id'>$dependency->name</option>";
+                    }
+                    ?>
+                </select><br>
                 <input required class="basic-text-input" type="number" placeholder="Cantidad del producto"
                        name="product_amount"
                        style="width: 75%;">

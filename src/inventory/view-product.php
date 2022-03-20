@@ -38,7 +38,8 @@ if ($product === null) {
             if (strlen($product->descripcion) === 0) {
                 $product->descripcion = "Producto sin descripcion";
             }
-            echo "<h1 class='purple-text' style='margin-top: 0.5%;'>$product->nombre</h1>";
+            $dependencia = connect()->database->get_dependency_name($product->dependencia);
+            echo "<h1 class='purple-text' style='margin-top: 0.5%;'>$product->nombre ($dependencia)</h1>";
             echo "<h3 class='black-text' style='margin-top: 0.5%;'>Precio $$product->precio</h3>";
             echo "<h3 class='black-text' style='margin-top: 0.5%;'>Activo: $activo</h3>";
             echo "<h3 class='black-text' style='margin-top: 0.5%;'>$product->cantidad unidades</h3>";
