@@ -52,16 +52,16 @@ $(document).ready(function () {
                 if (get_cliente() != 'null'){
                     if (get_pago() != ''){
                         $.ajax({
-                        method: "POST",
-                        url: 'save_orden_compra.php',
-                        data: {
-                            empleado: get_empleado(),
-                            cliente: get_cliente(),
-                            descuento: descuento
-                        },
-                        success: function (response) {
-                            console.log(response);
-                        }
+                            method: "POST",
+                            url: 'save_factura.php',
+                            data: {
+                                empleado: get_empleado(),
+                                cliente: get_cliente(),
+                                descuento: descuento
+                            },
+                            success: function (response) {
+                                console.log(response);
+                            }
                         });
                         let rowCount = $("#details tr").length;
                         $('#details tr').each(function () {
@@ -72,19 +72,19 @@ $(document).ready(function () {
                                 if (cantidad != ''){
                                     rowCount = rowCount - 1
                                     $.ajax({
-                                         method: "POST",
-                                         url: 'save_product_orden_compra.php',
-                                         data: {
-                                             empleado: get_empleado(),
-                                             cliente: get_cliente(),
-                                             producto: id_carro,
-                                             cantidad: cantidad,
-                                             pagos: get_pago(),
-                                         },
-                                         success: function (response) {
-                                             console.log(response);
-                                         }
-                                     });
+                                        method: "POST",
+                                        url: 'save_product_factura.php',
+                                        data: {
+                                            empleado: get_empleado(),
+                                            cliente: get_cliente(),
+                                            producto: id_carro,
+                                            cantidad: cantidad,
+                                            pagos: get_pago(),
+                                        },
+                                        success: function (response) {
+                                            console.log(response);
+                                        }
+                                    });
                                 }
                                 else {
                                     alert("Debe llenar en todas las filas la cantidad");
@@ -178,4 +178,3 @@ function solo_numeros(evento) {
         return false;
     return true;
 }
-

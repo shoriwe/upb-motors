@@ -88,6 +88,56 @@ interface iDatabase
     public function register_user(int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password): bool;
 
     public function register_client(string $name, string $personal_id, string $address, string $phone, string $email): bool;
+
+    public function cancel_purchase(int $o_cliente_id,int $o_empleado_id,string $fecha, bool $o_enabled ):bool;
+
+    public function get_price_history(int $product_id): ?array;
+
+    public function id_orden(int $empleado, int $cliente): ?int;
+
+    public function lista_pagos(): array;
+
+    public function registrar_orden_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool;
+
+    public function delete_erorr_orden(int $id): bool;
+
+    public function delete_erorr_detalles_orden(int $id): bool;
+
+    public function buscar_orden_empleado(string $empleado): array;
+
+    public function get_name_employees(int $id): ?string;
+
+    public function get_name_clients(int $id): ?string;
+
+    public function view_orden(int $orden_id): ?Lista_ordenes;
+
+    public function details_view_orden(int $orden_id): array;
+
+    public function get_product(int $id): ?Product;
+
+    public function get_tipo_pago(int $id): ?string;
+
+    public function close_orden(int $id): bool;
+
+    public function registrar_factura(int $empleado, int $cliente, string $hoy, float $descuento): bool;
+
+    public function id_factura(int $empleado, int $cliente): ?int;
+
+    public function registrar_factura_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool;
+
+    public function delete_erorr_factura(int $id): bool;
+
+    public function delete_erorr_detalles_factura(int $id): bool;
+
+    public function registrar_orden(int $empleado, int $cliente, string $hoy, float $descuento): bool;
+
+    public function buscar_factura_empleado(string $empleado): array;
+
+    public function view_factura(int $factura_id): ?Lista_facturas;
+
+    public function details_view_factura(int $factura_id): array;
+
+    public function close_factura(int $id): bool;
 }
 
 
@@ -277,11 +327,157 @@ class TestDatabase implements iDatabase
         return array();
     }
 
-    public function registrar_orden(int $empleado, int $cliente, string $hoy): bool
+    public function registrar_orden(int $empleado, int $cliente, string $hoy, float $descuento): bool
     {
         // TODO: Implement registrar_orden() method.
         return false;
     }
+
+    public function cancel_purchase(int $o_cliente_id,int $o_empleado_id,string $fecha,bool $o_enabled ):bool
+    {
+        // TODO: Implement cancel_purchase() method.
+        return false;
+    }
+
+
+    public function get_price_history(int $product_id): ?array
+    {
+        // TODO: Implement get_price_history() method.
+        return null;
+    }
+
+    public function id_orden(int $empleado, int $cliente): ?int
+    {
+        // TODO: Implement id_orden() method.
+        return null;
+    }
+
+    public function lista_pagos(): array
+    {
+        // TODO: Implement lista_productos() method.
+        return array();
+    }
+
+    public function registrar_orden_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool
+    {
+        // TODO: Implement registrar_orden_producto() method.
+        return false;
+    }
+
+    public function delete_erorr_orden(int $id): bool
+    {
+        // TODO: Implement delete_erorr_orden() method.
+        return false;
+    }
+
+    public function delete_erorr_detalles_orden(int $id): bool
+    {
+        // TODO: Implement delete_erorr_detalles_orden() method.
+        return false;
+    }
+
+    public function buscar_orden_empleado(string $empleado): array
+    {
+        // TODO: Implement buscar_orden_empleado() method.
+        return array();
+    }
+
+    public function get_name_employees(int $id): ?string
+    {
+        // TODO: Implement get_name_employees() method.
+        return null;
+    }
+
+    public function get_name_clients(int $id): ?string
+    {
+        // TODO: Implement get_name_clients() method.
+        return null;
+    }
+
+    public function view_orden(int $orden_id): ?Lista_ordenes
+    {
+        // TODO: Implement view_orden() method.
+        return null;
+    }
+
+    public function details_view_orden(int $orden_id): array
+    {
+        // TODO: Implement details_view_orden() method.
+        return array();
+    }
+
+    public function get_product(int $id): ?Product
+    {
+        // TODO: Implement get_product() method.
+        return null;
+    }
+
+    public function get_tipo_pago(int $id): ?string
+    {
+        // TODO: Implement get_tipo_pago() method.
+        return null;
+    }
+
+    public function close_orden(int $id): bool
+    {
+        // TODO: Implement close_orden() method.
+        return false;
+    }
+
+    public function registrar_factura(int $empleado, int $cliente, string $hoy, float $descuento): bool
+    {
+        // TODO: Implement registrar_orden() method.
+        return false;
+    }
+
+    public function id_factura(int $empleado, int $cliente): ?int
+    {
+        // TODO: Implement id_factura() method.
+        return null;
+    }
+
+    public function registrar_factura_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool
+    {
+        // TODO: Implement registrar_factura_producto() method.
+        return false;
+    }
+
+    public function delete_erorr_factura(int $id): bool
+    {
+        // TODO: Implement delete_erorr_factura() method.
+        return false;
+    }
+
+    public function delete_erorr_detalles_factura(int $id): bool
+    {
+        // TODO: Implement delete_erorr_detalles_factura() method.
+        return false;
+    }
+
+    public function buscar_factura_empleado(string $empleado): array
+    {
+        // TODO: Implement buscar_factura_empleado() method.
+        return array();
+    }
+
+    public function view_factura(int $factura_id): ?Lista_facturas
+    {
+        // TODO: Implement view_factura() method.
+        return null;
+    }
+
+    public function details_view_factura(int $factura_id): array
+    {
+        // TODO: Implement details_view_factura() method.
+        return array();
+    }
+
+    public function close_factura(int $id): bool
+    {
+        // TODO: Implement close_factura() method.
+        return false;
+    }
+
 }
 
 class MySQL implements iDatabase
@@ -753,17 +949,18 @@ class MySQL implements iDatabase
             if (count($row) === 0) {
                 break;
             }
-            $empleados[] = new Lis_Clients($row["id"], $row["nombre_completo"]);
+            $empleados[] = new Lis_Empleados($row["id"], $row["nombre_completo"]);
         }
         return $empleados;
     }
 
-    public function registrar_orden(int $empleado, int $cliente, string $hoy): bool
+    public function registrar_orden(int $empleado, int $cliente, string $hoy, float $descuento): bool
     {
-        $records = $this->database->prepare('SELECT registrar_orden(:empleado, :cliente, :hoy) AS result');
+        $records = $this->database->prepare('SELECT registrar_orden(:empleado, :cliente, :hoy,:descuento) AS result');
         $records->bindParam(':empleado', $empleado);
         $records->bindParam(':cliente', $cliente);
         $records->bindParam(':hoy', $hoy);
+        $records->bindParam(':descuento', $descuento);
         try {
             $records->execute();
             $result = $records->fetch(PDO::FETCH_ASSOC);
@@ -775,4 +972,486 @@ class MySQL implements iDatabase
             return false;
         }
     }
+
+    public function cancel_purchase(int $o_cliente_id,int $o_empleado_id,string $fecha,bool $o_enabled):bool
+    {
+        $records = $this->database->prepare('SELECT cancel_purchase(:o_cliente_id, :o_empleado_id, :fecha, :o_enabled)');
+        $records->bindParam(':o_cliente_id', $o_cliente_id);
+        $records->bindParam(':o_empleado_id', $o_empleado_id);
+        $records->bindParam(':fecha', $fecha);
+        $records->bindParam(':o_enabled', $o_enabled);
+
+        try {
+            $records->execute();
+            $result = $records->fetch(PDO::FETCH_ASSOC);
+            if (count($result) !== 0) {
+                return $result;
+            }
+        }catch (Exception $e) {
+            return false;
+        }
+        return false;
+    }
+
+    public function id_orden(int $empleado, int $cliente): int
+    {
+        $records = $this->database->prepare('SELECT id FROM ordenes_compra WHERE empleados_id = :empleado AND clientes_id = :cliente;');
+        $records->bindParam(':empleado', $empleado);
+        $records->bindParam(':cliente', $cliente);
+        $records->execute();
+        $id = 0;
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $id = $row["id"];
+        }
+        return $id;
+    }
+
+    public function lista_pagos(): array
+    {
+        $records = $this->database->prepare('SELECT id,pago FROM tipo_pago_orden;');
+        $records->execute();
+        $pago = array();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $pago[] = new Lis_tipo_pago($row["id"], $row["pago"]);
+        }
+        return $pago;
+    }
+
+    public function registrar_orden_producto(int $producto, int $cantidad,int $id_orden,int $pagos): bool
+    {
+        $detalles_producto = $this->database->prepare('SELECT cantidad,precio,activo FROM inventario WHERE id = :id_producto;');
+        $detalles_producto->bindParam(':id_producto', $producto);
+        $detalles_producto->execute();
+        $row_producto = $detalles_producto->fetch(PDO::FETCH_ASSOC);
+        $cantidad_actual_producto = $row_producto['cantidad'];
+        $precio_producto = $row_producto['precio'];
+        $activo_producto = $row_producto['activo'];
+
+        if ($activo_producto == 1){
+
+            if($cantidad_actual_producto>=$cantidad){
+                $nueva_cantidad = $cantidad_actual_producto - $cantidad;
+                $total = $cantidad*$precio_producto;
+                $insertar = $this->database->prepare('SELECT registrar_detalles_orden(:cantidad, :total,:producto, :pagos, :orden) AS result');
+                $insertar->bindParam(':cantidad', $cantidad);
+                $insertar->bindParam(':total', $total);
+                $insertar->bindParam(':producto', $producto);
+                $insertar->bindParam(':pagos', $pagos);
+                $insertar->bindParam(':orden', $id_orden);
+                try {
+                    $insertar->execute();
+                    $result = $insertar->fetch(PDO::FETCH_ASSOC);
+                    if (count($result) !== 0) {
+                        return $result["result"];
+                    }
+                    return false;
+                } catch (Exception $e) {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    public function delete_erorr_orden(int $id): bool
+    {
+        $records = $this->database->prepare('DELETE FROM ordenes_compra WHERE id = :id;');
+        $records->bindParam(':id', $id);
+        $records->execute();
+        try {
+            $records->execute();
+
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+
+    }
+
+    public function get_price_history(int $product_id): ?array
+    {
+        $records = $this->database->prepare('SELECT id, modification_date, inventario_id, precio FROM historial_precios ORDER BY id DESC;');
+        $records->execute();
+        $precios = array();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $precios[] = new PriceHistory($row["id"], strtotime($row["modification_date"]), $row["inventario_id"], $row["precio"]);
+        }
+        return $precios;
+
+        return false;
+    }
+
+    public function delete_erorr_detalles_orden(int $id): bool
+    {
+        $records = $this->database->prepare('DELETE FROM detalles_ordenes_compra WHERE orden_compra_id = :id;');
+        $records->bindParam(':id', $id);
+        $records->execute();
+        try {
+            $records->execute();
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+        return false;
+    }
+
+    public function buscar_orden_empleado(string $empleado): array
+    {
+        $empleados = $this->search_employees($empleado,"");
+        $ordenes = array();
+        foreach ($empleados as $empleado) {
+            $orden = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM ordenes_compra WHERE empleados_id LIKE :empleados_id;');
+            $orden->bindParam(':empleados_id', $empleado->id);
+            $orden->execute();
+            while ($rowOrd = $orden->fetch(PDO::FETCH_ASSOC)) {
+                if (count($rowOrd) === 0) {
+                    break;
+                }
+                $ordenes[] = new Lista_ordenes($rowOrd["id"], $rowOrd["fehca"],$rowOrd["empleados_id"],$rowOrd["clientes_id"],$rowOrd["decuento"],$rowOrd["abierta"]);;
+            }
+        }
+        return $ordenes;
+    }
+
+    public function get_name_employees(int $id): ?string
+    {
+
+        $empleado = $this->database->prepare('SELECT nombre_completo FROM empleados WHERE id = :id;');
+        $empleado->bindParam(':id', $id);
+        $empleado->execute();
+        $nombre_empleado = 0;
+        while ($row = $empleado->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $nombre_empleado = $row["nombre_completo"];
+        }
+        return $nombre_empleado;
+    }
+
+    public function get_name_clients(int $id): ?string
+    {
+
+        $cliente = $this->database->prepare('SELECT nombre_completo FROM clientes WHERE id = :id;');
+        $cliente->bindParam(':id', $id);
+        $cliente->execute();
+        $nombre_cliente = 0;
+        while ($row = $cliente->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $nombre_cliente = $row["nombre_completo"];
+        }
+        return $nombre_cliente;
+    }
+
+    public function view_orden(int $orden_id): ?Lista_ordenes
+    {
+        $records = $this->database->prepare('SELECT fehca,empleados_id,clientes_id,decuento,abierta FROM ordenes_compra WHERE id = :id;');
+        $records->bindParam(':id', $orden_id);
+        $records->execute();
+        $result = $records->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            if (count($result) !== 0) {
+                return new Lista_ordenes(
+                    $orden_id,
+                    $result["fehca"],
+                    $result["empleados_id"],
+                    $result["clientes_id"],
+                    $result["decuento"],
+                    $result["abierta"]
+                );
+            }
+        }
+        return null;
+    }
+
+    public function details_view_orden(int $orden_id): array
+    {
+        $records = $this->database->prepare('SELECT cantidad,valor_total,productos_id,tipo_pago_id FROM detalles_ordenes_compra WHERE orden_compra_id = :id;');
+        $records->bindParam(':id', $orden_id);
+        $records->execute();
+        $details_view_orden = array();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $details_view_orden[] = new orden_detalles(
+                $row["cantidad"],
+                $row["valor_total"],
+                $row["productos_id"],
+                $row["tipo_pago_id"],
+                $orden_id
+            );;
+        }
+        return $details_view_orden;
+    }
+
+    public function get_product(int $id): ?Product
+    {
+        $records = $this->database->prepare('SELECT cantidad, nombre, descripcion, precio, activo, imagen FROM inventario WHERE id = :id;');
+        $records->bindParam(':id', $id);
+        $records->execute();
+        $result = $records->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            if (count($result) !== 0) {
+                return new Product($id,
+                    $result["cantidad"],
+                    $result["nombre"],
+                    $result["descripcion"],
+                    $result["precio"],
+                    $result["activo"],
+                    $result["imagen"]
+                );
+            }
+        }
+        return null;
+    }
+
+    public function get_tipo_pago(int $id): ?string{
+        $tipo_pago = $this->database->prepare('SELECT pago FROM tipo_pago_orden WHERE id = :id;');
+        $tipo_pago->bindParam(':id', $id);
+        $tipo_pago->execute();
+        $nombre_pago = "";
+        while ($row = $tipo_pago->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $nombre_pago = $row["pago"];
+        }
+        return $nombre_pago;
+    }
+
+    public function close_orden(int $id): bool
+    {
+        $records = $this->database->prepare('SELECT close_orden(:id)');
+        $records->bindParam(':id', $id);
+        $records->execute();
+        if ($records) {
+            return true;
+        }
+        return false;
+    }
+
+    public function buscar_orden_cliente(string $cliente): array
+    {
+        $clientes = $this->search_clients($cliente,"");
+        $ordenes = array();
+        foreach ($clientes as $cliente) {
+            $orden = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM ordenes_compra WHERE clientes_id LIKE :clientes_id;');
+            $orden->bindParam(':clientes_id', $cliente->id);
+            $orden->execute();
+            while ($rowOrd = $orden->fetch(PDO::FETCH_ASSOC)) {
+                if (count($rowOrd) === 0) {
+                    break;
+                }
+                $ordenes[] = new Lista_ordenes($rowOrd["id"], $rowOrd["fehca"],$rowOrd["empleados_id"],$rowOrd["clientes_id"],$rowOrd["decuento"],$rowOrd["abierta"]);;
+            }
+        }
+        return $ordenes;
+    }
+
+    public function registrar_factura(int $empleado, int $cliente, string $hoy, float $descuento): bool
+    {
+        $records = $this->database->prepare('SELECT registrar_factura(:empleado, :cliente, :hoy,:descuento) AS result');
+        $records->bindParam(':empleado', $empleado);
+        $records->bindParam(':cliente', $cliente);
+        $records->bindParam(':hoy', $hoy);
+        $records->bindParam(':descuento', $descuento);
+        try {
+            $records->execute();
+            $result = $records->fetch(PDO::FETCH_ASSOC);
+            if (count($result) !== 0) {
+                return $result["result"];
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function id_factura(int $empleado, int $cliente): int
+    {
+        $records = $this->database->prepare('SELECT id FROM facturas WHERE empleados_id = :empleado AND clientes_id = :cliente;');
+        $records->bindParam(':empleado', $empleado);
+        $records->bindParam(':cliente', $cliente);
+        $records->execute();
+        $id = 0;
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $id = $row["id"];
+        }
+        return $id;
+    }
+
+    public function registrar_factura_producto(int $producto, int $cantidad,int $id_factura,int $pagos): bool
+    {
+        $detalles_producto = $this->database->prepare('SELECT cantidad,precio,activo FROM inventario WHERE id = :id_producto;');
+        $detalles_producto->bindParam(':id_producto', $producto);
+        $detalles_producto->execute();
+        $row_producto = $detalles_producto->fetch(PDO::FETCH_ASSOC);
+        $cantidad_actual_producto = $row_producto['cantidad'];
+        $precio_producto = $row_producto['precio'];
+        $activo_producto = $row_producto['activo'];
+
+        if ($activo_producto == 1){
+
+            if($cantidad_actual_producto>=$cantidad){
+                $nueva_cantidad = $cantidad_actual_producto - $cantidad;
+                $total = $cantidad*$precio_producto;
+                $actualizar_producto = $this->database->prepare('SELECT actualizar_cantidad_orden(:producto, :cantidad)');
+                $actualizar_producto->bindParam(':producto', $producto);
+                $actualizar_producto->bindParam(':cantidad', $nueva_cantidad);
+                $actualizar_producto->execute();
+                $insertar_factura = $this->database->prepare('SELECT registrar_detalles_factura(:cantidad, :total,:producto, :pagos, :factura) AS result');
+                $insertar_factura->bindParam(':cantidad', $cantidad);
+                $insertar_factura->bindParam(':total', $total);
+                $insertar_factura->bindParam(':producto', $producto);
+                $insertar_factura->bindParam(':pagos', $pagos);
+                $insertar_factura->bindParam(':factura', $id_factura);
+                try {
+                    $insertar_factura->execute();
+                    $result = $insertar_factura->fetch(PDO::FETCH_ASSOC);
+                    if (count($result) !== 0) {
+                        return $result["result"];
+                    }
+                    return false;
+                } catch (Exception $e) {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    public function delete_erorr_factura(int $id): bool
+    {
+        $records = $this->database->prepare('DELETE FROM facturas WHERE id = :id;');
+        $records->bindParam(':id', $id);
+        $records->execute();
+        try {
+            $records->execute();
+
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+
+    }
+
+
+    public function delete_erorr_detalles_factura(int $id): bool
+    {
+        $records = $this->database->prepare('DELETE FROM detalles_facturas WHERE facturas_id = :id;');
+        $records->bindParam(':id', $id);
+        $records->execute();
+        try {
+            $records->execute();
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+        return false;
+    }
+
+    public function buscar_factura_empleado(string $empleado): array
+    {
+        $empleados = $this->search_employees($empleado,"");
+        $facturas = array();
+        foreach ($empleados as $empleado) {
+            $factura = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE empleados_id LIKE :empleados_id;');
+            $factura->bindParam(':empleados_id', $empleado->id);
+            $factura->execute();
+            while ($rowOrd = $factura->fetch(PDO::FETCH_ASSOC)) {
+                if (count($rowOrd) === 0) {
+                    break;
+                }
+                $facturas[] = new Lista_facturas($rowOrd["id"], $rowOrd["fehca"],$rowOrd["empleados_id"],$rowOrd["clientes_id"],$rowOrd["decuento"],$rowOrd["abierta"]);;
+            }
+        }
+        return $facturas;
+    }
+
+    public function view_factura(int $factura_id): ?Lista_facturas
+    {
+        $records = $this->database->prepare('SELECT fehca,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE id = :id;');
+        $records->bindParam(':id', $factura_id);
+        $records->execute();
+        $result = $records->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            if (count($result) !== 0) {
+                return new Lista_facturas(
+                    $factura_id,
+                    $result["fehca"],
+                    $result["empleados_id"],
+                    $result["clientes_id"],
+                    $result["decuento"],
+                    $result["abierta"]
+                );
+            }
+        }
+        return null;
+    }
+
+    public function details_view_factura(int $factura_id): array
+    {
+        $records = $this->database->prepare('SELECT cantidad,valor_total,productos_id,tipo_pago_id FROM detalles_facturas WHERE facturas_id = :id;');
+        $records->bindParam(':id', $factura_id);
+        $records->execute();
+        $details_view_factura = array();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $details_view_factura[] = new factura_detalles(
+                $row["cantidad"],
+                $row["valor_total"],
+                $row["productos_id"],
+                $row["tipo_pago_id"],
+                $factura_id
+            );;
+        }
+        return $details_view_factura;
+    }
+
+    public function close_factura(int $id): bool
+    {
+        $records = $this->database->prepare('SELECT close_factura(:id)');
+        $records->bindParam(':id', $id);
+        $records->execute();
+        if ($records) {
+            return true;
+        }
+        return false;
+    }
+
+    public function buscar_factura_cliente(string $cliente): array
+    {
+        $clientes = $this->search_clients($cliente,"");
+        $facturas = array();
+        foreach ($clientes as $cliente) {
+            $factura = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE clientes_id LIKE :clientes_id;');
+            $factura->bindParam(':clientes_id', $cliente->id);
+            $factura->execute();
+            while ($row = $factura->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $facturas[] = new Lista_facturas($row["id"], $row["fehca"],$row["empleados_id"],$row["clientes_id"],$row["decuento"],$row["abierta"]);;
+            }
+        }
+        return $facturas;
+    }
+
 }

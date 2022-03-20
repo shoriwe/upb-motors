@@ -100,6 +100,28 @@ class Lis_Product
     }
 }
 
+class PriceHistory {
+    public int $id;
+    public int $modification_date;
+    public int $inventario_id;
+    public float $precio;
+
+    /**
+     * @param int $id
+     * @param int $modification_date
+     * @param int $inventario_id
+     * @param float $precio
+     */
+    public function __construct(int $id, int $modification_date, int $inventario_id, float $precio)
+    {
+        $this->id = $id;
+        $this->modification_date = $modification_date;
+        $this->inventario_id = $inventario_id;
+        $this->precio = $precio;
+    }
+
+}
+
 class Lis_Clients
 {
     public ?int $id = null;
@@ -121,5 +143,93 @@ class Lis_Empleados
     {
         $this->id = $id;
         $this->nombre = $nombre;
+    }
+}
+
+class Lis_tipo_pago
+{
+    public ?int $id = null;
+    public ?string $pago = null;
+
+    public function __construct(int $id, string $pago)
+    {
+        $this->id = $id;
+        $this->pago = $pago;
+    }
+}
+
+class Lista_ordenes
+{
+    public ?int $id = null;
+    public ?string $fecha = null;
+    public ?string $empleado = null;
+    public ?string $cliente = null;
+    public ?float $descuento = null;
+    public ?bool $estado = null;
+
+    public function __construct(int $id, string $fecha, string $empleado, string $cliente, float $descuento,bool $estado)
+    {
+        $this->id = $id;
+        $this->fecha = $fecha;
+        $this->empleado = $empleado;
+        $this->cliente = $cliente;
+        $this->descuento = $descuento;
+        $this->estado = $estado;
+    }
+}
+
+class orden_detalles
+{
+    public ?int $cantidad = null;
+    public ?int $valor_total = null;
+    public ?int $productos_id = null;
+    public ?int $tipo_pago_id = null;
+    public ?int $orden_compra_id = null;
+
+    public function __construct(int $cantidad, int $valor_total, int $productos_id, int $tipo_pago_id,int $orden_compra_id)
+    {
+        $this->cantidad = $cantidad;
+        $this->valor_total = $valor_total;
+        $this->productos_id = $productos_id;
+        $this->tipo_pago_id = $tipo_pago_id;
+        $this->orden_compra_id = $orden_compra_id;
+    }
+}
+
+class Lista_facturas
+{
+    public ?int $id = null;
+    public ?string $fecha = null;
+    public ?string $empleado = null;
+    public ?string $cliente = null;
+    public ?float $descuento = null;
+    public ?bool $estado = null;
+
+    public function __construct(int $id, string $fecha, string $empleado, string $cliente, float $descuento,bool $estado)
+    {
+        $this->id = $id;
+        $this->fecha = $fecha;
+        $this->empleado = $empleado;
+        $this->cliente = $cliente;
+        $this->descuento = $descuento;
+        $this->estado = $estado;
+    }
+}
+
+class factura_detalles
+{
+    public ?int $cantidad = null;
+    public ?int $valor_total = null;
+    public ?int $productos_id = null;
+    public ?int $tipo_pago_id = null;
+    public ?int $orden_compra_id = null;
+
+    public function __construct(int $cantidad, int $valor_total, int $productos_id, int $tipo_pago_id,int $orden_compra_id)
+    {
+        $this->cantidad = $cantidad;
+        $this->valor_total = $valor_total;
+        $this->productos_id = $productos_id;
+        $this->tipo_pago_id = $tipo_pago_id;
+        $this->orden_compra_id = $orden_compra_id;
     }
 }

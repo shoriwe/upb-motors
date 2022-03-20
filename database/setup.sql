@@ -113,6 +113,35 @@ CREATE TABLE IF NOT EXISTS inventario
     CONSTRAINT unique_producto UNIQUE (nombre)
 );
 
+CREATE TABLE IF NOT EXISTS historial_precios
+(
+    id                INT      NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    modification_date DATETIME NOT NULL DEFAULT NOW(),
+    inventario_id     INT      NOT NULL,
+    precio            DOUBLE   NOT NULL,
+    CONSTRAINT fk_inventario_id_inventario FOREIGN KEY (inventario_id) REFERENCES inventario (id)
+);
+
+CREATE TRIGGER insertar_producto
+    AFTER INSERT
+    ON inventario
+    FOR EACH ROW
+    INSERT INTO historial_precios (inventario_id, precio)
+    VALUES (NEW.id, NEW.precio);
+
+DELIMITER @@
+CREATE TRIGGER actualizar_product
+    AFTER UPDATE
+    ON inventario
+    FOR EACH ROW
+BEGIN
+    IF OLD.precio != NEW.precio THEN
+        INSERT INTO historial_precios (inventario_id, precio) VALUES (NEW.id, NEW.precio);
+    END IF;
+END;
+@@
+DELIMITER ;
+
 -- -- Clientes -- --
 CREATE TABLE IF NOT EXISTS clientes
 (
@@ -130,35 +159,73 @@ CREATE TABLE IF NOT EXISTS clientes
 -- -- ordenes_compra -- --
 CREATE TABLE IF NOT EXISTS ordenes_compra
 (
+
     id           INT  NOT NULL PRIMARY KEY AUTO_INCREMENT,
     empleados_id INT  NOT NULL,
     clientes_id  INT  NOT NULL,
     fehca        DATE NOT NULL,
+    decuento     DOUBLE NOT NULL,
+    abierta      BOOLEAN NOT NULL DEFAULT true,
+
     CONSTRAINT fk_clientes_id FOREIGN KEY (clientes_id) REFERENCES clientes (id),
     CONSTRAINT fk_empleados_id FOREIGN KEY (empleados_id) REFERENCES empleados (id)
 
 );
 
--- -- ordenes_compra -- --
-CREATE TABLE IF NOT EXISTS tipo_pago
+-- -- tipo pago -- --
+CREATE TABLE IF NOT EXISTS tipo_pago_orden
 (
     id   INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    tipo VARCHAR(10) NOT NULL
+    pago VARCHAR(10) NOT NULL
 );
+
+INSERT INTO tipo_pago_orden (pago)
+    VALUES ('Efectivo'),
+           ('Tarjeta');
 
 -- -- detalles_ordenes_compra -- --
 CREATE TABLE IF NOT EXISTS detalles_ordenes_compra
 (
     id              INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
     cantidad        INT    NOT NULL,
-    decuento        DOUBLE NOT NULL,
     valor_total     DOUBLE NOT NULL,
     productos_id    INT    NOT NULL,
     tipo_pago_id    INT    NOT NULL,
     orden_compra_id INT    NOT NULL,
     CONSTRAINT fk_productos_id FOREIGN KEY (productos_id) REFERENCES inventario (id),
     CONSTRAINT fk_orden_compra_id FOREIGN KEY (orden_compra_id) REFERENCES ordenes_compra (id),
-    CONSTRAINT fk_tipo_pago_id FOREIGN KEY (tipo_pago_id) REFERENCES tipo_pago (id)
+    CONSTRAINT fk_tipo_pago_id FOREIGN KEY (tipo_pago_id) REFERENCES tipo_pago_orden (id)
+
+);
+
+-- -- facturas -- --
+CREATE TABLE IF NOT EXISTS facturas
+(
+
+    id           INT  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    empleados_id INT  NOT NULL,
+    clientes_id  INT  NOT NULL,
+    fehca        DATE NOT NULL,
+    decuento     DOUBLE NOT NULL,
+    abierta      BOOLEAN NOT NULL DEFAULT true,
+
+    CONSTRAINT fk_facturas_clientes_id FOREIGN KEY (clientes_id) REFERENCES clientes (id),
+    CONSTRAINT fk_facturas_empleados_id FOREIGN KEY (empleados_id) REFERENCES empleados (id)
+
+);
+
+-- -- detalles_facturas -- --
+CREATE TABLE IF NOT EXISTS detalles_facturas
+(
+    id              INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    cantidad        INT    NOT NULL,
+    valor_total     DOUBLE NOT NULL,
+    productos_id    INT    NOT NULL,
+    tipo_pago_id    INT    NOT NULL,
+    facturas_id     INT    NOT NULL,
+    CONSTRAINT FOREIGN KEY (productos_id) REFERENCES inventario (id),
+    CONSTRAINT FOREIGN KEY (facturas_id) REFERENCES facturas (id),
+    CONSTRAINT FOREIGN KEY (tipo_pago_id) REFERENCES tipo_pago_orden (id)
 
 );
 
@@ -494,7 +561,8 @@ END;
 CREATE FUNCTION registrar_orden(
     v_empleados_id INT,
     v_clientes_id INT,
-    v_fehca VARCHAR(10)
+    v_fehca VARCHAR(10),
+    v_descuento DOUBLE
 )
     RETURNS BOOLEAN
     LANGUAGE SQL
@@ -502,12 +570,156 @@ CREATE FUNCTION registrar_orden(
 BEGIN
     INSERT INTO ordenes_compra (empleados_id,
                                 clientes_id,
-                                fehca)
+                                fehca,
+                                decuento)
     VALUES (v_empleados_id,
             v_clientes_id,
-            v_fehca);
+            v_fehca,
+            v_descuento);
     RETURN TRUE;
 END;
 @@
+
+CREATE FUNCTION registrar_detalles_orden(
+    v_cantidad INT,
+    v_total INT,
+    v_productos INT,
+    v_tipo_pago INT,
+    v_orden INT
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    INSERT INTO detalles_ordenes_compra (cantidad,
+                                valor_total,
+                                productos_id,
+                                tipo_pago_id,
+                                orden_compra_id)
+    VALUES (v_cantidad,
+            v_total,
+            v_productos,
+            v_tipo_pago,
+            v_orden);
+    RETURN TRUE;
+END;
+@@
+
+CREATE FUNCTION actualizar_cantidad_orden(
+    v_producto INT,
+    v_cantidad INT
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    UPDATE inventario
+        SET cantidad = v_cantidad
+        WHERE id = v_producto;
+    RETURN TRUE;
+END;
+@@
+
+CREATE FUNCTION cancel_purchase(
+    o_id INT,
+    o_enabled BOOLEAN
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    SELECT id,
+           empleados_id,
+           clientes_id,
+           fehca
+    INTO @r_id, @r_empleados_id, @r_clientes_id
+    FROM ordenes_compra
+    WHERE id = o_id;
+    IF @r_id IS NULL THEN
+        RETURN false;
+    END IF;
+    UPDATE
+        ordenes_compra
+    SET habilitado = o_enabled
+    WHERE id = o_id;
+    return true;
+END;
+@@
+
+CREATE FUNCTION close_orden(
+    v_id INT
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    UPDATE ordenes_compra
+    SET abierta = 0
+    WHERE id = v_id;
+    RETURN TRUE;
+END;
+@@
+
+CREATE FUNCTION registrar_factura(
+    v_empleados_id INT,
+    v_clientes_id INT,
+    v_fehca VARCHAR(10),
+    v_descuento DOUBLE
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    INSERT INTO facturas (empleados_id,
+                                clientes_id,
+                                fehca,
+                                decuento)
+    VALUES (v_empleados_id,
+            v_clientes_id,
+            v_fehca,
+            v_descuento);
+    RETURN TRUE;
+END;
+@@
+
+CREATE FUNCTION registrar_detalles_factura(
+    v_cantidad INT,
+    v_total INT,
+    v_productos INT,
+    v_tipo_pago INT,
+    v_factura INT
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    INSERT INTO detalles_facturas (cantidad,
+                                         valor_total,
+                                         productos_id,
+                                         tipo_pago_id,
+                                         facturas_id)
+    VALUES (v_cantidad,
+            v_total,
+            v_productos,
+            v_tipo_pago,
+            v_factura);
+    RETURN TRUE;
+END;
+@@
+
+CREATE FUNCTION close_factura(
+    v_id INT
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    UPDATE facturas
+    SET abierta = 0
+    WHERE id = v_id;
+    RETURN TRUE;
+END;
+@@
+
 
 DELIMITER ;
