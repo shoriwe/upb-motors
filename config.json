@@ -3,9 +3,9 @@
   "DB_USERNAME": "upb_motors_client",
   "DB_PASSWORD": "password",
   "DB_DATABASE": "upb_motors",
-  "EMAIL_HOST": "smtp.gmail.com",
-  "EMAIL_PORT": "465",
-  "EMAIL_USERNAME": "upbmotorstestmail@gmail.com",
-  "EMAIL_PASSWORD": "SuperSecurePassword123@",
+  "EMAIL_HOST": "172.20.42.76",
+  "EMAIL_PORT": "25",
+  "EMAIL_USERNAME": "aplicacion@upb-motors.co",
+  "EMAIL_PASSWORD": "password",
   "TEST": 1
 }
