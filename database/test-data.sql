@@ -6,7 +6,7 @@ SET @_ = registrar_empleado(
         '1234567891',
         '1234567890',
         '1234567890',
-        'upbmotorstestmail@gmail.com',
+        'admin@upb-motors.co',
         '$2y$10$WAQuk2pamDhPkUd2Hdxxpe1HoiaGTIEQr6H6GZ9o34rHFbFey5VZ.'
     );
 
@@ -16,7 +16,7 @@ SET @_ = registrar_empleado(
         '1234567892',
         '1234567890',
         '1234567890',
-        'rh@gmail.com',
+        'rh@upb-motors.co',
         '$2y$10$WAQuk2pamDhPkUd2Hdxxpe1HoiaGTIEQr6H6GZ9o34rHFbFey5VZ.'
     );
 
@@ -26,7 +26,7 @@ SET @_ = registrar_empleado(
         '1234567893',
         '1234567890',
         '1234567890',
-        'inventario@gmail.com',
+        'inventario@upb-motors.co',
         '$2y$10$WAQuk2pamDhPkUd2Hdxxpe1HoiaGTIEQr6H6GZ9o34rHFbFey5VZ.'
     );
 
@@ -36,7 +36,7 @@ SET @_ = registrar_empleado(
         '1234567894',
         '1234567890',
         '1234567890',
-        'gerente@gmail.com',
+        'gerente@upb-motors.co',
         '$2y$10$WAQuk2pamDhPkUd2Hdxxpe1HoiaGTIEQr6H6GZ9o34rHFbFey5VZ.'
     );
 
@@ -46,7 +46,7 @@ SET @_ = registrar_empleado(
         '1234567895',
         '1234567890',
         '1234567890',
-        'ventas@gmail.com',
+        'ventas@upb-motors.co',
         '$2y$10$WAQuk2pamDhPkUd2Hdxxpe1HoiaGTIEQr6H6GZ9o34rHFbFey5VZ.'
     );
 
