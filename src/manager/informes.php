@@ -13,9 +13,9 @@ require_once '../navbar.php';
     <div class="centered-container-for-input">
             <h1 class="purple-text">Informes</h1>
         <div class="centered-flex-container">
-            <a class="blue-button" href="/manager/ordenes-de-compra.php">Informe de perdidas y Ganancias</a>
+            <a class="blue-button" href="/manager/perdidas-ganancias.php">Informe de Perdidas y Ganancias</a>
             <pre style="width: 1vw;"></pre>
-            <a class="blue-button" href="/manager/facturas.php">Informe de Inventario</a>
+            <a class="blue-button" href="/manager/informe-inventario.php">Informe de Inventario</a>
         </div>
     </div>
 </div>

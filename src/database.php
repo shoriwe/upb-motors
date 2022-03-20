@@ -150,6 +150,14 @@ interface iDatabase
     public function registrar_gasto(int $valor, string $razon): bool;
 
     public function lista_gastos(): array;
+
+    public function get_ventas_caja(): ?int;
+
+    public function get_ventas_bancos(): ?int;
+
+    public function get_costos_ventas(): ?int;
+
+    public function get_gastos(): ?int;
 }
 
 
@@ -521,6 +529,30 @@ class TestDatabase implements iDatabase
     public function lista_gastos(): array{
         // TODO: Implement lista_gastos() method.
         return array();
+    }
+
+    public function get_ventas_caja(): ?int
+    {
+        // TODO: Implement get_ventas_caja() method.
+        return null;
+    }
+
+    public function get_ventas_bancos(): ?int
+    {
+        // TODO: Implement get_ventas_bancos() method.
+        return null;
+    }
+
+    public function get_costos_ventas(): ?int
+    {
+        // TODO: Implement get_costos_ventas() method.
+        return null;
+    }
+
+    public function get_gastos(): ?int
+    {
+        // TODO: Implement get_gastos() method.
+        return null;
     }
 }
 
@@ -1568,5 +1600,69 @@ class MySQL implements iDatabase
         }
 
         return $lista;
+    }
+
+    public function get_ventas_caja(): int
+    {
+        $records = $this->database->prepare('SELECT SUM(detalles_facturas.valor_total) AS valor
+                                                    FROM detalles_facturas,facturas
+                                                    WHERE facturas.id = detalles_facturas.facturas_id
+                                                    AND detalles_facturas.tipo_pago_id = 1
+                                                    AND facturas.abierta = 1;');
+        $records->execute();
+        $valor = 0;
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $valor = $row["valor"];
+        }
+        return $valor;
+    }
+
+    public function get_ventas_bancos(): int
+    {
+        $records = $this->database->prepare('SELECT SUM(detalles_facturas.valor_total) AS valor
+                                                    FROM detalles_facturas,facturas
+                                                    WHERE facturas.id = detalles_facturas.facturas_id
+                                                    AND detalles_facturas.tipo_pago_id = 2;
+                                                    AND facturas.abierta = 1;');
+        $records->execute();
+        $valor = 0;
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $valor = $row["valor"];
+        }
+        return $valor;
+    }
+
+    public function get_costos_ventas(): int
+    {
+        $records = $this->database->prepare('SELECT SUM(costo*cantidad) AS valor FROM costos_inventario;');
+        $records->execute();
+        $valor = 0;
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $valor = $row["valor"];
+        }
+        return $valor;
+    }
+
+    public function get_gastos(): int
+    {
+        $records = $this->database->prepare('SELECT SUM(valor) AS valor FROM gastos;');
+        $records->execute();
+        $valor = 0;
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $valor = $row["valor"];
+        }
+        return $valor;
     }
 }
