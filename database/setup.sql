@@ -707,5 +707,19 @@ BEGIN
 END;
 @@
 
+CREATE FUNCTION close_factura(
+    v_id INT
+)
+    RETURNS BOOLEAN
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+BEGIN
+    UPDATE facturas
+    SET abierta = 0
+    WHERE id = v_id;
+    RETURN TRUE;
+END;
+@@
+
 
 DELIMITER ;

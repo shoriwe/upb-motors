@@ -195,3 +195,41 @@ class orden_detalles
         $this->orden_compra_id = $orden_compra_id;
     }
 }
+
+class Lista_facturas
+{
+    public ?int $id = null;
+    public ?string $fecha = null;
+    public ?string $empleado = null;
+    public ?string $cliente = null;
+    public ?float $descuento = null;
+    public ?bool $estado = null;
+
+    public function __construct(int $id, string $fecha, string $empleado, string $cliente, float $descuento,bool $estado)
+    {
+        $this->id = $id;
+        $this->fecha = $fecha;
+        $this->empleado = $empleado;
+        $this->cliente = $cliente;
+        $this->descuento = $descuento;
+        $this->estado = $estado;
+    }
+}
+
+class factura_detalles
+{
+    public ?int $cantidad = null;
+    public ?int $valor_total = null;
+    public ?int $productos_id = null;
+    public ?int $tipo_pago_id = null;
+    public ?int $orden_compra_id = null;
+
+    public function __construct(int $cantidad, int $valor_total, int $productos_id, int $tipo_pago_id,int $orden_compra_id)
+    {
+        $this->cantidad = $cantidad;
+        $this->valor_total = $valor_total;
+        $this->productos_id = $productos_id;
+        $this->tipo_pago_id = $tipo_pago_id;
+        $this->orden_compra_id = $orden_compra_id;
+    }
+}

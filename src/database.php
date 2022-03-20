@@ -130,6 +130,14 @@ interface iDatabase
     public function delete_erorr_detalles_factura(int $id): bool;
 
     public function registrar_orden(int $empleado, int $cliente, string $hoy, float $descuento): bool;
+
+    public function buscar_factura_empleado(string $empleado): array;
+
+    public function view_factura(int $factura_id): ?Lista_facturas;
+
+    public function details_view_factura(int $factura_id): array;
+
+    public function close_factura(int $id): bool;
 }
 
 
@@ -443,6 +451,30 @@ class TestDatabase implements iDatabase
     public function delete_erorr_detalles_factura(int $id): bool
     {
         // TODO: Implement delete_erorr_detalles_factura() method.
+        return false;
+    }
+
+    public function buscar_factura_empleado(string $empleado): array
+    {
+        // TODO: Implement buscar_factura_empleado() method.
+        return array();
+    }
+
+    public function view_factura(int $factura_id): ?Lista_facturas
+    {
+        // TODO: Implement view_factura() method.
+        return null;
+    }
+
+    public function details_view_factura(int $factura_id): array
+    {
+        // TODO: Implement details_view_factura() method.
+        return array();
+    }
+
+    public function close_factura(int $id): bool
+    {
+        // TODO: Implement close_factura() method.
         return false;
     }
 
@@ -1006,10 +1038,6 @@ class MySQL implements iDatabase
             if($cantidad_actual_producto>=$cantidad){
                 $nueva_cantidad = $cantidad_actual_producto - $cantidad;
                 $total = $cantidad*$precio_producto;
-                $actualizar_producto = $this->database->prepare('SELECT actualizar_cantidad_orden(:producto, :cantidad)');
-                $actualizar_producto->bindParam(':producto', $producto);
-                $actualizar_producto->bindParam(':cantidad', $nueva_cantidad);
-                $actualizar_producto->execute();
                 $insertar = $this->database->prepare('SELECT registrar_detalles_orden(:cantidad, :total,:producto, :pagos, :orden) AS result');
                 $insertar->bindParam(':cantidad', $cantidad);
                 $insertar->bindParam(':total', $total);
@@ -1335,6 +1363,95 @@ class MySQL implements iDatabase
             return false;
         }
         return false;
+    }
+
+    public function buscar_factura_empleado(string $empleado): array
+    {
+        $empleados = $this->search_employees($empleado,"");
+        $facturas = array();
+        foreach ($empleados as $empleado) {
+            $factura = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE empleados_id LIKE :empleados_id;');
+            $factura->bindParam(':empleados_id', $empleado->id);
+            $factura->execute();
+            while ($rowOrd = $factura->fetch(PDO::FETCH_ASSOC)) {
+                if (count($rowOrd) === 0) {
+                    break;
+                }
+                $facturas[] = new Lista_facturas($rowOrd["id"], $rowOrd["fehca"],$rowOrd["empleados_id"],$rowOrd["clientes_id"],$rowOrd["decuento"],$rowOrd["abierta"]);;
+            }
+        }
+        return $facturas;
+    }
+
+    public function view_factura(int $factura_id): ?Lista_facturas
+    {
+        $records = $this->database->prepare('SELECT fehca,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE id = :id;');
+        $records->bindParam(':id', $factura_id);
+        $records->execute();
+        $result = $records->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            if (count($result) !== 0) {
+                return new Lista_facturas(
+                    $factura_id,
+                    $result["fehca"],
+                    $result["empleados_id"],
+                    $result["clientes_id"],
+                    $result["decuento"],
+                    $result["abierta"]
+                );
+            }
+        }
+        return null;
+    }
+
+    public function details_view_factura(int $factura_id): array
+    {
+        $records = $this->database->prepare('SELECT cantidad,valor_total,productos_id,tipo_pago_id FROM detalles_facturas WHERE facturas_id = :id;');
+        $records->bindParam(':id', $factura_id);
+        $records->execute();
+        $details_view_factura = array();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $details_view_factura[] = new factura_detalles(
+                $row["cantidad"],
+                $row["valor_total"],
+                $row["productos_id"],
+                $row["tipo_pago_id"],
+                $factura_id
+            );;
+        }
+        return $details_view_factura;
+    }
+
+    public function close_factura(int $id): bool
+    {
+        $records = $this->database->prepare('SELECT close_factura(:id)');
+        $records->bindParam(':id', $id);
+        $records->execute();
+        if ($records) {
+            return true;
+        }
+        return false;
+    }
+
+    public function buscar_factura_cliente(string $cliente): array
+    {
+        $clientes = $this->search_clients($cliente,"");
+        $facturas = array();
+        foreach ($clientes as $cliente) {
+            $factura = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE clientes_id LIKE :clientes_id;');
+            $factura->bindParam(':clientes_id', $cliente->id);
+            $factura->execute();
+            while ($row = $factura->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $facturas[] = new Lista_facturas($row["id"], $row["fehca"],$row["empleados_id"],$row["clientes_id"],$row["decuento"],$row["abierta"]);;
+            }
+        }
+        return $facturas;
     }
 
 }
