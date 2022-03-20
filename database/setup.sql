@@ -267,6 +267,16 @@ CREATE TABLE IF NOT EXISTS detalles_facturas
 
 );
 
+-- -- costos productos -- --
+CREATE TABLE IF NOT EXISTS costos_inventario
+(
+    id              INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    productos_id    INT    NOT NULL,
+    costo    		  DOUBLE    NOT NULL DEFAULT 0,
+    CONSTRAINT FOREIGN KEY (productos_id) REFERENCES inventario (id)
+
+);
+
 -- -- Procesos -- --
 DELIMITER @@
 CREATE PROCEDURE actualizar_contrasena(IN v_id INT, IN hash_nueva_contrasena VARCHAR(500))
@@ -774,6 +784,32 @@ BEGIN
     SET abierta = 0
     WHERE id = v_id;
     RETURN TRUE;
+END;
+@@
+
+CREATE TRIGGER costos_carros
+    AFTER INSERT
+    ON inventario FOR EACH ROW
+
+BEGIN
+
+    SET @id_carro = NEW.id;
+    SET @costo = (NEW.precio*100)/125;
+    INSERT INTO costos_inventario (productos_id,costo) VALUES (@id_carro,@costo);
+
+END;
+@@
+
+CREATE TRIGGER actualisar_costos_carros
+    AFTER UPDATE
+    ON inventario FOR EACH ROW
+
+BEGIN
+
+    SET @id_carro = NEW.id;
+    SET @costo = (NEW.precio*100)/125;
+    UPDATE costos_inventario SET costo = @costo WHERE productos_id = @id_carro;
+
 END;
 @@
 
