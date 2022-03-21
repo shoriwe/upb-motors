@@ -21,3 +21,6 @@ tbody tr:nth-child(odd) {
 tbody tr:nth-child(even) {
     background: #f4f4f4;
 }
+td {
+    text-align: center;
+}

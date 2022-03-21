@@ -158,6 +158,12 @@ interface iDatabase
     public function get_costos_ventas(): ?int;
 
     public function get_gastos(): ?int;
+
+    public function get_informe_inventario(): array;
+
+    public function get_total_productos(): ?int;
+
+    public function get_total_precio(): ?int;
 }
 
 
@@ -516,17 +522,20 @@ class TestDatabase implements iDatabase
         return array();
     }
 
-    public function buscar_factura_cliente(string $cliente): array{
+    public function buscar_factura_cliente(string $cliente): array
+    {
         // TODO: Implement buscar_factura_cliente() method.
         return array();
     }
 
-    public function registrar_gasto(int $valor, string $razon): bool{
+    public function registrar_gasto(int $valor, string $razon): bool
+    {
         // TODO: Implement registrar_gasto() method.
         return false;
     }
 
-    public function lista_gastos(): array{
+    public function lista_gastos(): array
+    {
         // TODO: Implement lista_gastos() method.
         return array();
     }
@@ -552,6 +561,24 @@ class TestDatabase implements iDatabase
     public function get_gastos(): ?int
     {
         // TODO: Implement get_gastos() method.
+        return null;
+    }
+
+    public function get_informe_inventario(): array
+    {
+        // TODO: Implement get_informe_inventario() method.
+        return array();
+    }
+
+    public function get_total_productos(): ?int
+    {
+        // TODO: Implement get_total_productos() method.
+        return null;
+    }
+
+    public function get_total_precio(): ?int
+    {
+        // TODO: Implement get_total_precio() method.
         return null;
     }
 }
@@ -1571,7 +1598,8 @@ class MySQL implements iDatabase
         return $dependencies;
     }
 
-    public function registrar_gasto(int $valor, string $razon): bool{
+    public function registrar_gasto(int $valor, string $razon): bool
+    {
         $records = $this->database->prepare('SELECT registrar_gasto(:valor, :razon) AS result');
         $records->bindParam(':valor', $valor);
         $records->bindParam(':razon', $razon);
@@ -1587,7 +1615,8 @@ class MySQL implements iDatabase
         }
     }
 
-    public function lista_gastos(): array{
+    public function lista_gastos(): array
+    {
 
         $gastos = $this->database->prepare('SELECT id,valor,razon FROM gastos;');
         $gastos->execute();
@@ -1664,5 +1693,54 @@ class MySQL implements iDatabase
             $valor = $row["valor"];
         }
         return $valor;
+    }
+
+    public function get_informe_inventario(): array
+    {
+        $informe_inventario = array();
+        $records = $this->database->prepare('SELECT inventario.id AS id,inventario.nombre AS nombre,dependencias.nombre AS dependencia,
+                                                    inventario.cantidad AS cantidad,costos_inventario.costo AS costo_unitario,
+                                                    costos_inventario.costo*inventario.cantidad AS costo_total, 
+                                                    inventario.precio AS precio,inventario.precio*inventario.cantidad AS precio_total, inventario.activo AS habilitado
+                                                    FROM inventario, costos_inventario,dependencias
+                                                    WHERE costos_inventario.productos_id = inventario.id
+                                                    AND dependencias.id = inventario.dependencia_id;');
+        $records->execute();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $informe_inventario[] = new informe_inventario($row["id"], $row["nombre"], $row["dependencia"], $row["cantidad"], $row["costo_unitario"],
+                $row["costo_total"], $row["precio"], $row["precio_total"], $row["habilitado"]);;
+        }
+        return $informe_inventario;
+    }
+
+    public function get_total_productos(): int
+    {
+        $records = $this->database->prepare('SELECT SUM(cantidad) AS total FROM inventario;');
+        $records->execute();
+        $total = 0;
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $total = $row["total"];
+        }
+        return $total;
+    }
+
+    public function get_total_precio(): ?int
+    {
+        $records = $this->database->prepare('SELECT SUM(cantidad*precio) AS total FROM inventario;');
+        $records->execute();
+        $total = 0;
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $total = $row["total"];
+        }
+        return $total;
     }
 }

@@ -1,11 +1,11 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+
 
 require_once '../connection.php';
 require_once '../ensure_login.php';
 require 'menu.php';
+
+
 
 $product = connect()->database->view_product($_GET["id"]);
 if ($product === null) {

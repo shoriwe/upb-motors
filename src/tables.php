@@ -267,3 +267,29 @@ class gastos
         $this->razon = $razon;
     }
 }
+
+class informe_inventario
+{
+    public ?int $id = null;
+    public ?string $nombre = null;
+    public ?string $dependencia = null;
+    public ?int $cantidad = null;
+    public ?int $costo_unitario = null;
+    public ?int $costo_total = null;
+    public ?int $precio = null;
+    public ?int $precio_total = null;
+    public ?int $habilitado = null;
+
+    public function __construct(int $id, string $nombre, string $dependencia,int $cantidad,int $costo_unitario,int $costo_total,int $precio,int $precio_total,int $habilitado)
+    {
+        $this->id = $id;
+        $this->nombre = $nombre;
+        $this->dependencia = $dependencia;
+        $this->cantidad = $cantidad;
+        $this->costo_unitario = $costo_unitario;
+        $this->costo_total = $costo_total;
+        $this->precio = $precio;
+        $this->precio_total = $precio_total;
+        $this->habilitado = $habilitado;
+    }
+}

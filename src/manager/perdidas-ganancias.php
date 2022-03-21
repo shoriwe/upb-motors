@@ -30,162 +30,138 @@ $gastos = connect()->database->get_gastos();
         <tbody id="details">
         <tr>
             <td colspan="2">
-                <center><b>Ventas</b></center>
+                <b>Ventas</b>
             </td>
         </tr>
         <tr>
-            <td >
-                <center>Ventas al Contado</center>
+            <td>
+                Ventas al Contado
             </td>
             <td>
-                <center>
                     <?php
                     echo "$$caja";
                     ?>
-                </center>
             </td>
         </tr>
         <tr>
-            <td >
-                <center>Ventas por tarjeta</center>
+            <td>
+                Ventas por tarjeta
             </td>
             <td>
-                <center>
                     <?php
                     echo "$$banco";
                     ?>
-                </center>
             </td>
         </tr>
         <tr>
-            <td >
-                <center>Total Ventas</center>
+            <td>
+                Total Ventas
             </td>
             <td>
-                <center><b>
+                <b>
                     <?php
                     echo "$".$banco+$caja;
                     ?></b>
-                </center>
             </td>
         </tr>
         <tr>
             <td colspan="2">
-                <center><b>Costos</b></center>
+                <b>Costos</b>
             </td>
         </tr>
         <tr>
-            <td >
-                <center>Costos de producción</center>
+            <td>
+                Costos de producción
             </td>
             <td>
-                <center>
                     <?php
                     echo "$$costos";
                     ?>
-                </center>
             </td>
         </tr>
         <tr>
-            <td >
-                <center>Total Costos</center>
-            </td>
             <td>
-                <center><b>
+                Total Costos
+            </td>
+            <td><b>
                         <?php
                         echo "$".$costos;
                         ?></b>
-                </center>
             </td>
         </tr>
         <tr><td colspan="2"><br></td></tr>
         <tr>
-            <td >
-                <center><b>Utilidad bruta</b></center>
+            <td>
+                <b>Utilidad bruta</b>
             </td>
             <td>
-                <center>
                     <?php
                     $utilidad_bruta = $banco+$caja-$costos;
                     echo "$".$utilidad_bruta;
                     ?>
-                </center>
             </td>
         </tr>
         <tr>
-            <td >
-                <center><b>Gastos Generales</b></center>
+            <td>
+                <b>Gastos Generales</b>
             </td>
             <td>
-                <center>
                     <?php
                     echo "$".$gastos;
                     ?>
-                </center>
             </td>
         </tr>
         <tr>
-            <td >
-                <center><b>Utilidad Operativa</b></center>
+            <td>
+                <b>Utilidad Operativa</b>
             </td>
             <td>
-                <center>
                     <?php
                     $utilidad_operativa = $utilidad_bruta-$gastos;
                     echo "$".$utilidad_operativa;
                     ?>
-                </center>
             </td>
         </tr>
         <tr>
-            <td >
-                <center><b>Impuestos</b></center>
+            <td>
+                <b>Impuestos</b>
             </td>
             <td>
-                <center>
                     <?php
                     $impuesto = ($banco+$caja)*0.19;
                     echo "$".$impuesto;
                     ?>
-                </center>
             </td>
         </tr>
         <tr>
-        <td >
-            <center><b>Utilidad Neta</b></center>
+        <td><b>Utilidad Neta</b>
         </td>
         <td>
-            <center>
                 <?php
                 $utilidad_neta = $utilidad_operativa - $impuesto;
                 echo "$".$utilidad_neta;
                 ?>
-            </center>
         </td>
         </tr>
-        <td >
-            <center><b>Dividendos</b></center>
+        <td>
+            <b>Dividendos</b>
         </td>
         <td>
-            <center>
                 <?php
                 $dividendos = 1000000;
                 echo "$".$dividendos;
                 ?>
-            </center>
         </td>
         </tr>
         <tr>
-            <td >
-                <center><b>Utilidad Retenida</b></center>
-            </td>
             <td>
-                <center><b>
+                <b>Utilidad Retenida</b>
+            </td>
+            <td><b>
                     <?php
                     $utilidad_retenida = $utilidad_neta - $dividendos;
                     echo "$".$utilidad_retenida;
                     ?></b>
-                </center>
             </td>
         </tr>
         </tbody>
