@@ -3,34 +3,56 @@ package memory
 import (
 	"github.com/shoriwe/upb-motors/internal/data"
 	"github.com/shoriwe/upb-motors/internal/data/objects"
-	"sync"
+	"math/rand"
+)
+
+const (
+	PageLength = 10
+)
+
+var (
+	dependencies = []string{"Bucaramanga", "Bogota", "Giron"}
+	descriptions = []string{"Mazda", "Nissan", "Ford"}
+	names        = []string{"sedan", "camioneta", "deportivo"}
 )
 
 type Memory struct {
-	users      map[string]*objects.User
-	usersMutex *sync.Mutex
+	inventory []objects.Inventory
 }
 
-func (m *Memory) Login(email, password string) (user *objects.User, err error, succeed bool) {
-	m.usersMutex.Lock()
-	defer m.usersMutex.Unlock()
-	user, succeed = m.users[email]
-	if succeed {
-		if data.CheckPasswords(password, user.Password) {
-			return user, nil, true
-		}
+func (m *Memory) QueryInventory(inventoryPage int) []objects.Inventory {
+	if inventoryPage <= 0 {
+		return nil
 	}
-	return nil, nil, false
+	startIndex := inventoryPage * PageLength
+	lastIndex := startIndex + PageLength
+	if startIndex > len(m.inventory) {
+		return nil
+	} else if lastIndex > len(m.inventory) {
+		return m.inventory[startIndex:]
+	}
+	return m.inventory[startIndex:lastIndex]
 }
 
 func NewMemory() data.Database {
+	var inventory []objects.Inventory
+	for i := 1; i <= 300; i++ {
+		inventory = append(inventory, generateProduct(i))
+	}
 	return &Memory{
-		users: map[string]*objects.User{
-			"admin@upb.motors.co": &objects.User{
-				Email:    "admin@upb.motors.co",
-				Password: "5a38afb1a18d408e6cd367f9db91e2ab9bce834cdad3da24183cc174956c20ce35dd39c2bd36aae907111ae3d6ada353f7697a5f1a8fc567aae9e4ca41a9d19d", // admin
-			},
-		},
-		usersMutex: new(sync.Mutex),
+		inventory: inventory,
+	}
+}
+
+func generateProduct(i int) objects.Inventory {
+	return objects.Inventory{
+		Id:          i,
+		Amount:      rand.Int() + 1,
+		Name:        names[rand.Intn(len(names))],
+		Description: descriptions[rand.Intn(len(descriptions))],
+		Price:       rand.Float64(),
+		Active:      rand.Intn(1) == 1,
+		Dependency:  dependencies[rand.Intn(len(dependencies))],
+		Image:       nil,
 	}
 }
