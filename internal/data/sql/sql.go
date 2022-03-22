@@ -5,6 +5,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/shoriwe/upb-motors/internal/data"
+	"github.com/shoriwe/upb-motors/internal/data/memory"
 	"github.com/shoriwe/upb-motors/internal/data/objects"
 	"time"
 )
@@ -29,7 +30,8 @@ FROM
 	inventario
 WHERE
 	dependencias.id = inventario.dependencia_id
-ORDER BY inventario.id ASC`)
+ORDER BY inventario.id ASC
+LIMIT ?, ?`, inventoryPage, memory.PageLength)
 	if queryError != nil {
 		fmt.Println(queryError)
 		return nil
