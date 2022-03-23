@@ -1,0 +1,186 @@
+Building configuration...
+
+
+Current configuration : 1930 bytes
+!
+! Last configuration change at 21:00:08 UTC Tue Mar 22 2022
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+!
+hostname Router
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+
+Router#
+Router#show running-config
+Building configuration...
+
+
+Current configuration : 1930 bytes
+!
+! Last configuration change at 21:00:08 UTC Tue Mar 22 2022
+!
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no platform punt-keepalive disable-kernel-core
+!
+hostname Router
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition Mgmt-intf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+
+!
+ip dhcp pool vlan100
+ network 192.168.101.32 255.255.255.240
+ default-router 192.168.101.33
+ dns-server 192.168.101.33
+!
+ip dhcp pool vlan200
+ network 192.168.101.48 255.255.255.248
+ default-router 192.168.101.49
+ dns-server 192.168.101.49
+!
+ip dhcp pool vlan300
+ network 192.168.101.56 255.255.255.248
+ default-router 192.168.101.57
+ dns-server 192.168.101.57
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+multilink bundle-name authenticated
+!
+!
+!
+!
+license udi pid ISR4321/K9 sn FDO22461ZBC
+!
+spanning-tree extend system-id
+!
+!
+redundancy
+ mode none
+!
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ negotiation auto
+!
+interface GigabitEthernet0/0/0.100
+!
+interface GigabitEthernet0/0/0.200
+!
+interface GigabitEthernet0/0/0.300
+!
+interface GigabitEthernet0/0/1
+ ip address 10.10.10.2 255.255.255.252
+ negotiation auto
+!
+interface Serial0/1/0
+ no ip address
+ shutdown
+!
+interface Serial0/1/1
+ no ip address
+ shutdown
+!
+interface Serial0/2/0
+ no ip address
+ shutdown
+!
+interface Serial0/2/1
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0
+ vrf forwarding Mgmt-intf
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router rip
+ version 2
+ network 10.0.0.0
+ network 192.168.101.0
+ no auto-summary
+!
+ip forward-protocol nd
+no ip http server
+no ip http secure-server
+ip tftp source-interface GigabitEthernet0
+!
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ stopbits 1
+line aux 0
+ stopbits 1
+line vty 0 4
+ login
+!
+!
+end
+
+
