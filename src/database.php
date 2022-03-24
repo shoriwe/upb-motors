@@ -1100,18 +1100,11 @@ class MySQL implements iDatabase
 
     public function id_orden(int $empleado, int $cliente): int
     {
-        $records = $this->database->prepare('SELECT id FROM ordenes_compra WHERE empleados_id = :empleado AND clientes_id = :cliente ORDER BY id ASC;');
+        $records = $this->database->prepare('SELECT id FROM ordenes_compra WHERE empleados_id = :empleado AND clientes_id = :cliente ORDER BY id DESC LIMIT 1;');
         $records->bindParam(':empleado', $empleado);
         $records->bindParam(':cliente', $cliente);
         $records->execute();
-        $id = 0;
-        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
-            if (count($row) === 0) {
-                break;
-            }
-            $id = $row["id"];
-        }
-        return $id;
+        return $records->fetch(PDO::FETCH_ASSOC)["id"];
     }
 
     public function lista_pagos(): array
@@ -1387,18 +1380,11 @@ class MySQL implements iDatabase
 
     public function id_factura(int $empleado, int $cliente): int
     {
-        $records = $this->database->prepare('SELECT id FROM facturas WHERE empleados_id = :empleado AND clientes_id = :cliente ORDER BY id ASC;');
+        $records = $this->database->prepare('SELECT id FROM facturas WHERE empleados_id = :empleado AND clientes_id = :cliente ORDER BY id DESC LIMIT 1;');
         $records->bindParam(':empleado', $empleado);
         $records->bindParam(':cliente', $cliente);
         $records->execute();
-        $id = 0;
-        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
-            if (count($row) === 0) {
-                break;
-            }
-            $id = $row["id"];
-        }
-        return $id;
+        return $records->fetch(PDO::FETCH_ASSOC)["id"];
     }
 
     public function registrar_factura_producto(int $producto, int $cantidad, int $id_factura, int $pagos): bool
