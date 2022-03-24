@@ -1100,7 +1100,7 @@ class MySQL implements iDatabase
 
     public function id_orden(int $empleado, int $cliente): int
     {
-        $records = $this->database->prepare('SELECT id FROM ordenes_compra WHERE empleados_id = :empleado AND clientes_id = :cliente;');
+        $records = $this->database->prepare('SELECT id FROM ordenes_compra WHERE empleados_id = :empleado AND clientes_id = :cliente ORDER BY id ASC;');
         $records->bindParam(':empleado', $empleado);
         $records->bindParam(':cliente', $cliente);
         $records->execute();
@@ -1387,7 +1387,7 @@ class MySQL implements iDatabase
 
     public function id_factura(int $empleado, int $cliente): int
     {
-        $records = $this->database->prepare('SELECT id FROM facturas WHERE empleados_id = :empleado AND clientes_id = :cliente;');
+        $records = $this->database->prepare('SELECT id FROM facturas WHERE empleados_id = :empleado AND clientes_id = :cliente ORDER BY id ASC;');
         $records->bindParam(':empleado', $empleado);
         $records->bindParam(':cliente', $cliente);
         $records->execute();
@@ -1654,7 +1654,7 @@ class MySQL implements iDatabase
         $records = $this->database->prepare('SELECT SUM(detalles_facturas.valor_total) AS valor
                                                     FROM detalles_facturas,facturas
                                                     WHERE facturas.id = detalles_facturas.facturas_id
-                                                    AND detalles_facturas.tipo_pago_id = 2;
+                                                    AND detalles_facturas.tipo_pago_id = 2
                                                     AND facturas.abierta = 1;');
         $records->execute();
         $valor = 0;
