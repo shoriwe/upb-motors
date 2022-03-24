@@ -14,11 +14,10 @@ require 'menu-factura.php';
     <link rel="stylesheet" href="/css/buttons.css">
     <link rel="stylesheet" href="/css/select-list.css">
     <link rel="stylesheet" href="/css/table.css">
-    <script src="/js/addrow-factura.js"></script>
 </head>
 
 <div class="centered-container">
-    <div class="centered-container-for-input" style="margin-top: 10vh" >
+    <div class="centered-container-for-input" style="margin-top: 10vh">
         <h1 class="purple-text" style="margin-top: 0.5%;">Crear Factura</h1>
     </div>
 </div>
@@ -89,7 +88,8 @@ require 'menu-factura.php';
                 ?>
             </td>
             <td>
-                <input type="number" name="quantity[]" min="1" id="quantity_1" class="basic-text-input" placeholder="Cantidad"
+                <input type="number" name="quantity[]" min="1" id="quantity_1" class="basic-text-input"
+                       placeholder="Cantidad"
                        onkeypress="return solo_numeros(event)" style="width: 75%;">
             </td>
         </tr>
@@ -105,3 +105,7 @@ require 'menu-factura.php';
 <div class="centered-container" style="margin-top: 10vh">
     <input id="ok" class="blue-button" type="button" value="Crear Factura"/>
 </div>
+
+<script src="/js/table.js"></script>
+<script src="/js/get_entry_info.js"></script>
+<script src="/js/addrow-factura.js"></script>

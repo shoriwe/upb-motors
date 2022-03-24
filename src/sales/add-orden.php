@@ -14,7 +14,6 @@ require 'menu.php';
     <link rel="stylesheet" href="/css/buttons.css">
     <link rel="stylesheet" href="/css/select-list.css">
     <link rel="stylesheet" href="/css/table.css">
-    <script src="/js/addrow.js"></script>
 </head>
 
 <div class="centered-container">
@@ -106,4 +105,6 @@ require 'menu.php';
     <input id="ok" class="blue-button" type="button" value="Crear Orden de Compra"/>
 </div>
 
-
+<script src="/js/table.js"></script>
+<script src="/js/get_entry_info.js"></script>
+<script src="/js/addrow.js"></script>
