@@ -1,49 +1,44 @@
 package web
 
 import (
-	"embed"
 	"github.com/gin-gonic/gin"
-	"github.com/shoriwe/upb-motors/internal/controller"
 	"github.com/shoriwe/upb-motors/internal/data"
-	"github.com/shoriwe/upb-motors/internal/logs"
-	"github.com/shoriwe/upb-motors/internal/web/handlers"
+	"github.com/shoriwe/upb-motors/internal/data/objects"
 	"github.com/shoriwe/upb-motors/internal/web/values"
-	"net/http"
+	"strconv"
 )
 
-var (
-	//go:embed static/*
-	staticFiles embed.FS
-	//go:embed pages/*
-	pagesFiles embed.FS
-)
+type Response struct {
+	Succeed bool                `json:"succeed"`
+	Message string              `json:"message"`
+	Body    []objects.Inventory `json:"body"`
+}
 
-func NewEngine(connection *data.Connection, logger *logs.Logger) *gin.Engine {
-	router := gin.Default()
-	c := controller.NewController(connection, logger, &staticFiles, &pagesFiles)
-	router.Use(gin.Logger())
-	router.Use(func(context *gin.Context) {
-		value, getError := context.Cookie(values.CookieName)
-		if getError == nil {
-			_, found := c.Connection.Cache.GetUserSession(value)
-			if found {
-				context.Redirect(http.StatusFound, values.DashboardLocation)
-			}
+func inventory(database data.Database) gin.HandlerFunc {
+	return func(context *gin.Context) {
+		rawPage := context.Param("page")
+		page, parseError := strconv.Atoi(rawPage)
+		if parseError != nil {
+			context.JSON(403,
+				Response{
+					Succeed: false,
+					Message: "Invalid page",
+				},
+			)
+			return
 		}
-	})
-	router.GET(values.RootLocation, func(context *gin.Context) {
-		context.Redirect(http.StatusFound, values.LoginLocation)
-	})
-	router.GET(values.IndexLocation, func(context *gin.Context) {
-		context.Redirect(http.StatusFound, values.LoginLocation)
-	})
-	router.GET(values.StaticLocation, func(context *gin.Context) {
-		context.FileFromFS(
-			context.Request.URL.Path,
-			http.FS(staticFiles),
+		context.JSON(200,
+			Response{
+				Succeed: true,
+				Body:    database.QueryInventory(page),
+			},
 		)
-	})
-	router.GET(values.LoginLocation, handlers.GetLogin(c))
-	router.POST(values.LoginLocation, handlers.PostLogin(c))
+	}
+}
+
+func NewEngine(database data.Database) *gin.Engine {
+	router := gin.Default()
+	router.Use(gin.Logger())
+	router.GET(values.InventoryLocation, inventory(database))
 	return router
 }

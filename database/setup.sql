@@ -1,3 +1,4 @@
+SET GLOBAL log_bin_trust_function_creators = 1;
 DROP DATABASE upb_motors;
 CREATE DATABASE upb_motors;
 USE upb_motors;
