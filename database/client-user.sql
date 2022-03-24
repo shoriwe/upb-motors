@@ -13,6 +13,9 @@ GRANT EXECUTE ON FUNCTION upb_motors.update_product TO 'upb_motors_client'@'loca
 GRANT EXECUTE ON FUNCTION upb_motors.registrar_cliente TO 'upb_motors_client'@'localhost';
 GRANT EXECUTE ON FUNCTION upb_motors.update_client TO 'upb_motors_client'@'localhost';
 GRANT EXECUTE ON FUNCTION upb_motors.registrar_orden TO 'upb_motors_client'@'localhost';
+GRANT EXECUTE ON FUNCTION upb_motors.actualizar_cantidad_orden TO 'upb_motors_client'@'localhost';
+GRANT EXECUTE ON FUNCTION upb_motors.close_factura TO 'upb_motors_client'@'localhost';
+GRANT EXECUTE ON FUNCTION upb_motors.close_orden TO 'upb_motors_client'@'localhost';
 
 GRANT SELECT ON upb_motors.* TO 'upb_motors_client'@'localhost';
 GRANT INSERT ON upb_motors.* TO 'upb_motors_client'@'localhost';
