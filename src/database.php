@@ -1617,7 +1617,7 @@ class MySQL implements iDatabase
         return $lista;
     }
 
-    public function get_ventas_caja(): int
+    public function get_ventas_caja(): ?int
     {
         $records = $this->database->prepare('SELECT SUM(detalles_facturas.valor_total) AS valor
                                                     FROM detalles_facturas,facturas
@@ -1635,7 +1635,7 @@ class MySQL implements iDatabase
         return $valor;
     }
 
-    public function get_ventas_bancos(): int
+    public function get_ventas_bancos(): ?int
     {
         $records = $this->database->prepare('SELECT SUM(detalles_facturas.valor_total) AS valor
                                                     FROM detalles_facturas,facturas
@@ -1653,7 +1653,7 @@ class MySQL implements iDatabase
         return $valor;
     }
 
-    public function get_costos_ventas(): int
+    public function get_costos_ventas(): ?int
     {
         $records = $this->database->prepare('SELECT SUM(costo*cantidad) AS valor FROM costos_inventario;');
         $records->execute();
@@ -1667,7 +1667,7 @@ class MySQL implements iDatabase
         return $valor;
     }
 
-    public function get_gastos(): int
+    public function get_gastos(): ?int
     {
         $records = $this->database->prepare('SELECT SUM(valor) AS valor FROM gastos;');
         $records->execute();
@@ -1702,7 +1702,7 @@ class MySQL implements iDatabase
         return $informe_inventario;
     }
 
-    public function get_total_productos(): int
+    public function get_total_productos(): ?int
     {
         $records = $this->database->prepare('SELECT SUM(cantidad) AS total FROM inventario;');
         $records->execute();
