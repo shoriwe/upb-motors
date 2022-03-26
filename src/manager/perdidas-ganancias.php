@@ -5,6 +5,7 @@ require_once 'menu-informes.php';
 
 $caja = 0 + connect()->database->get_ventas_caja();
 $banco = 0 + connect()->database->get_ventas_bancos();
+$credito = 0 + connect()->database->get_ventas_credito();
 $costos = 0 + connect()->database->get_costos_ventas();
 $gastos = 0 + connect()->database->get_gastos();
 
@@ -45,7 +46,17 @@ $gastos = 0 + connect()->database->get_gastos();
         </tr>
         <tr>
             <td>
-                Ventas por tarjeta
+                Ventas por Tarjeta
+            </td>
+            <td>
+                <?php
+                echo "$$credito";
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Ventas a Crédito
             </td>
             <td>
                 <?php
@@ -60,7 +71,7 @@ $gastos = 0 + connect()->database->get_gastos();
             <td>
                 <b>
                     <?php
-                    echo "$" . $banco + $caja;
+                    echo "$" . $banco + $caja + $credito;
                     ?></b>
             </td>
         </tr>
@@ -98,7 +109,7 @@ $gastos = 0 + connect()->database->get_gastos();
             </td>
             <td>
                 <?php
-                $utilidad_bruta = $banco + $caja - $costos;
+                $utilidad_bruta = $banco + $caja + $credito - $costos;
                 echo "$" . $utilidad_bruta;
                 ?>
             </td>
@@ -171,8 +182,9 @@ $gastos = 0 + connect()->database->get_gastos();
 
 </div>
 <?php
-$_SESSION['caja'] = $caja;
+$_SESSION['caja'] = $credito;
 $_SESSION['banco'] = $banco;
+$_SESSION['credito'] = $credito;
 $_SESSION['costos'] = $costos;
 $_SESSION['gastos'] = $gastos;
 $_SESSION['dividendos'] = $dividendos;

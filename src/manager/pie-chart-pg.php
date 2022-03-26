@@ -5,6 +5,7 @@ require_once 'menu-informes.php';
 
 $caja = $_SESSION['caja'];
 $banco = $_SESSION['banco'];
+$credito = $_SESSION['credito'];
 $costos = $_SESSION['costos'];
 $gastos = $_SESSION['gastos'];
 $dividendos = $_SESSION['dividendos'];
@@ -26,7 +27,7 @@ $impuesto = $_SESSION['impuesto'];
 
             var data = google.visualization.arrayToDataTable([
                 ['Razon', 'Valor'],
-                ['Ventas',     <?php echo $banco+$caja;?>],
+                ['Ventas',     <?php echo $banco+$caja+$credito;?>],
                 ['Costos',      <?php echo $costos;?>],
                 ['Gastos',  <?php echo $gastos;?>],
                 ['Impuesto', <?php echo $impuesto;?>],
@@ -54,7 +55,7 @@ $impuesto = $_SESSION['impuesto'];
         function drawChart() {
             var data = google.visualization.arrayToDataTable([
                 ['Año', 'Ganancias', 'Perdidas', 'Utilidad Retenida'],
-                ['2022', <?php echo $banco+$caja;?>, <?php echo $costos+$gastos+$impuesto+$dividendos;?>, <?php echo $utilidad_retenida;?>],
+                ['2022', <?php echo $banco+$caja+$credito;?>, <?php echo $costos+$gastos+$impuesto+$dividendos;?>, <?php echo $utilidad_retenida;?>],
             ]);
 
             var options = {

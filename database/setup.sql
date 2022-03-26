@@ -220,7 +220,8 @@ CREATE TABLE IF NOT EXISTS tipo_pago_orden
 
 INSERT INTO tipo_pago_orden (pago)
 VALUES ('Efectivo'),
-       ('Tarjeta');
+       ('Tarjeta'),
+       ('Credito');
 
 -- -- detalles_ordenes_compra -- --
 CREATE TABLE IF NOT EXISTS detalles_ordenes_compra

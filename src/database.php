@@ -1729,4 +1729,22 @@ class MySQL implements iDatabase
         }
         return $total;
     }
+
+    public function get_ventas_credito(): ?int
+    {
+        $records = $this->database->prepare('SELECT SUM(detalles_facturas.valor_total) AS valor
+                                                    FROM detalles_facturas,facturas
+                                                    WHERE facturas.id = detalles_facturas.facturas_id
+                                                    AND detalles_facturas.tipo_pago_id = 3
+                                                    AND facturas.abierta = 1;');
+        $records->execute();
+        $valor = 0;
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $valor = $row["valor"];
+        }
+        return $valor;
+    }
 }

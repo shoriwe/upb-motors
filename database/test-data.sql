@@ -51,7 +51,7 @@ SET @_ = registrar_empleado(
     );
 
 SET @_ = registrar_producto(
-        10,
+        20,
         'Versa 2016',
         'Un carro',
         10000000,
@@ -60,7 +60,7 @@ SET @_ = registrar_producto(
     );
 
 SET @_ = registrar_producto(
-        10,
+        20,
         'Versa 2020',
         'Otro carro',
         25000000,
