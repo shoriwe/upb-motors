@@ -182,7 +182,7 @@ $gastos = 0 + connect()->database->get_gastos();
 
 </div>
 <?php
-$_SESSION['caja'] = $credito;
+$_SESSION['caja'] = $caja;
 $_SESSION['banco'] = $banco;
 $_SESSION['credito'] = $credito;
 $_SESSION['costos'] = $costos;
