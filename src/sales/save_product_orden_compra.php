@@ -24,8 +24,8 @@ $succeed = connect()->database->registrar_orden_producto(
 if ($succeed) {
     echo "Orden Creada";
 } else {
-    $delete_detalle_orden = connect()->database->delete_erorr_detalles_orden($id_orden);
-    $delete_orden = connect()->database->delete_erorr_orden($id_orden);
+    $delete_detalle_orden = connect()->database->delete_detalles_orden($id_orden);
+    $delete_orden = connect()->database->delete_orden($id_orden);
     echo "No se logro crear la orden";
 }
 ?>

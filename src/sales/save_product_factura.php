@@ -24,8 +24,8 @@ $succeed = connect()->database->registrar_factura_producto(
 if ($succeed) {
     echo "Factura Creada";
 } else {
-    $delete_detalle_factura = connect()->database->delete_erorr_detalles_factura($id_factura);
-    $delete_factura = connect()->database->delete_erorr_factura($id_factura);
+    $delete_detalle_factura = connect()->database->delete_detalles_factura($id_factura);
+    $delete_factura = connect()->database->delete_factura($id_factura);
     echo "No se logro crear la factura";
 }
 ?>

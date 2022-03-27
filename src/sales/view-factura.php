@@ -22,8 +22,8 @@ $total_sin_decuento = 0;
             } else {
                 $activo = "No";
             }
-            $empleado_nombre = connect()->database->get_name_employees($factura->empleado);
-            $cliente_nombre = connect()->database->get_name_clients($factura->cliente);
+            $empleado_nombre = connect()->database->get_employee_name($factura->empleado);
+            $cliente_nombre = connect()->database->get_client_name($factura->cliente);
             $pago = connect()->database->get_tipo_pago($productos[0]->tipo_pago_id);
             $descuento_porciento = $factura->descuento*100;
             foreach ($productos as $producto) {

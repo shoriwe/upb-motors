@@ -11,8 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         foreach ($facturas as $factura) {
             if ($factura->estado == 1){
-                $empleado_nombre = connect()->database->get_name_employees($factura->empleado);
-                $cliente_nombre = connect()->database->get_name_clients($factura->cliente);
+                $empleado_nombre = connect()->database->get_employee_name($factura->empleado);
+                $cliente_nombre = connect()->database->get_client_name($factura->cliente);
                 $descuento_porciento = $factura->descuento*100;
                 echo "
 <div class='list-entry'>
