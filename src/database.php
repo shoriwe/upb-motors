@@ -81,10 +81,6 @@ interface iDatabase
 
     public function update_password(int $user_id, string $old_password, string $new_password): ?string;
 
-    public function log_login_succeed(string $email);
-
-    public function log_login_failed(string $email);
-
     public function login(string $email, string $password): ?int;
 
     public function request_password_reset(string $email): ?string;
@@ -219,16 +215,6 @@ class TestDatabase implements iDatabase
         $this->users->set($user->email, $user);
         $this->cache->delete($code);
         return true;
-    }
-
-    public function log_login_succeed(string $email)
-    {
-        print_r("Login succeed for " . $email);
-    }
-
-    public function log_login_failed(string $email)
-    {
-        print_r("Login failed for " . $email);
     }
 
     public function update_password(int $user_id, string $old_password, string $new_password): ?string
@@ -658,20 +644,6 @@ class MySQL implements iDatabase
         $records->bindParam(':id', $id);
         $records->execute();
         return true;
-    }
-
-    public function log_login_succeed(string $email)
-    {
-        $records = $this->database->prepare('CALL log_login_succeed(:email);');
-        $records->bindParam(':email', $email);
-        $records->execute();
-    }
-
-    public function log_login_failed(string $email)
-    {
-        $records = $this->database->prepare('CALL log_login_failed(:email);');
-        $records->bindParam(':email', $email);
-        $records->execute();
     }
 
     public function update_password(int $user_id, string $old_password, string $new_password): ?string

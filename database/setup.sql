@@ -39,26 +39,6 @@ CREATE TABLE IF NOT EXISTS app_logs
     CONSTRAINT fk_logs_niveles_log_nivel FOREIGN KEY (nivel) REFERENCES niveles_log (id)
 );
 
-CREATE PROCEDURE
-    log_login_failed(IN correo VARCHAR(500))
-BEGIN
-    INSERT INTO app_logs (fecha,
-                          nivel,
-                          mensaje)
-    VALUES (NOW(), get_log_level('AUTH'), CONCAT('COULD NOT LOGIN AS ', correo));
-END;
-@@
-
-CREATE PROCEDURE
-    log_login_succeed(IN correo VARCHAR(500))
-BEGIN
-    INSERT INTO app_logs (fecha,
-                          nivel,
-                          mensaje)
-    VALUES (NOW(), get_log_level('LOG'), CONCAT('LOGIN SUCCEED ', correo));
-END;
-@@
-
 DELIMITER ;
 
 -- -- permisos -- --
