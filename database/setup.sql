@@ -30,16 +30,23 @@ BEGIN
 END;
 @@
 
+CREATE PROCEDURE log(IN level VARCHAR(500), IN message VARCHAR(5000))
+BEGIN
+    INSERT INTO app_logs (nivel, mensaje)
+    VALUES (get_log_level(level), message);
+END;
+@@
+
+DELIMITER ;
+
 CREATE TABLE IF NOT EXISTS app_logs
 (
     id      INT           NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    fecha   DATETIME      NOT NULL,
+    fecha   DATETIME      NOT NULL DEFAULT NOW(),
     nivel   INT           NOT NULL,
     mensaje VARCHAR(5000) NOT NULL,
     CONSTRAINT fk_logs_niveles_log_nivel FOREIGN KEY (nivel) REFERENCES niveles_log (id)
 );
-
-DELIMITER ;
 
 -- -- permisos -- --
 CREATE TABLE IF NOT EXISTS permisos
@@ -252,19 +259,20 @@ CREATE TABLE IF NOT EXISTS detalles_facturas
 -- -- costos productos -- --
 CREATE TABLE IF NOT EXISTS costos_inventario
 (
-    id              INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    productos_id    INT    NOT NULL,
-    costo    		DOUBLE    NOT NULL DEFAULT 0,
-    cantidad        INT    NOT NULL DEFAULT 0,
+    id           INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    productos_id INT    NOT NULL,
+    costo        DOUBLE NOT NULL DEFAULT 0,
+    cantidad     INT    NOT NULL DEFAULT 0,
     CONSTRAINT FOREIGN KEY (productos_id) REFERENCES inventario (id)
 
 );
 
 -- -- gastos generales -- --
-CREATE TABLE IF NOT EXISTS gastos(
-    id              INT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    valor           INT    NOT NULL,
-    razon    	    VARCHAR(100)
+CREATE TABLE IF NOT EXISTS gastos
+(
+    id    INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    valor INT NOT NULL,
+    razon VARCHAR(100)
 );
 
 -- -- Procesos -- --
@@ -779,26 +787,28 @@ END;
 
 CREATE TRIGGER costos_carros
     AFTER INSERT
-    ON inventario FOR EACH ROW
+    ON inventario
+    FOR EACH ROW
 
 BEGIN
 
     SET @id_carro = NEW.id;
     SET @cantidad = NEW.cantidad;
-    SET @costo = (NEW.precio*100)/125;
-    INSERT INTO costos_inventario (productos_id,costo,cantidad) VALUES (@id_carro,@costo,@cantidad);
+    SET @costo = (NEW.precio * 100) / 125;
+    INSERT INTO costos_inventario (productos_id, costo, cantidad) VALUES (@id_carro, @costo, @cantidad);
 
 END;
 @@
 
 CREATE TRIGGER actualisar_costos_carros
     AFTER UPDATE
-    ON inventario FOR EACH ROW
+    ON inventario
+    FOR EACH ROW
 
 BEGIN
 
     SET @id_carro = NEW.id;
-    SET @costo = (NEW.precio*100)/125;
+    SET @costo = (NEW.precio * 100) / 125;
     UPDATE costos_inventario SET costo = @costo WHERE productos_id = @id_carro;
 
 END;
