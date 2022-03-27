@@ -189,7 +189,7 @@ CREATE TABLE IF NOT EXISTS ordenes_compra
     id           INT     NOT NULL PRIMARY KEY AUTO_INCREMENT,
     empleados_id INT     NOT NULL,
     clientes_id  INT     NOT NULL,
-    fehca        DATE    NOT NULL,
+    fecha        DATE    NOT NULL,
     decuento     DOUBLE  NOT NULL,
     abierta      BOOLEAN NOT NULL DEFAULT true,
 
@@ -232,7 +232,7 @@ CREATE TABLE IF NOT EXISTS facturas
     id           INT     NOT NULL PRIMARY KEY AUTO_INCREMENT,
     empleados_id INT     NOT NULL,
     clientes_id  INT     NOT NULL,
-    fehca        DATE    NOT NULL,
+    fecha        DATE    NOT NULL,
     decuento     DOUBLE  NOT NULL,
     abierta      BOOLEAN NOT NULL DEFAULT true,
 
@@ -625,7 +625,7 @@ END;
 CREATE FUNCTION registrar_orden(
     v_empleados_id INT,
     v_clientes_id INT,
-    v_fehca VARCHAR(10),
+    v_fecha VARCHAR(10),
     v_descuento DOUBLE
 )
     RETURNS BOOLEAN
@@ -634,11 +634,11 @@ CREATE FUNCTION registrar_orden(
 BEGIN
     INSERT INTO ordenes_compra (empleados_id,
                                 clientes_id,
-                                fehca,
+                                fecha,
                                 decuento)
     VALUES (v_empleados_id,
             v_clientes_id,
-            v_fehca,
+            v_fecha,
             v_descuento);
     RETURN TRUE;
 END;
@@ -695,7 +695,7 @@ BEGIN
     SELECT id,
            empleados_id,
            clientes_id,
-           fehca
+           fecha
     INTO @r_id, @r_empleados_id, @r_clientes_id
     FROM ordenes_compra
     WHERE id = o_id;
@@ -727,7 +727,7 @@ END;
 CREATE FUNCTION registrar_factura(
     v_empleados_id INT,
     v_clientes_id INT,
-    v_fehca VARCHAR(10),
+    v_fecha VARCHAR(10),
     v_descuento DOUBLE
 )
     RETURNS BOOLEAN
@@ -736,11 +736,11 @@ CREATE FUNCTION registrar_factura(
 BEGIN
     INSERT INTO facturas (empleados_id,
                           clientes_id,
-                          fehca,
+                          fecha,
                           decuento)
     VALUES (v_empleados_id,
             v_clientes_id,
-            v_fehca,
+            v_fecha,
             v_descuento);
     RETURN TRUE;
 END;
