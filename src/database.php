@@ -11,10 +11,6 @@ const AUTH = "AUTH";
 const ERROR = "ERROR";
 const LOG = "LOG";
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 function get_permission_name(int $permission): string
 {
     switch ($permission) {
@@ -1443,8 +1439,10 @@ class MySQL implements iDatabase
 
     public function log(string $level, string $message)
     {
-        $user_id = $_SESSION["user-id"];
-        $message = "(Done by user identified by ID: $user_id) $message";
+        if (headers_sent()) {
+            $user_id = $_SESSION["user-id"];
+            $message = "(Done by user identified by ID: $user_id) $message";
+        }
         $records = $this->database->prepare('CALL log(:level, :message)');
         $records->bindParam(':level', $level);
         $records->bindParam(':message', $message);
