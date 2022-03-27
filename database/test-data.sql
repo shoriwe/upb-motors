@@ -68,14 +68,19 @@ SET @_ = registrar_producto(
         1
     );
 
-INSERT INTO clientes(nombre_completo,cedula,direccion,telefono,correo) VALUES('pepito',100453,'calale',36455,'correos');
+INSERT INTO clientes(nombre_completo,cedula,direccion,telefono,correo) VALUES('pepito',100453,'calle 48 # 47 - 22',36455,'pepito@gmail.com');
 
+INSERT INTO facturas(empleados_id,clientes_id,fehca,decuento,abierta) VALUES(5,1,CURDATE(),0,1);
+INSERT INTO facturas(empleados_id,clientes_id,fehca,decuento,abierta) VALUES(5,1,CURDATE(),0,1);
 INSERT INTO facturas(empleados_id,clientes_id,fehca,decuento,abierta) VALUES(5,1,CURDATE(),0,1);
 INSERT INTO facturas(empleados_id,clientes_id,fehca,decuento,abierta) VALUES(5,1,CURDATE(),0,1);
 
 INSERT INTO detalles_facturas(cantidad, valor_total, productos_id, tipo_pago_id, facturas_id) VALUES(2,20000000,1,1,1);
 INSERT INTO detalles_facturas(cantidad, valor_total, productos_id, tipo_pago_id, facturas_id) VALUES(1,25000000,2,1,1);
 INSERT INTO detalles_facturas(cantidad, valor_total, productos_id, tipo_pago_id, facturas_id) VALUES(1,25000000,2,2,2);
+INSERT INTO detalles_facturas(cantidad, valor_total, productos_id, tipo_pago_id, facturas_id) VALUES(1,25000000,2,3,3);
+INSERT INTO detalles_facturas(cantidad, valor_total, productos_id, tipo_pago_id, facturas_id) VALUES(1,25000000,2,3,4);
+INSERT INTO detalles_facturas(cantidad, valor_total, productos_id, tipo_pago_id, facturas_id) VALUES(1,10000000,1,3,4);
 
 INSERT INTO gastos(valor, razon) VALUES(200000,'Factura luz');
 INSERT INTO gastos(valor, razon) VALUES(1000,'Razon x');

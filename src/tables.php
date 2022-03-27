@@ -293,3 +293,27 @@ class informe_inventario
         $this->habilitado = $habilitado;
     }
 }
+
+class cuentas_cobrar
+{
+    public ?string $nombre = null;
+    public ?int $cedula = null;
+    public ?string $direccion = null;
+    public ?int $telefono = null;
+    public ?string $correo = null;
+    public ?int $numero = null;
+    public ?string $fecha = null;
+    public ?int $valor = null;
+
+    public function __construct(string $nombre, int $cedula, string $direccion,int $telefono,string $correo,int $numero,string $fecha,int $valor)
+    {
+        $this->nombre = $nombre;
+        $this->cedula = $cedula;
+        $this->direccion = $direccion;
+        $this->telefono = $telefono;
+        $this->correo = $correo;
+        $this->numero = $numero;
+        $this->fecha = $fecha;
+        $this->valor = $valor;
+    }
+}

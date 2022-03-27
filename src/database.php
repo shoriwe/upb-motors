@@ -164,6 +164,10 @@ interface iDatabase
     public function get_total_productos(): ?int;
 
     public function get_total_precio(): ?int;
+
+    public function get_ventas_credito(): ?int;
+
+    public function get_cuentas_cobrar(): array;
 }
 
 
@@ -580,6 +584,18 @@ class TestDatabase implements iDatabase
     {
         // TODO: Implement get_total_precio() method.
         return null;
+    }
+
+    public function get_ventas_credito(): ?int
+    {
+        // TODO: Implement get_ventas_credito() method.
+        return null;
+    }
+
+    public function get_cuentas_cobrar(): array
+    {
+        // TODO: Implement get_cuentas_cobrar() method.
+        return array();
     }
 }
 
@@ -1746,5 +1762,28 @@ class MySQL implements iDatabase
             $valor = $row["valor"];
         }
         return $valor;
+    }
+
+    public function get_cuentas_cobrar(): array
+    {
+        $cuentas_cobrar = array();
+        $records = $this->database->prepare('SELECT clientes.nombre_completo AS nombre, clientes.cedula AS cedula , clientes.direccion AS direccion, 
+                                                    clientes.telefono AS telefono, clientes.correo correo, facturas.id AS numero, facturas.fehca AS fecha,
+                                                    SUM(detalles_facturas.valor_total) AS valor
+                                                    FROM facturas, clientes, detalles_facturas
+                                                    WHERE facturas.clientes_id = clientes.id
+                                                    AND detalles_facturas.facturas_id = facturas.id
+                                                    AND detalles_facturas.tipo_pago_id = 3
+                                                    AND facturas.abierta = 1
+                                                    GROUP BY facturas.id;');
+        $records->execute();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $cuentas_cobrar[] = new cuentas_cobrar($row["nombre"], $row["cedula"], $row["direccion"], $row["telefono"], $row["correo"],
+                $row["numero"], $row["fecha"], $row["valor"]);;
+        }
+        return $cuentas_cobrar;
     }
 }
