@@ -11,6 +11,10 @@ const AUTH = "AUTH";
 const ERROR = "ERROR";
 const LOG = "LOG";
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 function get_permission_name(int $permission): string
 {
     switch ($permission) {
@@ -1418,7 +1422,7 @@ class MySQL implements iDatabase
     {
         $cuentas_cobrar = array();
         $records = $this->database->prepare('SELECT clientes.nombre_completo AS nombre, clientes.cedula AS cedula , clientes.direccion AS direccion, 
-                                                    clientes.telefono AS telefono, clientes.correo correo, facturas.id AS numero, facturas.fecha AS fecha,
+                                                    clientes.telefono AS telefono, clientes.correo AS correo, facturas.id AS numero, facturas.fecha AS fecha,
                                                     SUM(detalles_facturas.valor_total) AS valor
                                                     FROM facturas, clientes, detalles_facturas
                                                     WHERE facturas.clientes_id = clientes.id
@@ -1439,7 +1443,7 @@ class MySQL implements iDatabase
 
     public function log(string $level, string $message)
     {
-        $user_id = $_SESSION['user-id'];
+        $user_id = $_SESSION["user-id"];
         $message = "(Done by user identified by ID: $user_id) $message";
         $records = $this->database->prepare('CALL log(:level, :message)');
         $records->bindParam(':level', $level);
