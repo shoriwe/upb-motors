@@ -30,27 +30,26 @@ $inventario = connect()->database->get_informe_inventario();
         </tr>
         </thead>
         <tbody id="details">
-            <?php
-                foreach ($inventario as $producto){
-                    echo "<tr>";
-                    echo "<td>$producto->id</td>";
-                    echo "<td>$producto->nombre</td>";
-                    echo "<td>$producto->dependencia</td>";
-                    echo "<td>$producto->cantidad</td>";
-                    echo "<td>$producto->costo_unitario</td>";
-                    echo "<td>$producto->costo_total</td>";
-                    echo "<td>$producto->precio</td>";
-                    echo "<td>$producto->precio_total</td>";
-                    if ($producto->habilitado){
-                        $activo = "Si";
-                    }
-                    else{
-                        $activo = "No";
-                    }
-                    echo "<td>$activo</td>";
-                    echo "</tr>";
-                }
-            ?>
+        <?php
+        foreach ($inventario as $producto) {
+            echo "<tr>";
+            echo "<td>$producto->id</td>";
+            echo "<td>$producto->nombre</td>";
+            echo "<td>$producto->dependencia</td>";
+            echo "<td>$producto->cantidad</td>";
+            echo "<td>$producto->costo_unitario</td>";
+            echo "<td>$producto->costo_total</td>";
+            echo "<td>$producto->precio</td>";
+            echo "<td>$producto->precio_total</td>";
+            if ($producto->habilitado) {
+                $activo = "Si";
+            } else {
+                $activo = "No";
+            }
+            echo "<td>$activo</td>";
+            echo "</tr>";
+        }
+        ?>
         </tbody>
     </table>
 </div>

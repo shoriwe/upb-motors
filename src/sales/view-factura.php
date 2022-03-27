@@ -25,11 +25,11 @@ $total_sin_decuento = 0;
             $empleado_nombre = connect()->database->get_employee_name($factura->empleado);
             $cliente_nombre = connect()->database->get_client_name($factura->cliente);
             $pago = connect()->database->get_tipo_pago($productos[0]->tipo_pago_id);
-            $descuento_porciento = $factura->descuento*100;
+            $descuento_porciento = $factura->descuento * 100;
             foreach ($productos as $producto) {
                 $total_sin_decuento = $total_sin_decuento + $producto->valor_total;
             }
-            $total_con_descuento = $total_sin_decuento - $total_sin_decuento*$factura->descuento;
+            $total_con_descuento = $total_sin_decuento - $total_sin_decuento * $factura->descuento;
             echo "<h1 class='purple-text' style='margin-top: 0.5%;'>Factura Numero: $factura->id</h1>";
             echo "<h3 class='black-text' style='margin-top: 0.5%;'>Empleado: $empleado_nombre</h3>";
             echo "<h3 class='black-text' style='margin-top: 0.5%;'>Cliente: $cliente_nombre</h3>";

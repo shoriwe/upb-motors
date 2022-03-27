@@ -27,7 +27,7 @@ class Frame
 {
     const WS_TEXT = 1;
     const WS_SPACE = 2;
-/**
+    /**
      * Unique id counter
      *
      * @var int
@@ -236,6 +236,14 @@ class Frame
         $this->_original_style->dispose();
         $this->_original_style = null;
         unset($this->_original_style);
+    }
+
+    /**
+     * @return \DOMElement|\DOMText
+     */
+    public function get_node()
+    {
+        return $this->_node;
     }
 
     /**
@@ -497,6 +505,8 @@ class Frame
             3 => $h, "h" => $h];
     }
 
+    // Layout property accessors
+
     /**
      * Return the border box of the frame.
      *
@@ -542,8 +552,6 @@ class Frame
             3 => $h, "h" => $h];
     }
 
-    // Layout property accessors
-
     /**
      * @param null $opacity
      *
@@ -558,6 +566,8 @@ class Frame
         return $this->_opacity;
     }
 
+    //........................................................................
+
     /**
      * @param $opacity
      */
@@ -567,8 +577,6 @@ class Frame
         $base_opacity = (($parent && $parent->_opacity !== null) ? $parent->_opacity : 1.0);
         $this->_opacity = $base_opacity * $opacity;
     }
-
-    //........................................................................
 
     /**
      * @return LineBox|null
@@ -651,6 +659,30 @@ class Frame
     }
 
     /**
+     * @return Style
+     */
+    public function get_style()
+    {
+        return $this->_style;
+    }
+
+    //........................................................................
+    // Set methods
+
+    /**
+     * @param Style $style
+     */
+    public function set_style(Style $style)
+    {
+        if (is_null($this->_style)) {
+            $this->_original_style = clone $style;
+        }
+
+        //$style->set_frame($this);
+        $this->_style = $style;
+    }
+
+    /**
      * @return bool
      */
     public function is_absolute()
@@ -675,9 +707,6 @@ class Frame
 
         return $this->_is_cache["block"] = in_array($this->get_style()->display, Style::$BLOCK_TYPES, true);
     }
-
-    //........................................................................
-    // Set methods
 
     /**
      * Whether the frame has a block-level display type.
@@ -1091,6 +1120,20 @@ class Frame
     }
 
     /**
+     * Tells if the frame is a text node
+     *
+     * @return bool
+     */
+    public function is_text_node()
+    {
+        if (isset($this->_is_cache["text_node"])) {
+            return $this->_is_cache["text_node"];
+        }
+
+        return $this->_is_cache["text_node"] = ($this->get_node()->nodeName === "#text");
+    }
+
+    /**
      * Return the width of the margin box of the frame, in pt.  Meaningless
      * unless the width has been calculated properly.
      *
@@ -1169,27 +1212,6 @@ class Frame
     }
 
     /**
-     * @return Style
-     */
-    public function get_style()
-    {
-        return $this->_style;
-    }
-
-    /**
-     * @param Style $style
-     */
-    public function set_style(Style $style)
-    {
-        if (is_null($this->_style)) {
-            $this->_original_style = clone $style;
-        }
-
-        //$style->set_frame($this);
-        $this->_style = $style;
-    }
-
-    /**
      * @return bool
      */
     protected function ws_is_text()
@@ -1211,13 +1233,9 @@ class Frame
         return true;
     }
 
-    /**
-     * @return \DOMElement|\DOMText
-     */
-    public function get_node()
-    {
-        return $this->_node;
-    }
+    //........................................................................
+
+    // Debugging function:
 
     /**
      * @return bool
@@ -1229,23 +1247,5 @@ class Frame
         }
 
         return $this->_is_cache["in_flow"] = $this->get_style()->is_in_flow();
-    }
-
-    //........................................................................
-
-    // Debugging function:
-
-    /**
-     * Tells if the frame is a text node
-     *
-     * @return bool
-     */
-    public function is_text_node()
-    {
-        if (isset($this->_is_cache["text_node"])) {
-            return $this->_is_cache["text_node"];
-        }
-
-        return $this->_is_cache["text_node"] = ($this->get_node()->nodeName === "#text");
     }
 }

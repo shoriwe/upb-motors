@@ -203,6 +203,18 @@ class MySQL implements iDatabase
         return null;
     }
 
+    public function log(string $level, string $message)
+    {
+        if (headers_sent()) {
+            $user_id = $_SESSION["user-id"];
+            $message = "(Done by user identified by ID: $user_id) $message";
+        }
+        $records = $this->database->prepare('CALL log(:level, :message)');
+        $records->bindParam(':level', $level);
+        $records->bindParam(':message', $message);
+        $records->execute();
+    }
+
     public function request_password_reset(string $email): ?string
     {
         $records = $this->database->prepare('SELECT id FROM empleados WHERE correo = :email LIMIT 1;');
@@ -386,56 +398,6 @@ class MySQL implements iDatabase
         }
     }
 
-    public function search_employees(string $employee_name, string $employee_personal_id): array
-    {
-        $this->log(LOG, "Searching employees");
-        $employees = array();
-        if (strlen($employee_name) > 0) {
-            $employee_name = "%" . $employee_name . "%";
-            $records = $this->database->prepare('SELECT id, permisos_id, nombre_completo, cedula, direccion, telefono, correo, hash_contrasena, habilitado FROM empleados WHERE LOWER(nombre_completo) LIKE :name;');
-            $records->bindParam(':name', $employee_name);
-            $records->execute();
-            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
-                if (count($row) === 0) {
-                    break;
-                }
-                $employees[] = new Employee(
-                    $row["id"],
-                    $row["permisos_id"],
-                    $row["nombre_completo"],
-                    $row["cedula"],
-                    $row["direccion"],
-                    $row["telefono"],
-                    $row["correo"],
-                    $row["hash_contrasena"],
-                    $row["habilitado"]
-                );
-            }
-        } else if (strlen($employee_personal_id) > 0) {
-            $employee_personal_id = "%" . $employee_personal_id . "%";
-            $records = $this->database->prepare('SELECT id, permisos_id, nombre_completo, cedula, direccion, telefono, correo, hash_contrasena, habilitado FROM empleados WHERE LOWER(cedula) LIKE :personal_id;');
-            $records->bindParam(':personal_id', $employee_personal_id);
-            $records->execute();
-            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
-                if (count($row) === 0) {
-                    break;
-                }
-                $employees[] = new Employee(
-                    $row["id"],
-                    $row["permisos_id"],
-                    $row["nombre_completo"],
-                    $row["cedula"],
-                    $row["direccion"],
-                    $row["telefono"],
-                    $row["correo"],
-                    $row["hash_contrasena"],
-                    $row["habilitado"]
-                );
-            }
-        }
-        return $employees;
-    }
-
     public function view_user(int $user_id): ?Employee
     {
         $records = $this->database->prepare('SELECT permisos_id, nombre_completo, cedula, direccion, telefono, correo, hash_contrasena, habilitado FROM empleados WHERE id = :v_id;');
@@ -537,51 +499,6 @@ class MySQL implements iDatabase
         }
         $this->log(ERROR, "Failed to register client $personal_id");
         return false;
-    }
-
-    public function search_clients(string $client_name, string $employee_personal_id): array
-    {
-        $employees = array();
-        if (strlen($client_name) > 0) {
-            $client_name = "%" . $client_name . "%";
-            $records = $this->database->prepare('SELECT id, nombre_completo, cedula, direccion, telefono, correo, habilitado FROM clientes WHERE LOWER(nombre_completo) LIKE :name;');
-            $records->bindParam(':name', $client_name);
-            $records->execute();
-            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
-                if (count($row) === 0) {
-                    break;
-                }
-                $employees[] = new Client(
-                    $row["id"],
-                    $row["nombre_completo"],
-                    $row["cedula"],
-                    $row["direccion"],
-                    $row["telefono"],
-                    $row["correo"],
-                    $row["habilitado"]
-                );
-            }
-        } else if (strlen($employee_personal_id) > 0) {
-            $employee_personal_id = "%" . $employee_personal_id . "%";
-            $records = $this->database->prepare('SELECT id, nombre_completo, cedula, direccion, telefono, correo, habilitado FROM clientes WHERE LOWER(cedula) LIKE :personal_id;');
-            $records->bindParam(':personal_id', $employee_personal_id);
-            $records->execute();
-            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
-                if (count($row) === 0) {
-                    break;
-                }
-                $employees[] = new Client(
-                    $row["id"],
-                    $row["nombre_completo"],
-                    $row["cedula"],
-                    $row["direccion"],
-                    $row["telefono"],
-                    $row["correo"],
-                    $row["habilitado"]
-                );
-            }
-        }
-        return $employees;
     }
 
     public function view_client(int $client_id): ?Client
@@ -851,6 +768,56 @@ class MySQL implements iDatabase
         return $ordenes;
     }
 
+    public function search_employees(string $employee_name, string $employee_personal_id): array
+    {
+        $this->log(LOG, "Searching employees");
+        $employees = array();
+        if (strlen($employee_name) > 0) {
+            $employee_name = "%" . $employee_name . "%";
+            $records = $this->database->prepare('SELECT id, permisos_id, nombre_completo, cedula, direccion, telefono, correo, hash_contrasena, habilitado FROM empleados WHERE LOWER(nombre_completo) LIKE :name;');
+            $records->bindParam(':name', $employee_name);
+            $records->execute();
+            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $employees[] = new Employee(
+                    $row["id"],
+                    $row["permisos_id"],
+                    $row["nombre_completo"],
+                    $row["cedula"],
+                    $row["direccion"],
+                    $row["telefono"],
+                    $row["correo"],
+                    $row["hash_contrasena"],
+                    $row["habilitado"]
+                );
+            }
+        } else if (strlen($employee_personal_id) > 0) {
+            $employee_personal_id = "%" . $employee_personal_id . "%";
+            $records = $this->database->prepare('SELECT id, permisos_id, nombre_completo, cedula, direccion, telefono, correo, hash_contrasena, habilitado FROM empleados WHERE LOWER(cedula) LIKE :personal_id;');
+            $records->bindParam(':personal_id', $employee_personal_id);
+            $records->execute();
+            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $employees[] = new Employee(
+                    $row["id"],
+                    $row["permisos_id"],
+                    $row["nombre_completo"],
+                    $row["cedula"],
+                    $row["direccion"],
+                    $row["telefono"],
+                    $row["correo"],
+                    $row["hash_contrasena"],
+                    $row["habilitado"]
+                );
+            }
+        }
+        return $employees;
+    }
+
     public function get_employee_name(int $id): ?string
     {
         $this->log(LOG, "Getting name of employee identified by $id");
@@ -999,6 +966,51 @@ class MySQL implements iDatabase
         return $ordenes;
     }
 
+    public function search_clients(string $client_name, string $employee_personal_id): array
+    {
+        $employees = array();
+        if (strlen($client_name) > 0) {
+            $client_name = "%" . $client_name . "%";
+            $records = $this->database->prepare('SELECT id, nombre_completo, cedula, direccion, telefono, correo, habilitado FROM clientes WHERE LOWER(nombre_completo) LIKE :name;');
+            $records->bindParam(':name', $client_name);
+            $records->execute();
+            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $employees[] = new Client(
+                    $row["id"],
+                    $row["nombre_completo"],
+                    $row["cedula"],
+                    $row["direccion"],
+                    $row["telefono"],
+                    $row["correo"],
+                    $row["habilitado"]
+                );
+            }
+        } else if (strlen($employee_personal_id) > 0) {
+            $employee_personal_id = "%" . $employee_personal_id . "%";
+            $records = $this->database->prepare('SELECT id, nombre_completo, cedula, direccion, telefono, correo, habilitado FROM clientes WHERE LOWER(cedula) LIKE :personal_id;');
+            $records->bindParam(':personal_id', $employee_personal_id);
+            $records->execute();
+            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $employees[] = new Client(
+                    $row["id"],
+                    $row["nombre_completo"],
+                    $row["cedula"],
+                    $row["direccion"],
+                    $row["telefono"],
+                    $row["correo"],
+                    $row["habilitado"]
+                );
+            }
+        }
+        return $employees;
+    }
+
     public function registrar_factura(int $empleado, int $cliente, string $hoy, float $descuento): bool
     {
         $records = $this->database->prepare('SELECT registrar_factura(:empleado, :cliente, :hoy,:descuento) AS result');
@@ -1086,7 +1098,6 @@ class MySQL implements iDatabase
         $this->log(ERROR, "Failed to delete receipt identified by $id");
         return false;
     }
-
 
     public function delete_detalles_factura(int $id): bool
     {
@@ -1435,17 +1446,5 @@ class MySQL implements iDatabase
                 $row["numero"], $row["fecha"], $row["valor"]);;
         }
         return $cuentas_cobrar;
-    }
-
-    public function log(string $level, string $message)
-    {
-        if (headers_sent()) {
-            $user_id = $_SESSION["user-id"];
-            $message = "(Done by user identified by ID: $user_id) $message";
-        }
-        $records = $this->database->prepare('CALL log(:level, :message)');
-        $records->bindParam(':level', $level);
-        $records->bindParam(':message', $message);
-        $records->execute();
     }
 }

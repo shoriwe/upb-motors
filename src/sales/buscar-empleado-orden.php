@@ -10,10 +10,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php
 
         foreach ($ordenes as $orden) {
-            if ($orden->estado == 1){
+            if ($orden->estado == 1) {
                 $empleado_nombre = connect()->database->get_employee_name($orden->empleado);
                 $cliente_nombre = connect()->database->get_client_name($orden->cliente);
-                $descuento_porciento = $orden->descuento*100;
+                $descuento_porciento = $orden->descuento * 100;
                 echo "
 <div class='list-entry'>
     <h3 class='black-text'>Empleado: $empleado_nombre</h3>

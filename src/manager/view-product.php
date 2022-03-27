@@ -6,7 +6,6 @@ require_once '../ensure_login.php';
 require 'menu.php';
 
 
-
 $product = connect()->database->view_product($_GET["id"]);
 if ($product === null) {
     js_redirect("/inventory/home.php");

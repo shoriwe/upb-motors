@@ -20,14 +20,14 @@ $impuesto = $_SESSION['impuesto'];
 <div class="centered-container" style="margin-top: 10vh">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        google.charts.load('current', {'packages':['corechart']});
+        google.charts.load('current', {'packages': ['corechart']});
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
 
             var data = google.visualization.arrayToDataTable([
                 ['Razon', 'Valor'],
-                ['Ventas',     <?php echo $banco+$caja+$credito;?>],
+                ['Ventas',     <?php echo $banco + $caja + $credito;?>],
                 ['Costos',      <?php echo $costos;?>],
                 ['Gastos',  <?php echo $gastos;?>],
                 ['Impuesto', <?php echo $impuesto;?>],
@@ -49,13 +49,13 @@ $impuesto = $_SESSION['impuesto'];
 <div class="centered-container" style="margin-top: 10vh">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        google.charts.load('current', {'packages':['bar']});
+        google.charts.load('current', {'packages': ['bar']});
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
             var data = google.visualization.arrayToDataTable([
                 ['Año', 'Ganancias', 'Perdidas', 'Utilidad Retenida'],
-                ['2022', <?php echo $banco+$caja+$credito;?>, <?php echo $costos+$gastos+$impuesto+$dividendos;?>, <?php echo $utilidad_retenida;?>],
+                ['2022', <?php echo $banco + $caja + $credito;?>, <?php echo $costos + $gastos + $impuesto + $dividendos;?>, <?php echo $utilidad_retenida;?>],
             ]);
 
             var options = {

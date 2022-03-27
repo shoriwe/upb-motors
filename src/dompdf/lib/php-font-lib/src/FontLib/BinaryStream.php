@@ -156,6 +156,20 @@ class BinaryStream
         return $a["n"];
     }
 
+    /**
+     * @param int $n The number of bytes to read
+     *
+     * @return string
+     */
+    public function read($n)
+    {
+        if ($n < 1) {
+            return "";
+        }
+
+        return (string)fread($this->f, $n);
+    }
+
     public function writeUFWord($data)
     {
         return $this->writeUInt16($data);
@@ -164,6 +178,15 @@ class BinaryStream
     public function writeUInt16($data)
     {
         return $this->write(pack("n", $data), 2);
+    }
+
+    public function write($data, $length = null)
+    {
+        if ($data === null || $data === "" || $data === false) {
+            return 0;
+        }
+
+        return fwrite($this->f, $data, $length);
     }
 
     public function readFWord()
@@ -273,6 +296,11 @@ class BinaryStream
         }
     }
 
+    public function readUInt8()
+    {
+        return ord($this->read(1));
+    }
+
     public function readInt8()
     {
         $v = $this->readUInt8();
@@ -284,9 +312,11 @@ class BinaryStream
         return $v;
     }
 
-    public function readUInt8()
+    public function readUInt32()
     {
-        return ord($this->read(1));
+        $a = unpack("NN", $this->read(4));
+
+        return $a["N"];
     }
 
     public function readFixed()
@@ -312,13 +342,6 @@ class BinaryStream
         return date("Y-m-d H:i:s", $date);
     }
 
-    public function readUInt32()
-    {
-        $a = unpack("NN", $this->read(4));
-
-        return $a["N"];
-    }
-
     public function readUInt16Many($count)
     {
         return array_values(unpack("n*", $this->read($count * 2)));
@@ -339,20 +362,6 @@ class BinaryStream
     public function readUInt8Many($count)
     {
         return array_values(unpack("C*", $this->read($count)));
-    }
-
-    /**
-     * @param int $n The number of bytes to read
-     *
-     * @return string
-     */
-    public function read($n)
-    {
-        if ($n < 1) {
-            return "";
-        }
-
-        return (string)fread($this->f, $n);
     }
 
     public function readInt8Many($count)
@@ -427,6 +436,11 @@ class BinaryStream
         }
     }
 
+    public function writeUInt8($data)
+    {
+        return $this->write(chr($data), 1);
+    }
+
     public function writeInt8($data)
     {
         if ($data < 0) {
@@ -436,18 +450,9 @@ class BinaryStream
         return $this->writeUInt8($data);
     }
 
-    public function writeUInt8($data)
+    public function writeUInt32($data)
     {
-        return $this->write(chr($data), 1);
-    }
-
-    public function write($data, $length = null)
-    {
-        if ($data === null || $data === "" || $data === false) {
-            return 0;
-        }
-
-        return fwrite($this->f, $data, $length);
+        return $this->write(pack("N", $data), 4);
     }
 
     public function writeFixed($data)
@@ -464,11 +469,6 @@ class BinaryStream
         $date += 2082844800;
 
         return $this->writeUInt32(0) + $this->writeUInt32($date);
-    }
-
-    public function writeUInt32($data)
-    {
-        return $this->write(pack("N", $data), 4);
     }
 
     /**

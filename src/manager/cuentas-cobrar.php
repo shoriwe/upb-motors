@@ -30,7 +30,7 @@ $cuentas = connect()->database->get_cuentas_cobrar();
         </thead>
         <tbody id="details">
         <?php
-        foreach ($cuentas as $cuenta){
+        foreach ($cuentas as $cuenta) {
             echo "<tr>";
             echo "<td>$cuenta->nombre</td>";
             echo "<td>$cuenta->cedula</td>";

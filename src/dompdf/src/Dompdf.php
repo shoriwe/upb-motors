@@ -353,6 +353,24 @@ class Dompdf
     }
 
     /**
+     * @param DOMNode $node
+     */
+    public static function removeTextNodes(DOMNode $node)
+    {
+        $children = [];
+        for ($i = 0; $i < $node->childNodes->length; $i++) {
+            $child = $node->childNodes->item($i);
+            if ($child->nodeName === "#text") {
+                $children[] = $child;
+            }
+        }
+
+        foreach ($children as $child) {
+            $node->removeChild($child);
+        }
+    }
+
+    /**
      * @param $file
      * @deprecated
      */
@@ -557,24 +575,6 @@ class Dompdf
         $this->dom = $doc;
         $this->quirksmode = $quirksmode;
         $this->tree = new FrameTree($this->dom);
-    }
-
-    /**
-     * @param DOMNode $node
-     */
-    public static function removeTextNodes(DOMNode $node)
-    {
-        $children = [];
-        for ($i = 0; $i < $node->childNodes->length; $i++) {
-            $child = $node->childNodes->item($i);
-            if ($child->nodeName === "#text") {
-                $children[] = $child;
-            }
-        }
-
-        foreach ($children as $child) {
-            $node->removeChild($child);
-        }
     }
 
     /**

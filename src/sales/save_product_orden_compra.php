@@ -7,7 +7,7 @@ $empleado = $_POST['empleado'];
 $cliente = $_POST['cliente'];
 $producto = $_POST['producto'];
 $cantidad = $_POST['cantidad'];
-$pagos= $_POST['pagos'];
+$pagos = $_POST['pagos'];
 
 $id_orden = connect()->database->id_orden(
     $empleado,

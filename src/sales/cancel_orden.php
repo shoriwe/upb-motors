@@ -51,7 +51,7 @@ if ($succeed) {
                     echo "<h3 class='error-block'>No se pudo cancelar esta orden de compra</h3>";
                 }
             }
-            $orden = connect()->database->ver_orden($_GET["o_cliente_id"],$_GET["o_empleado_id"]);
+            $orden = connect()->database->ver_orden($_GET["o_cliente_id"], $_GET["o_empleado_id"]);
             if ($orden === null) {
                 js_redirect("/sales/home.php");
             }
