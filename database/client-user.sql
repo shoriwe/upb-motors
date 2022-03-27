@@ -1,6 +1,7 @@
 CREATE USER 'upb_motors_client'@'localhost' IDENTIFIED BY 'password';
 
 GRANT EXECUTE ON PROCEDURE upb_motors.actualizar_contrasena TO 'upb_motors_client'@'localhost';
+GRANT EXECUTE ON PROCEDURE upb_motors.log TO 'upb_motors_client'@'localhost';
 
 GRANT EXECUTE ON FUNCTION upb_motors.get_log_level TO 'upb_motors_client'@'localhost';
 GRANT EXECUTE ON FUNCTION upb_motors.get_permisos_id TO 'upb_motors_client'@'localhost';
