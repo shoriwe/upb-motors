@@ -177,6 +177,12 @@ Using Windows Server.
 
 <img src="docs/images/37.png" alt="37" style="zoom: 50%;" />
 
+13. Rename nameserver
+
+<img src="docs/images/34.png" alt="34" style="zoom:50%;" />
+
+<img src="docs/images/38.png" alt="38" style="zoom:50%;" />
+
 #### Services Domains
 
 ##### HTTP/HTTPS
@@ -193,9 +199,13 @@ Using Windows Server.
 
 1. `ftp` name
 
-![33](docs/images/33.png)
+<img src="docs/images/33.png" alt="33" style="zoom:50%;" />
 
 ##### All mail services
+
+##### Domain Controller
+
+<img src="docs/images/39.png" alt="39" style="zoom:50%;" />
 
 ### Secondary DNS
 
