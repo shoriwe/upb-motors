@@ -1,5 +1,15 @@
 # Setup
 
+## IPs and Domains
+
+| Service             | OS      | Domain            | Running IP      |
+| ------------------- | ------- | ----------------- | --------------- |
+| FTP/FTPS            | Windows | ftp.upb-motors.co | 192.168.101.50  |
+| Primary DNS         | Windows |                   | 192.168.101.50  |
+| All email services? | Debian? |                   | 192.168.101.58? |
+| HTTP/HTTPS          | Debian  | www.upb-motors.co | 192.168.101.58  |
+| VoIP                | Debian? |                   | 192.168.101.58  |
+
 ## Default Emails
 
 | User       | Domain        |
@@ -158,6 +168,34 @@ Using Windows Server.
 11. No Dynamic updates
 
 <img src="docs/images/30.png" alt="30" style="zoom:50%;" />
+
+12. New Reverse lookup zone
+
+<img src="docs/images/35.png" alt="35" style="zoom:50%;" />
+
+<img src="docs/images/36.png" alt="36" style="zoom:50%;" />
+
+<img src="docs/images/37.png" alt="37" style="zoom: 50%;" />
+
+#### Services Domains
+
+##### HTTP/HTTPS
+
+1. New Host **A**
+
+<img src="docs/images/31.png" alt="31" style="zoom:50%;" />
+
+2. `www` name
+
+<img src="docs/images/32.png" alt="32" style="zoom:50%;" />
+
+##### FTP/FTPS
+
+1. `ftp` name
+
+![33](docs/images/33.png)
+
+##### All mail services
 
 ### Secondary DNS
 
