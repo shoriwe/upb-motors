@@ -16,7 +16,7 @@
 | Machine name | Service             | OS       | Domain            | Running IP      |
 | ------------ | ------------------- | -------- | ----------------- | --------------- |
 | WS-1         | FTP/FTPS            | Windows  | ftp.upb-motors.co | 192.168.101.50  |
-| WS-1         | Primary DNS         | Windows  |                   | 192.168.101.50  |
+| WS-1         | Primary DNS         | Windows  | dc.upb-motors.co  | 192.168.101.50  |
 | WS-2         | Secondary DNS       | Windows? |                   | ?               |
 | WS-2         | HTTP Reverse Proxy  | Windows? |                   | ?               |
 | Deb-1        | All email services? | Debian?  |                   | 192.168.101.58? |
