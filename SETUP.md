@@ -15,6 +15,8 @@
 
 ### FTP(S)
 
+Using Windows server.
+
 1. Add roles and features
 
 <img src="docs/images/1.png" alt="1" style="zoom:50%;" />
@@ -65,19 +67,19 @@ New-SelfSignedCertificate -FriendlyName "selfsigned-upb-motors" -CertStoreLocati
 
 10. Serve folder in FTP
 
-![14](docs/images/14.png)
+<img src="docs/images/14.png" alt="14" style="zoom:50%;" />
 
-![15](docs/images/15.png)
+<img src="docs/images/15.png" alt="15" style="zoom:50%;" />
 
-![16](docs/images/16.png)
+<img src="docs/images/16.png" alt="16" style="zoom:50%;" />
 
 11. Serve folder in FTPS
 
-![17](docs/images/17.png)
+<img src="docs/images/17.png" alt="17" style="zoom:50%;" />
 
-![18](docs/images/18.png)
+<img src="docs/images/18.png" alt="18" style="zoom:50%;" />
 
-![19](docs/images/19.png)
+<img src="docs/images/19.png" alt="19" style="zoom:50%;" />
 
 ### HTTP(S)
 
@@ -104,6 +106,62 @@ docker create -p 80:80 -p 443:443 --restart unless-stopped --name upb-motors-pro
 ```shell
 docker start upb-motors-production
 ```
+
+### Primary DNS
+
+Using Windows Server.
+
+1. Add roles and features
+
+<img src="docs/images/1.png" alt="1" style="zoom:50%;" />
+
+2. Installation Type `Role-bases`
+
+<img src="docs/images/2.png" alt="2" style="zoom:50%;" />
+
+3. DNS server
+
+<img src="docs/images/21.png" alt="21" style="zoom:50%;" />
+
+4. Confirmation and install
+
+<img src="docs/images/22.png" alt="22" style="zoom:50%;" />
+
+4. `Open Server Manager >Tools > DNS`
+
+<img src="docs/images/23.png" alt="23" style="zoom:50%;" />
+
+5. Select server
+
+<img src="docs/images/24.png" alt="24" style="zoom:50%;" />
+
+6. New zone
+
+![25](docs/images/25.png)
+
+7. Primary zone
+
+<img src="docs/images/26.png" alt="26" style="zoom:50%;" />
+
+8. Forward lookup zone
+
+![27](docs/images/27.png)
+
+9. Zone name
+
+<img src="docs/images/28.png" alt="28" style="zoom:50%;" />
+
+10. Zone file
+
+<img src="docs/images/29.png" alt="29" style="zoom:50%;" />
+
+11. No Dynamic updates
+
+<img src="docs/images/30.png" alt="30" style="zoom:50%;" />
+
+### Secondary DNS
+
+
 
 ### Mail
 
