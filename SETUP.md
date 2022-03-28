@@ -1,14 +1,27 @@
 # Setup
 
-## IPs and Domains
+## IPs
 
-| Service             | OS      | Domain            | Running IP      |
-| ------------------- | ------- | ----------------- | --------------- |
-| FTP/FTPS            | Windows | ftp.upb-motors.co | 192.168.101.50  |
-| Primary DNS         | Windows |                   | 192.168.101.50  |
-| All email services? | Debian? |                   | 192.168.101.58? |
-| HTTP/HTTPS          | Debian  | www.upb-motors.co | 192.168.101.58  |
-| VoIP                | Debian? |                   | 192.168.101.58  |
+| Machine name | Network           | IP                | Default gateway | DNS server     |
+| ------------ | ----------------- | ----------------- | --------------- | -------------- |
+| WS-1         | 192.168.101.48/29 | 192.168.101.50    | 192.168.101.49  | 192.168.101.50 |
+| WS-2         |                   |                   |                 |                |
+| Deb-1        | 192.168.101.56/29 | 192.168.101.58    | 192.168.101.57  | 192.168.101.50 |
+| Employees    | 192.168.101.32/28 | 192.168.101.34-46 | 192.168.101.33  | 192.168.101.50 |
+
+
+
+## IPs with Domains
+
+| Machine name | Service             | OS       | Domain            | Running IP      |
+| ------------ | ------------------- | -------- | ----------------- | --------------- |
+| WS-1         | FTP/FTPS            | Windows  | ftp.upb-motors.co | 192.168.101.50  |
+| WS-1         | Primary DNS         | Windows  |                   | 192.168.101.50  |
+| WS-2         | Secondary DNS       | Windows? |                   | ?               |
+| WS-2         | HTTP Reverse Proxy  | Windows? |                   | ?               |
+| Deb-1        | All email services? | Debian?  |                   | 192.168.101.58? |
+| Deb-1        | HTTP/HTTPS          | Debian   | www.upb-motors.co | 192.168.101.58  |
+| Deb-1?       | VoIP                | Debian?  |                   | 192.168.101.58  |
 
 ## Default Emails
 
