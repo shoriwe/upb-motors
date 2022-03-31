@@ -134,3 +134,36 @@ EMAIL_PORT = PORT
 EMAIL_USERNAME = USERNAME
 EMAIL_PASSWORD = PASSWORD
 ```
+
+##DNS
+
+```ini
+Domain Name System, es una base de datos jerárqquica y distribuida que contiene asignaciones entre nombres de host
+Los navegadores web interactúan mediante direcciones de Protocolo de Internet (IP).
+
+
+DNS directo: Permite principalmente que una computadora, servidor, teléfono inteligente u otro cliente final traduzca un nombre de dominio o una dirección de correo electrónico a la dirección del dispositivo que manejaría la comunicación resultante.
+La búsqueda DNS inversa es la determinación de un nombre de dominio que está asociado a una determinada dirección IP utilizando el DNS de internet.
+
+Existen muchos registros DNS, nombrare algunos de los principales, y sus funciones:
+Registro A: registro que contiene la dirección IP de un dominio.
+Registro CNAME: reenvía un dominio o subdominio a otro dominio, NO proporciona una dirección IP.
+
+
+AHORA CONFIGURAMOS EL DNS EN EL ROUTER
+Activamos el servicio:
+
+```
+![20](docs/images/21.png)
+
+```ini
+INFORMACIÓN
+
+
+```
+
+
+#DNS WINDOW SERVER
+```ini
+Configuración:
+```
