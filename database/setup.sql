@@ -832,3 +832,12 @@ END;
 
 
 DELIMITER ;
+
+CREATE TABLE IF NOT EXISTS ventas_externas
+(
+    id           INT      NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    product_id   INT      NOT NULL,
+    precio_venta FLOAT    NOT NULL,
+    fecha_venta  DATETIME NOT NULL,
+    CONSTRAINT fk_product_id_inventario_id FOREIGN KEY (product_id) REFERENCES inventario (id)
+);

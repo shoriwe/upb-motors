@@ -7,11 +7,103 @@ import (
 	"github.com/shoriwe/upb-motors/internal/data"
 	"github.com/shoriwe/upb-motors/internal/data/memory"
 	"github.com/shoriwe/upb-motors/internal/data/objects"
+	"sync"
 	"time"
 )
 
 type SQL struct {
-	db *sql.DB
+	apiKey      string
+	apiKeyMutex *sync.Mutex
+	db          *sql.DB
+}
+
+func (s *SQL) Authenticate(apiKey string) bool {
+	s.apiKeyMutex.Lock()
+	defer s.apiKeyMutex.Unlock()
+	return s.apiKey == apiKey
+}
+
+func (s *SQL) Clients(page int) (result []objects.Client) {
+	rows, queryError := s.db.Query(
+		`SELECT
+	clientes.id AS id,
+	clientes.nombre_completo AS nombre_completo,
+	clientes.cedula AS cedula,
+	clientes.direccion AS direccion,
+	clientes.telefono AS telefono,
+	clientes.correo AS correo,
+	clientes.habilitado AS habilitado
+FROM
+    clientes
+ORDER BY clientes.id ASC
+LIMIT ?, ?`, page, memory.PageLength)
+	if queryError != nil {
+		fmt.Println(queryError)
+		return nil
+	}
+	var row objects.Client
+	for rows.Next() {
+		scanError := rows.Scan(
+			&row.DatabaseId,
+			&row.Name,
+			&row.PersonalId,
+			&row.Address,
+			&row.PhoneNumber,
+			&row.Email,
+			&row.Enabled)
+		if scanError != nil {
+			return nil
+		}
+		result = append(result, row)
+	}
+	return result
+}
+
+func (s *SQL) UploadClient(client objects.Client) error {
+	_, err := s.db.Exec(
+		`INSERT INTO clientes (
+	nombre_completo,
+	cedula,
+	direccion,
+	telefono,
+	correo,
+	habilitado
+) VALUES (
+	?,
+	?,
+	?,
+	?,
+	?,
+	?
+);`,
+		client.Name,
+		client.PersonalId,
+		client.Address,
+		client.PhoneNumber,
+		client.Email,
+		client.Enabled)
+	return err
+}
+
+func (s *SQL) UploadSale(sale objects.Sale) error {
+	_, err := s.db.Exec(
+		`INSERT INTO ventas_externas (
+	product_id, precio_venta, fecha_venta
+) VALUES (
+	?,
+	?,
+	?
+);`,
+		sale.VehicleId,
+		sale.SalePrice,
+		sale.SaleDate)
+	return err
+}
+
+func (s *SQL) APIKey(newAPIKey string) {
+	s.apiKeyMutex.Lock()
+	defer s.apiKeyMutex.Unlock()
+	s.apiKey = newAPIKey
 }
 
 func (s *SQL) QueryInventory(inventoryPage int) (result []objects.Inventory) {
@@ -65,6 +157,7 @@ func NewSQL(dataSourceName string) data.Database {
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
 	return &SQL{
-		db: db,
+		apiKeyMutex: new(sync.Mutex),
+		db:          db,
 	}
 }

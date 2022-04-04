@@ -46,6 +46,15 @@
 
 ## Production
 
+### Build API
+
+1. Install Go > 1.18.
+2. Execute:
+
+```shell
+go build -buildvcs=false -ldflags="-s -w" -trimpath -mod vendor -o ./api.exe ./cmd/api
+```
+
 ### FTP(S)
 
 Using Windows server.
