@@ -188,6 +188,10 @@ docker start upb-motors-production
 
 <img src="docs/images/37.png" alt="37" style="zoom: 50%;" />
 
+13. Ensure zone transfer is allowed (`Zone properties -> Zone tranfers`):
+
+<img src="docs/images/45.png" alt="45" style="zoom:50%;" />
+
 ##### Services Domains
 
 ###### HTTP/HTTPS
@@ -217,6 +221,20 @@ docker start upb-motors-production
 <img src="docs/images/40.png" alt="40" style="zoom:50%;" />
 
 ### Secondary DNS
+
+For each company, create a zone pointing to its domain and domain server. (Ensure that zone transfer is allowed in the primary server).
+
+1. Create zone
+
+<img src="docs/images/41.png" alt="41" style="zoom:50%;" />
+
+2. Point to domain of company
+
+<img src="docs/images/42.png" alt="42" style="zoom:50%;" />
+
+<img src="docs/images/43.png" alt="43" style="zoom:50%;" />
+
+<img src="docs/images/44.png" alt="44" style="zoom:50%;" />
 
 
 
