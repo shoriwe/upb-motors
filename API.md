@@ -6,8 +6,9 @@
   - URL Arguments:
     - `page`: int >= 0
 - Response:
+  - Body (JSON)
 
-```json
+```
 {
   "succeed": true | false,
   "message": "ERROR MESSAGE IN CASE OF SUCCEED == false",
@@ -30,13 +31,14 @@
 ## (GET) `/private/clients/:page`
 
 - Request:
-    - URL Arguments:
-      - `page`: int >= 0
-    - Headers:
-      - `API-Key`: string
+  - URL Arguments:
+    - `page`: int >= 0
+  - Headers:
+    - `API-Key`: string
 - Response:
+  - Body (JSON)
 
-```json
+```
 {
   "succeed": true | false,
   "message": "ERROR MESSAGE IN CASE OF SUCCEED == false",
@@ -60,9 +62,9 @@
 - Request:
   - Headers:
     - `API-Key`: string
-  - Body:
+  - Body (JSON)
 
-```json
+```
 {
   "nombre_completo": "Antonio",     // Client name
   "cedula": "123456",               // Client personal id
@@ -76,11 +78,10 @@
 ## (POST) `/private/sales`
 
 - Request:
-    - Headers:
-        - `API-Key`: string
-    - Body:
-
-```json
+  - Headers:
+    - `API-Key`: string
+  - Body (JSON)
+```
 {
   "id_vehiculo": 1,             // Vehicle ID
   "precio_venta": 1000000,      // Sale price
