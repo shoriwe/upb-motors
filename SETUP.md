@@ -3,34 +3,34 @@
 ## IPs
 
 | Machine name | DHCP | Network           | IP                | Default gateway | DNS server     |
-| ------------ | ---- | ----------------- | ----------------- | --------------- | -------------- |
+|--------------|------|-------------------|-------------------|-----------------|----------------|
 | WS-1         | NO   | 192.168.101.48/29 | 192.168.101.50    | 192.168.101.49  | 192.168.101.50 |
-| WS-2         | NO   |                   |                   |                 |                |
+| WS-2         | NO   | 10.0.0.0/29       | 10.0.0.2          | 10.0.0.1        | 10.0.0.2       |
 | Deb-1        | NO   | 192.168.101.56/29 | 192.168.101.58    | 192.168.101.57  | 192.168.101.50 |
 | Employees    | YES  | 192.168.101.32/28 | 192.168.101.34-46 | 192.168.101.33  | 192.168.101.50 |
 
 ## IPs with Domains
 
-| Machine name | Service             | OS       | Domain            | Running IP      |
-| ------------ | ------------------- | -------- | ----------------- | --------------- |
-| WS-1         | FTP/FTPS            | Windows  | ftp.upb-motors.co | 192.168.101.50  |
-| WS-1         | Primary DNS         | Windows  | dc.upb-motors.co  | 192.168.101.50  |
-| WS-2         | Secondary DNS       | Windows? |                   | ?               |
-| WS-2         | HTTP Reverse Proxy  | Windows? |                   | ?               |
-| Deb-1        | All email services? | Debian?  |                   | 192.168.101.58? |
-| Deb-1        | HTTP/HTTPS          | Debian   | www.upb-motors.co | 192.168.101.58  |
-| Deb-1?       | VoIP                | Debian?  |                   | 192.168.101.58  |
+| Machine name | Service             | OS       | Type | Domain                   | Running IP      |
+| ------------ | ------------------- | -------- | ---- | ------------------------ | --------------- |
+| WS-1         | FTP/FTPS            | Windows  | A    | ftp.matriz.autoupb.com   | 192.168.101.50  |
+| WS-1         | Primary DNS         | Windows  | A    | ?                        | 192.168.101.50  |
+| WS-2         | Secondary DNS       | Windows? | ?    | ?                        | 10.0.0.2        |
+| WS-2         | Proxy               | Windows? | A    | proxy.matriz.autoupb.com | 10.0.0.2        |
+| Deb-1        | All email services? | Debian?  | MX   | mail.matriz.autoupb.com  | 192.168.101.58? |
+| Deb-1        | HTTP/HTTPS          | Debian   | A    | www.matriz.autoupb.com   | 192.168.101.58  |
+| Deb-1?       | VoIP                | Debian?  | A    | voip.matriz.autoupb.com  | 192.168.101.58  |
 
 ## Default Emails
 
-| User       | Domain        |
-| ---------- | ------------- |
-| aplicacion | upb-motors.co |
-| admin      | upb-motors.co |
-| gerente    | upb-motors.co |
-| inventario | upb-motors.co |
-| rh         | upb-motors.co |
-| ventas     | upb-motors.co |
+| User       | Domain             |
+| ---------- | ------------------ |
+| aplicacion | matriz.autoupb.com |
+| admin      | matriz.autoupb.com |
+| gerente    | matriz.autoupb.com |
+| inventario | matriz.autoupb.com |
+| rh         | matriz.autoupb.com |
+| ventas     | matriz.autoupb.com |
 
 ## Production
 
@@ -81,7 +81,7 @@ Using Windows server.
 9. Create SSL certificate.
 
 ```powershell
-New-SelfSignedCertificate -FriendlyName "selfsigned-upb-motors" -CertStoreLocation cert:\localmachine\my -DnsName upb-motors.com
+New-SelfSignedCertificate -FriendlyName "selfsigned-upb-motors" -CertStoreLocation cert:\localmachine\my -DnsName www.matriz.autoupb.com
 ```
 
 ![13](docs/images/13.png)
@@ -130,7 +130,7 @@ docker start upb-motors-production
 
 ### Primary DNS
 
-Using Windows Server.
+#### Using Windows Server.
 
 1. Add roles and features
 
@@ -188,15 +188,9 @@ Using Windows Server.
 
 <img src="docs/images/37.png" alt="37" style="zoom: 50%;" />
 
-13. Rename nameserver
+##### Services Domains
 
-<img src="docs/images/34.png" alt="34" style="zoom:50%;" />
-
-<img src="docs/images/38.png" alt="38" style="zoom:50%;" />
-
-#### Services Domains
-
-##### HTTP/HTTPS
+###### HTTP/HTTPS
 
 1. New Host **A**
 
@@ -206,17 +200,21 @@ Using Windows Server.
 
 <img src="docs/images/32.png" alt="32" style="zoom:50%;" />
 
-##### FTP/FTPS
+###### FTP/FTPS
 
-1. `ftp` name
+1. `ftp` name (A)
 
 <img src="docs/images/33.png" alt="33" style="zoom:50%;" />
 
-##### All mail services
+###### All mail services
 
-##### Domain Controller
+1. `mail` host (A)
 
-<img src="docs/images/39.png" alt="39" style="zoom:50%;" />
+<img src="docs/images/39.png" alt="40" style="zoom:50%;" />
+
+2. Mail exchange (MX)
+
+<img src="docs/images/40.png" alt="40" style="zoom:50%;" />
 
 ### Secondary DNS
 
