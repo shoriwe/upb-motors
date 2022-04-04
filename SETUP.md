@@ -1,5 +1,17 @@
 # Setup
 
+## Zone lookups (For secondary DNS)
+
+| Company           | Domain             | DNS server IP  |
+| ----------------- | ------------------ | -------------- |
+| Matriz            | matriz.autoupb.com | 192.168.101.50 |
+| Concesionario - 1 | ?                  | ?              |
+| Concesionario - 2 | ?                  | ?              |
+| Taller            | ?                  | ?              |
+| Partes            | ?                  | ?              |
+
+
+
 ## IPs
 
 | Machine name | DHCP | Network           | IP                | Default gateway | DNS server     |
