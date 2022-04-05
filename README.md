@@ -16,7 +16,7 @@
 
 - [API](https://github.com/shoriwe/upb-motors/blob/main/API.md)
 - [Build and Setup](https://github.com/shoriwe/upb-motors/blob/main/SETUP.md)
-- [Architecture](https://github.com/shoriwe/upb-motors/tree/main/docs))
+- [Architecture](https://github.com/shoriwe/upb-motors/tree/main/docs)
 
 ## Authors
 
