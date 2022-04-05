@@ -261,8 +261,119 @@ For each company, create a zone pointing to its domain and domain server. (Ensur
 
 ### Mail
 
-1. Install `.NET framework 3.5 (includes .NET 2.0 and 3.0)` feature
-2. Install `hMailServer`
+1. Access the file `sources.list`
+
+```shell
+sudo nano sources.list
+```
+
+2. comment the second line
+
+![46](docs/images/46.png)
+
+3. update repositories
+
+```shell
+sudo apt update
+```
+
+4. install postfix
+
+```shell
+apt install postfix
+```
+
+5. Press accept in postfix configuration
+
+![47](docs/images/47.png)
+
+6. Select website
+
+![48](docs/images/48.png)
+
+7. Add a mail system name
+
+![49](docs/images/49.png)
+
+8. restart postfix
+
+```shell
+sudo service postfix restart
+```
+
+9. Install dovecot
+
+```shell
+sudo apt install dovecot-imapd dovecot-pop3d
+```
+
+10. restart dovecot
+
+```shell
+sudo service dovecot restart
+```
+
+11. install PHP
+
+```shell
+sudo apt-get install php
+```
+
+12. install squirrelmail
+
+```shell
+wget https://sourceforge.net/projects/squirrelmail/files/stable/1.4.22/squirrelmail-webmail-1.4.22.zip
+```
+
+13. unzip the file
+
+```shell
+unzip squirrelmail-webmail-1.4.22.zip
+```
+
+14. Select file location
+
+```shell
+sudo mv squirrelmail-webmail-1.4.22 /var/www/html/
+```
+
+15. Change Directory Owner
+
+```shell
+sudo chown -R www-data:www-data /var/www/html/squirrelmail-webmail-1.4.22/
+sudo chmod 755 -R /var/www/html/squirrelmail-webmail-1.4.22/
+sudo mv /var/www/html/squirrelmail-webmail-1.4.22/ /var/www/html/squirrelmail
+```
+
+16. configure squirrelmail
+
+```shell
+sudo perl /var/www/html/squirrelmail/config/conf.pl
+```
+
+17. Select option 2 of "server settings"
+
+![50](docs/images/50.png)
+
+18. Select option 1 of "domain"
+
+![51](docs/images/51.png)
+
+19. Write the domain
+
+![52](docs/images/52.png)
+
+20. Select option 4 of "general options"
+
+![53](docs/images/53.png)
+
+21. Modify options 1,2 and 11
+
+![54](docs/images/54.png)
+
+22. Enter the link `localhost/src/login.php`
+
+![55](docs/images/55.png)
 
 ## Development
 
