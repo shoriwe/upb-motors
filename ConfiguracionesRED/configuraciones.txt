@@ -6,8 +6,9 @@ P1/IPV4
 192.168.101.33
 
 P1/IPV6
-
+2801:0:2E0:D:A::2/80
 FE80::290:21FF:FE13:96AB
+2801:0:2E0:D:A::1
 
 
 P2/IPV4
@@ -16,8 +17,9 @@ P2/IPV4
 192.168.101.33
 
 P2/IPV6
-
+2801:0:2E0:D:A::3/80
 FE80::201:43FF:FE45:3D90
+2801:0:2E0:D:A::
 
 
 P3/IPV4
@@ -26,8 +28,9 @@ P3/IPV4
 192.168.101.33
 
 P3/IPV6
-
+2801:0:2E0:D:A::4/80
 FE80::200:CFF:FE72:C4BE
+2801:0:2E0:D:A::
 
 
 P4/IPV4
@@ -36,8 +39,9 @@ P4/IPV4
 192.168.101.33
 
 P4/IPV6
-
+2801:0:2E0:D:A::5/80
 FE80::20C:85FF:FE2D:32
+2801:0:2E0:D:A::
 
 
 P5/IPV4
@@ -46,8 +50,9 @@ P5/IPV4
 192.168.101.33
 
 P5/IPV6
-
+2801:0:2E0:D:A::6/80
 FE80::209:7CFF:FECC:3842
+2801:0:2E0:D:A::
 
 
 P6/IPV4
@@ -56,8 +61,9 @@ P6/IPV4
 192.168.101.33
 
 P6/IPV6
-
+2801:0:2E0:D:A::7/80
 FE80::204:9AFF:FEE6:2177
+2801:0:2E0:D:A::
 
 
 P7/IPV4
@@ -66,8 +72,9 @@ P7/IPV4
 192.168.101.33
 
 P7/IPV6
-
+2801:0:2E0:D:A::8/80
 FE80::202:17FF:FE40:12C6
+2801:0:2E0:D:A::
 
 
 P8/IPV4
@@ -76,8 +83,9 @@ P8/IPV4
 192.168.101.33
 
 P8/IPV6
-
+2801:0:2E0:D:A::9/80
 FE80::260:70FF:FE05:43B8
+2801:0:2E0:D:A::
 
 
 DEBIAN/IPV4
@@ -86,8 +94,9 @@ DEBIAN/IPV4
 192.168.101.57
 
 DEBIAN/IPV6
-
+2801:0:2E0:D:C::2/80
 FE80::260:2FFF:FE60:63E2
+2801:0:2E0:D:C::1
 
 
 WINDOW/IPV4
@@ -96,106 +105,6 @@ WINDOW/IPV4
 192.168.101.49
 
 WINDOW/IPV6
-
+2801:0:2E0:D:B::2/80
 FE80::202:4AFF:FE8A:6034
-
-
-CONFIGURACION DEL SWITCH
-enable
-configure terminal
-vlan 100
-name equipos
-exit
-vlan 200
-name windows
-exit
-vlan 300
-name debian
-exit
-interface range fastEthernet 0/3-10
-switchport mode access
-switchport access vlan 100
-exit
-interface fastEthernet 0/1
-switchport mode access
-switchport access vlan 200
-exit
-interface fastEthernet 0/2
-switchport mode access
-switchport access vlan 300
-exit
-interface GigabitEthernet 0/1
-switchport mode trunk
-switchport trunk allowed vlan 100,200,300
-
-
-CONFIGURACION DEL ROUTER
-enable
-configure terminal
-interface GigabitEthernet 0/0/1
-ip address 192.168.101.0
-no shutdown
-exit
-interface GigabitEthernet 0/0/1.100
-ip address 192.168.101.32 255.255.255.240
-encapsulation dot1q 100
-exit
-interface GigabitEthernet 0/0/1.200
-ip address 192.162.101.48 255.255.255.248
-encapsulation dot1q 200
-exit
-interface GigabitEthernet 0/0/1.300
-ip address 192.168.101.56 255.255.255.248
-encapsulation dot1q 300
-
-DHCP-ROUTER
-enable 
-configure terminal
-ip dhcp pool vlan 100
-netmask 192.168.101.32 255.255.255.240
-default-router 192.168.101.33
-dns-server 192.168.101.33
-exit 
-ip dhcp pool vlan 200
-network 192.162.101.48 255.255.255.248
-default-router 192.168.101.49
-dns-server 192.168.101.49
-exit
-netmask 192.168.101.56 255.255.255.248
-default-router 192.168.101.57
-dns-server 192.168.101.57
- 
-
-DNS
-ip host https.matriz.upbmotors.com 192.168.101.56
-ip domain name matriz.upbmotors.com
-ip name-server 8.8.8.8
-ip domain lookup
-
-
-Enrutamiento OSPF
-router ospf 1
-network (red conocida 1) (mascara invertida 1) area 1
-network (red conocida 2) (mascara invertida 2) area 1
-network (red conocida n) (mascara invertida n) area 1
-
-
-Nat Estático
-access-list (nombre de la lista) permit (direccion ip) (mascara invertida)
-ip nat inside source list (nombre de la lista) interface (puerto de salida)
-interface (puerto donde entra la informacion)
-ip nat inside
-exit
-interface (puerto donde sale la informacion)
-ip nat outside
-
-
-NAT Dinámico
-ip nat pool (nombre de pool) (rango inicial global) (rango final global) netmask (mascara del rango)
-access-list (nombre de la lista) permit (direccion de red) (mascra invertida)
-ip nat inside source list (nombre de la lista) pool (nombre del pool)
-interface (puerto donde entra la informacion)
-ip nat inside
-exit
-interface (puerto donde sale la informacion)
-ip nat outside
+2801:0:2E0:D:B::1
