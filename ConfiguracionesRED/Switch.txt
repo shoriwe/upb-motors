@@ -1,6 +1,6 @@
 Building configuration...
 
-Current configuration : 1855 bytes
+Current configuration : 1714 bytes
 !
 version 15.0
 no service timestamps log datetime msec
@@ -18,7 +18,7 @@ spanning-tree mode pvst
 spanning-tree extend system-id
 !
 interface FastEthernet0/1
- switchport access vlan 300
+ switchport access vlan 200
  switchport mode access
 !
 interface FastEthernet0/2
@@ -26,6 +26,8 @@ interface FastEthernet0/2
  switchport mode access
 !
 interface FastEthernet0/3
+ switchport access vlan 200
+ switchport mode access
 !
 interface FastEthernet0/4
 !
@@ -86,7 +88,7 @@ interface FastEthernet0/23
 interface FastEthernet0/24
 !
 interface GigabitEthernet0/1
- switchport trunk allowed vlan 100,200,300
+ switchport trunk allowed vlan 100,200
  switchport mode trunk
 !
 interface GigabitEthernet0/2
@@ -94,15 +96,6 @@ interface GigabitEthernet0/2
 interface Vlan1
  no ip address
  shutdown
-!
-interface Vlan100
- ip address 192.168.101.33 255.255.255.240
-!
-interface Vlan200
- ip address 192.168.101.49 255.255.255.240
-!
-interface Vlan300
- ip address 192.168.101.57 255.255.255.240
 !
 !
 !

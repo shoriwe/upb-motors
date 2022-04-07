@@ -1,6 +1,6 @@
 Building configuration...
 
-Current configuration : 1926 bytes
+Current configuration : 1187 bytes
 !
 version 15.4
 no service timestamps log datetime msec
@@ -16,21 +16,11 @@ hostname Router
 ip dhcp pool vlan100
  network 192.168.101.32 255.255.255.240
  default-router 192.168.101.33
- dns-server 192.168.101.33
-ip dhcp pool vlan200
- network 192.168.101.48 255.255.255.248
- default-router 192.168.101.49
- dns-server 192.168.101.49
-ip dhcp pool vlan300
- network 192.168.101.56 255.255.255.248
- default-router 192.168.101.57
- dns-server 192.168.101.57
+ dns-server 192.168.101.19
 !
 !
 !
 no ip cef
-ipv6 unicast-routing
-!
 no ipv6 cef
 !
 !
@@ -42,9 +32,6 @@ no ipv6 cef
 !
 !
 !
-ip domain-name matriz.autoupb.com
-ip host matriz.autoupb.com 192.168.101.57 
-ip name-server 8.8.8.8
 !
 !
 spanning-tree mode pvst
@@ -61,11 +48,9 @@ interface GigabitEthernet0/0/0
  shutdown
 !
 interface GigabitEthernet0/0/1
- no ip address
- ip nat inside
+ ip address 192.168.101.1 255.255.255.240
  duplex auto
  speed auto
- ipv6 address 2801:0:2E0:D::1/64
 !
 interface GigabitEthernet0/0/1.100
  encapsulation dot1Q 100
@@ -73,21 +58,13 @@ interface GigabitEthernet0/0/1.100
 !
 interface GigabitEthernet0/0/1.200
  encapsulation dot1Q 200
- ip address 192.168.101.49 255.255.255.248
-!
-interface GigabitEthernet0/0/1.300
- encapsulation dot1Q 300
- ip address 192.168.101.57 255.255.255.248
+ ip address 192.168.101.17 255.255.255.240
 !
 interface Serial0/1/0
  ip address 10.10.10.1 255.255.255.252
- ip nat outside
- ipv6 address 2801:0:2E0:1::5/126
 !
 interface Serial0/1/1
  ip address 10.10.20.1 255.255.255.252
- ip nat outside
- ipv6 address 2801:0:2E0:1::9/126
 !
 interface Vlan1
  no ip address
@@ -99,14 +76,11 @@ router ospf 1
  network 10.10.10.0 0.0.0.3 area 0
  network 10.10.20.0 0.0.0.3 area 0
 !
-ip nat pool grupo 10.152.164.200 10.152.164.250 netmask 255.192.0.0
-ip nat inside source list 1 pool grupo
 ip classless
 !
 ip flow-export version 9
 !
 !
-access-list 1 permit 192.168.101.0 0.0.0.255
 !
 !
 !
