@@ -1,38 +1,5 @@
 # Setup
 
-## Zone lookups (For secondary DNS)
-
-| Company           | Domain             | DNS server IP  |
-| ----------------- | ------------------ | -------------- |
-| Matriz            | matriz.autoupb.com | 192.168.101.50 |
-| Concesionario - 1 | ?                  | ?              |
-| Concesionario - 2 | ?                  | ?              |
-| Taller            | ?                  | ?              |
-| Partes            | ?                  | ?              |
-
-
-
-## IPs
-
-| Machine name | DHCP | Network           | IP                | Default gateway | DNS server     |
-|--------------|------|-------------------|-------------------|-----------------|----------------|
-| WS-1         | NO   | 192.168.101.48/29 | 192.168.101.50    | 192.168.101.49  | 192.168.101.50 |
-| WS-2         | NO   | 10.0.0.0/29       | 10.0.0.2          | 10.0.0.1        | 10.0.0.2       |
-| Deb-1        | NO   | 192.168.101.56/29 | 192.168.101.58    | 192.168.101.57  | 192.168.101.50 |
-| Employees    | YES  | 192.168.101.32/28 | 192.168.101.34-46 | 192.168.101.33  | 192.168.101.50 |
-
-## IPs with Domains
-
-| Machine name | Service             | OS       | Type | Domain                   | Running IP      |
-| ------------ | ------------------- | -------- | ---- | ------------------------ | --------------- |
-| WS-1         | FTP/FTPS            | Windows  | A    | ftp.matriz.autoupb.com   | 192.168.101.50  |
-| WS-1         | Primary DNS         | Windows  | A    | ?                        | 192.168.101.50  |
-| WS-2         | Secondary DNS       | Windows? | ?    | ?                        | 10.0.0.2        |
-| WS-2         | Proxy               | Windows? | A    | proxy.matriz.autoupb.com | 10.0.0.2        |
-| Deb-1        | All email services? | Debian?  | MX   | mail.matriz.autoupb.com  | 192.168.101.58? |
-| Deb-1        | HTTP/HTTPS          | Debian   | A    | www.matriz.autoupb.com   | 192.168.101.58  |
-| Deb-1?       | VoIP                | Debian?  | A    | voip.matriz.autoupb.com  | 192.168.101.58  |
-
 ## Default Emails
 
 | User       | Domain             |
