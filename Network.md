@@ -2,12 +2,12 @@
 
 ## Primary zone domains
 
-| Domain                  | Type       | IPv4           | IPv6 |
-| ----------------------- | ---------- | -------------- | ---- |
-| www.matriz.autoupb.com  | A and AAAA | 192.168.101.18 |      |
-| ftp.matriz.autoupb.com  | A and AAAA | 192.168.101.18 |      |
-| mail.matriz.autoupb.com | A and AAAA | 192.168.101.18 |      |
-| mail.matriz.autoupb.com | MX         | 192.168.101.18 |      |
+| Domain                  | Type       | IPv4           | IPv6              |
+| ----------------------- | ---------- |----------------|-------------------|
+| www.matriz.autoupb.com  | A and AAAA | 192.168.101.19 | 2801:0:2E0:D:B::3 |
+| ftp.matriz.autoupb.com  | A and AAAA | 192.168.101.19 | 2801:0:2E0:D:B::3 |
+| mail.matriz.autoupb.com | A and AAAA | 192.168.101.18 | 2801:0:2E0:D:B::2 |
+| mail.matriz.autoupb.com | MX         | 192.168.101.18 | 2801:0:2E0:D:B::2 |
 
 ## Secondary zone
 
@@ -21,18 +21,19 @@
 
 ## Topology
 
-| Computer         | Services                      | VLAN | IPv6 | IPv4                            | IPv4 mask | IPv4 Default Gateway | DNS server     |
-| ---------------- | ----------------------------- | ---- | ---- | ------------------------------- | --------- | -------------------- | -------------- |
-| Debian           | HTTP, HTTPS, POP3, IMAP, SMTP | 1    | ?    | 192.168.101.18                  | 28        | 192.168.101.17       | 192.168.101.19 |
-| Windows server 1 | FTP, FTPS, Primary DNS        | 1    | ?    | 192.168.101.19                  | 28        | 192.168.101.17       | 192.168.101.19 |
-| Mint             | Proxy and IPTables            | 1    | ?    | 192.168.101.20                  | 28        | 192.168.101.17       | 192.168.101.19 |
-| Employees        |                               | 2    | ?    | 192.168.101.34 - 192.168.101.41 | 28        | 192.168.101.33       | 192.168.101.19 |
+| Computer         | Services                      | VLAN  | IPv6                                  | IPv6 mask | IPv6 Default Gateway | DNS server IPV6   | IPv4                            | IPv4 mask | IPv4 Default Gateway | DNS server IPV4 |
+| ---------------- | ----------------------------- |-------|---------------------------------------|-----------|----------------------|-------------------|---------------------------------| --------- | -------------------- |-----------------|
+| Debian           | HTTP, HTTPS, POP3, IMAP, SMTP | 200   | 2801:0:2E0:D:B::2                     | 80        | 2801:0:2E0:D:B::1    | 2801:0:2E0:D:B::3 | 192.168.101.18                  | 28        | 192.168.101.17       | 192.168.101.19  |
+| Windows server 1 | FTP, FTPS, Primary DNS        | 200   | 2801:0:2E0:D:B::3                     | 80        | 2801:0:2E0:D:B::1    | 2801:0:2E0:D:B::3 | 192.168.101.19                  | 28        | 192.168.101.17       | 192.168.101.19  |
+| Mint             | Proxy and IPTables            | 200   | 2801:0:2E0:D:B::4                     | 80        | 2801:0:2E0:D:B::1    | 2801:0:2E0:D:B::3 | 192.168.101.20                  | 28        | 192.168.101.17       | 192.168.101.19  |
+| Employees        |                               | 100   | 2801:0:2E0:D:A::2 - 2801:0:2E0:D:A::9 | 80        | 2801:0:2E0:D:A::1    | 2801:0:2E0:D:B::3 | 192.168.101.34 - 192.168.101.41 | 28        | 192.168.101.33       | 192.168.101.19  |
 
 
 ## Switch ports
 
 - vlan 100 from fastEthernet 10 to fastEthernet 17
 - vlan 200 from fastEthernet 1 to fastEthernet 3
+- GigabitEthernet 0/1 connects to router GigabitEthernet 0/0/1
 
 ## Router ports
 
