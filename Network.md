@@ -48,16 +48,26 @@
 ```
 enable
 configure terminal
+ipv6 unicast-routing
+ipv6 router ospf 1
+router-id 1.1.1.1
+exit
 interface GigabitEthernet0/0/1
 ip address 192.168.101.1 255.255.255.240
+ipv6 address 2801:0:2E0:D::1/64
+ipv6 ospf 1 area 0
 no shutdown
 exit
 interface Serial0/1/0
 ip address 10.10.10.1 255.255.255.252
+ipv6 address 2801:0:2E0:1:0::5/126
+ipv6 ospf 1 area 0
 no shutdown
 exit
 interface Serial0/1/1
 ip address 10.10.20.1 255.255.255.252
+ipv6 address 2801:0:2E0:1:0::9/126
+ipv6 ospf 1 area 0
 no shutdown
 end
 configure terminal 
@@ -79,10 +89,11 @@ network 10.10.10.0 0.0.0.3 area 0
 network 10.10.20.0 0.0.0.3 area 0
 end
 configure terminal 
-ip dhcp pool vlan100
+ip dhcp pool vlan100ipv4
 network 192.168.101.32 255.255.255.240
 default-router 192.168.101.33
 dns-server 192.168.101.19
+exit
 
 ```
 
@@ -108,5 +119,69 @@ exit
 interface gigabitEthernet 0/1
 switchport mode trunk 
 switchport trunk allowed vlan 100,200
+exit
 
+```
+
+### Router version 2 in process (not functional)
+
+```
+enable
+configure terminal
+ipv6 unicast-routing
+ipv6 router ospf 1
+router-id 1.1.1.1
+exit
+interface GigabitEthernet0/0/1
+ip address 192.168.101.1 255.255.255.240
+ipv6 address 2801:0:2E0:D::1/64
+ipv6 ospf 1 area 0
+no shutdown
+exit
+interface Serial0/1/0
+ip address 10.10.10.1 255.255.255.252
+ipv6 address 2801:0:2E0:1:0::5/126
+ipv6 ospf 1 area 0
+no shutdown
+exit
+interface Serial0/1/1
+ip address 10.10.20.1 255.255.255.252
+ipv6 address 2801:0:2E0:1:0::9/126
+ipv6 ospf 1 area 0
+no shutdown
+end
+configure terminal 
+interface gigabitEthernet 0/0/1
+no shutdown 
+exit
+interface gigabitEthernet 0/0/1.100
+encapsulation dot1Q 100
+ip address 192.168.101.33 255.255.255.240
+ipv6 address 2801:0:2E0:D:C::1/80
+exit
+interface gigabitEthernet 0/0/1.200
+encapsulation dot1Q 200
+ip address 192.168.101.17 255.255.255.240
+ipv6 address 2801:0:2E0:D:A::1/80
+end
+configure terminal
+router ospf 1
+network 192.168.101.0 0.0.0.255 area 0
+network 10.10.10.0 0.0.0.3 area 0
+network 10.10.20.0 0.0.0.3 area 0
+end
+configure terminal 
+ip dhcp pool vlan100ipv4
+network 192.168.101.32 255.255.255.240
+default-router 192.168.101.33
+dns-server 192.168.101.19
+exit
+ipv6 dhcp pool vlan100ipv6
+prefix-delegation pool LOCAL
+dns-server 2801:0:2E0:D:A::3
+exit
+ipv6 local pool LOCAL 2801:0:2E0:D:C::2/80 48
+interface gigabitEthernet 0/0/1
+ipv6 dhcp server vlan100ipv6
+exit
 ```
