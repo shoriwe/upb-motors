@@ -1,28 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/shoriwe/upb-motors/internal/data"
 	"github.com/shoriwe/upb-motors/internal/data/memory"
-	"github.com/shoriwe/upb-motors/internal/logs"
 	"github.com/shoriwe/upb-motors/internal/web"
 	"log"
-	"os"
+	"net"
+	"net/http"
 )
 
-func init() {
-	gin.SetMode(gin.ReleaseMode)
-}
-
 func main() {
-	database := memory.NewMemory()
-	connection := data.NewConnection(database)
-	logger := logs.NewLogger(os.Stderr)
-	engine := web.NewEngine(connection, logger)
-	executionError := engine.Run(":8080")
-	if executionError != nil {
-		log.Fatal(executionError)
+	gin.SetMode(gin.ReleaseMode)
+	db := memory.NewMemory()
+	db.APIKey("demo")
+	engine := web.NewEngine(db)
+	l, err := net.Listen("tcp", "127.0.0.1:8000")
+	if err != nil {
+		panic(err)
 	}
-	fmt.Println("Everything is Fine :)")
+	log.Fatal(http.Serve(l, engine))
 }
