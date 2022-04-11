@@ -2,8 +2,8 @@ package test
 
 import (
 	"encoding/json"
+	"github.com/shoriwe/upb-motors/internal/api"
 	"github.com/shoriwe/upb-motors/internal/data/memory"
-	"github.com/shoriwe/upb-motors/internal/web"
 	"io"
 	"net/http"
 	"testing"
@@ -20,7 +20,7 @@ func TestMemoryQueryInventoryValidPage(t *testing.T) {
 	if readError != nil {
 		t.Fatal(readError)
 	}
-	var jsonResponse web.Response
+	var jsonResponse api.Response
 	parseError := json.Unmarshal(contents, &jsonResponse)
 	if parseError != nil {
 		t.Fatal(parseError)
@@ -44,7 +44,7 @@ func TestMemoryQueryInventoryInvalidPage(t *testing.T) {
 	if readError != nil {
 		t.Fatal(readError)
 	}
-	var jsonResponse web.Response
+	var jsonResponse api.Response
 	parseError := json.Unmarshal(contents, &jsonResponse)
 	if parseError != nil {
 		t.Fatal(parseError)
