@@ -1,0 +1,54 @@
+.blue-button {
+    font-size: 20px;
+    color: white;
+    background: rgba(0, 168, 255,1.0);
+    border-color: rgba(0, 168, 255,1.0);
+}
+
+.blue-button:hover {
+    color: white;
+    background: rgba(0, 151, 230,1.0);
+    border-color: rgba(0, 151, 230,1.0);
+}
+
+.title {
+    font-size: 20px;
+}
+
+.vehicles {
+    position: relative;
+}
+
+.vehicle {
+    position: relative;
+    max-width: 100%;
+}
+
+.section {
+    padding: 5vh 5vw;
+    text-align: center;
+}
+
+.blank {
+    text-align: left;
+}
+
+.factory {
+    background-size: cover;
+    background-image: url('/static-vendor/images/factory.jpg');
+    background-position: center center;
+    color: #fff;
+    height: 10vh;
+}
+
+@media (min-width: 300px) {
+    .title {
+        font-size: 20px;
+    }
+}
+
+@media (min-width: 1000px) {
+    .title {
+        font-size: 30px;
+    }
+}
