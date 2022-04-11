@@ -12,7 +12,7 @@ import (
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 	db := memory.NewMemory()
-	db.APIKey("demo")
+	db.APIKey("api-demo")
 	engine := api.NewEngine(db)
 	l, err := net.Listen("tcp", "127.0.0.1:8000")
 	if err != nil {
