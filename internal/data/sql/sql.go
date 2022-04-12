@@ -2,6 +2,7 @@ package sql
 
 import (
 	"database/sql"
+	"encoding/base64"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/shoriwe/upb-motors/internal/data"
@@ -36,7 +37,7 @@ func (s *SQL) Clients(page int) (result []objects.Client) {
 FROM
     clientes
 ORDER BY clientes.id ASC
-LIMIT ?, ?`, page, memory.PageLength)
+LIMIT ? OFFSET ?`, memory.PageLength, (page*memory.PageLength)-memory.PageLength)
 	if queryError != nil {
 		fmt.Println(queryError)
 		return nil
@@ -115,7 +116,7 @@ func (s *SQL) QueryInventory(inventoryPage int) (result []objects.Inventory) {
 	inventario.descripcion AS Description,
 	inventario.precio AS Price,
 	inventario.activo AS Active,
-	dependencias.nombre AS Name,
+	dependencias.nombre AS Dependency,
 	inventario.imagen AS Image
 FROM
     dependencias,
@@ -123,25 +124,28 @@ FROM
 WHERE
 	dependencias.id = inventario.dependencia_id
 ORDER BY inventario.id ASC
-LIMIT ?, ?`, inventoryPage, memory.PageLength)
+LIMIT ? OFFSET ?`, memory.PageLength, (inventoryPage*memory.PageLength)-memory.PageLength)
 	if queryError != nil {
-		fmt.Println(queryError)
 		return nil
 	}
 	var row objects.Inventory
+	var rowImage []byte
+	var rowPrice float64
 	for rows.Next() {
 		scanError := rows.Scan(
 			&row.Id,
 			&row.Amount,
 			&row.Name,
 			&row.Description,
-			&row.Price,
+			&rowPrice,
 			&row.Active,
-			&row.Name,
-			&row.Image)
+			&row.Dependency,
+			&rowImage)
 		if scanError != nil {
 			return nil
 		}
+		row.Price = int64(rowPrice)
+		row.Image = base64.StdEncoding.EncodeToString(rowImage)
 		result = append(result, row)
 	}
 	return result

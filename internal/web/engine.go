@@ -2,9 +2,10 @@ package web
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/shoriwe/upb-motors/internal/api"
 	"github.com/shoriwe/upb-motors/internal/data"
+	"github.com/shoriwe/upb-motors/internal/data/objects"
 	"html/template"
 	"io"
 	"mime"
@@ -12,6 +13,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -66,20 +68,41 @@ func build(context *gin.Context, t string, object interface{}) string {
 	return s
 }
 
+func static(p string) gin.HandlerFunc {
+	return func(context *gin.Context) {
+		f := context.Param("filepath")
+		context.Header("Content-Type", mime.TypeByExtension(f[strings.Index(f, "."):]))
+		context.FileFromFS(path.Join(prefix, p, f), http.FS(resources))
+	}
+}
+
 func index(context *gin.Context) {
 	build(context, "nav-bar.html", NavigationBar{
 		Body: template.HTML(build(nil, "index.html", nil)),
 	})
 }
 
-func static(p string) gin.HandlerFunc {
+type VehiclesList struct {
+	BeforePage int
+	NextPage   int
+	Vehicles   []objects.Inventory
+}
+
+func vehicles(database data.Database) gin.HandlerFunc {
 	return func(context *gin.Context) {
-		f := context.Param("filepath")
-		extension := f[strings.Index(f, "."):]
-		contentType := mime.TypeByExtension(extension)
-		fmt.Println(extension, contentType)
-		context.Header("Content-Type", contentType)
-		context.FileFromFS(path.Join(prefix, p, f), http.FS(resources))
+		rawPage := context.Param(api.PageParam)
+		page, parseError := strconv.Atoi(rawPage)
+		if parseError != nil {
+			_ = context.AbortWithError(http.StatusForbidden, parseError)
+			return
+		}
+		build(context, "nav-bar.html", NavigationBar{
+			Body: template.HTML(build(nil, "vehicles.html", VehiclesList{
+				BeforePage: page - 1,
+				NextPage:   page + 1,
+				Vehicles:   database.QueryInventory(page),
+			})),
+		})
 	}
 }
 
@@ -92,5 +115,6 @@ func NewEngine(database data.Database) *gin.Engine {
 	engine.GET("/js/*filepath", static("js"))
 	engine.GET("/static-vendor/*filepath", static("static-vendor"))
 	engine.GET(IndexLocation, index)
+	engine.GET(ProductsListLocation, vehicles(database))
 	return engine
 }

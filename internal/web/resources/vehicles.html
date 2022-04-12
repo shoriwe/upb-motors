@@ -1,0 +1,39 @@
+<title>Vehicles</title>
+
+<div class="list">
+    {{range $vehicle := .Vehicles}}
+    <div class="entry">
+        <img alt="{{$vehicle.Id}}" src="data:image;base64, {{$vehicle.Image}}">
+        <h2 style="text-align: left;">{{$vehicle.Name}}</h2>
+        <table class="table-details">
+            <tr>
+                <td><h5><strong>Amount:</strong></h5></td>
+                <td><h5>{{$vehicle.Amount}}</h5></td>
+            </tr>
+            <tr>
+                <td><h5><strong>Price:</strong></h5></td>
+                <td><h5>{{$vehicle.Price}}</h5></td>
+            </tr>
+        </table>
+        <a style="width: 100%;" href="/vehicles/view/{{$vehicle.Id}}" class="button green-button">View</a>
+    </div>
+    {{end}}
+</div>
+
+<div style="text-align: center;">
+    <div class="container">
+        <div class="row">
+            <div class="one-half column">
+                <a class="button button-primary"
+                   href="/vehicles/{{.BeforePage}}"
+                   {{ if lt .BeforePage 0}}
+                   onclick="return false;"
+                   {{end}}
+                >Before</a>
+            </div>
+            <div class="one-half column">
+                <a class="button button-primary" href="/vehicles/{{.NextPage}}">Next</a>
+            </div>
+        </div>
+    </div>
+</div>

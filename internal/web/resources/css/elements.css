@@ -1,14 +1,55 @@
+.list {
+    padding: 5vh 5vw;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.entry {
+    text-align: center;
+    padding: 2.5vh 2.5vw;
+    flex: 1 0 30%; /* explanation below */
+    margin: 5px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.entry img {
+    width: 400px;
+    height: 250px;
+}
+
+.entry h2 {
+    font-weight: bold;
+}
+
 .blue-button {
     font-size: 20px;
     color: white;
-    background: rgba(0, 168, 255,1.0);
-    border-color: rgba(0, 168, 255,1.0);
+    background: rgba(0, 168, 255, 1.0);
+    border-color: rgba(0, 168, 255, 1.0);
 }
 
 .blue-button:hover {
     color: white;
-    background: rgba(0, 151, 230,1.0);
-    border-color: rgba(0, 151, 230,1.0);
+    background: rgba(0, 151, 230, 1.0);
+    border-color: rgba(0, 151, 230, 1.0);
+}
+
+.green-button {
+    font-size: 20px;
+    color: white;
+    background: #1abc9c;
+    border-color: #1abc9c;
+}
+
+.green-button:hover {
+    color: white;
+    background: #16a085;
+    border-color: #16a085;
+}
+
+.table-details {
+    width: 100%;
+    border: 0 solid transparent;
 }
 
 .title {

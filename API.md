@@ -4,7 +4,7 @@
 
 - Request:
   - URL Arguments:
-    - `page`: int >= 0
+    - `page`: int >= 1
 - Response:
   - Body (JSON)
 
@@ -21,7 +21,7 @@
       "precio": 1900,         // Product price
       "activo": false,        // Available for sale
       "dependencia": "Giron", // Product location
-      "imagen": null          // Product image
+      "imagen": "..."         // Product image base64 encoded
     },
     ...
   ] | [] | null
@@ -32,7 +32,7 @@
 
 - Request:
   - URL Arguments:
-    - `page`: int >= 0
+    - `page`: int >= 1
   - Headers:
     - `API-Key`: string
 - Response:
