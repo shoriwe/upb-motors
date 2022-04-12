@@ -3,7 +3,6 @@ package web
 import (
 	"bytes"
 	"github.com/gin-gonic/gin"
-	"github.com/shoriwe/upb-motors/internal/api"
 	"github.com/shoriwe/upb-motors/internal/data"
 	"github.com/shoriwe/upb-motors/internal/data/objects"
 	"html/template"
@@ -90,7 +89,7 @@ type VehiclesList struct {
 
 func vehicles(database data.Database) gin.HandlerFunc {
 	return func(context *gin.Context) {
-		rawPage := context.Param(api.PageParam)
+		rawPage := context.Param(PageParam)
 		page, parseError := strconv.Atoi(rawPage)
 		if parseError != nil {
 			_ = context.AbortWithError(http.StatusForbidden, parseError)
@@ -106,6 +105,25 @@ func vehicles(database data.Database) gin.HandlerFunc {
 	}
 }
 
+func viewVehicle(database data.Database) gin.HandlerFunc {
+	return func(context *gin.Context) {
+		rawPage := context.Param(IdParam)
+		page, parseError := strconv.Atoi(rawPage)
+		if parseError != nil {
+			_ = context.AbortWithError(http.StatusForbidden, parseError)
+			return
+		}
+		vehicle := database.GetVehicle(page)
+		if vehicle == nil {
+			context.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+		build(context, "nav-bar.html", NavigationBar{
+			Body: template.HTML(build(nil, "view-vehicle.html", vehicle)),
+		})
+	}
+}
+
 func NewEngine(database data.Database) *gin.Engine {
 	engine := gin.Default()
 	engine.GET(RootLocation, func(context *gin.Context) {
@@ -115,6 +133,7 @@ func NewEngine(database data.Database) *gin.Engine {
 	engine.GET("/js/*filepath", static("js"))
 	engine.GET("/static-vendor/*filepath", static("static-vendor"))
 	engine.GET(IndexLocation, index)
-	engine.GET(ProductsListLocation, vehicles(database))
+	engine.GET(ListVehiclesLocation, vehicles(database))
+	engine.GET(ViewVehicleLocation, viewVehicle(database))
 	return engine
 }

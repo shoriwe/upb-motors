@@ -1,8 +1,10 @@
 package web
 
 const (
+	PageParam            = "page"
+	IdParam              = "id"
 	RootLocation         = "/"
 	IndexLocation        = "/index"
-	ProductsListLocation = "/vehicles/:page"
-	ProductViewLocation  = "/vehicles/view/:id"
+	ListVehiclesLocation = "/vehicles/:page"
+	ViewVehicleLocation  = "/vehicles/view/:id"
 )
