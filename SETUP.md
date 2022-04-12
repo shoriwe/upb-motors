@@ -13,13 +13,50 @@
 
 ## Production
 
-### Build API
+### Setup API
 
 1. Install Go > 1.18.
-2. Execute:
+2. Compile:
 
 ```shell
 go build -buildvcs=false -ldflags="-s -w" -trimpath -mod vendor -o ./api.exe ./cmd/api
+```
+
+3. Set environment variables
+
+| Variable name | Description                                             | Example value                           |
+| ------------- | ------------------------------------------------------- | --------------------------------------- |
+| API-KEY       | API Key to be used by the clients connecting to the API | API_KEY_TO_BE_USED_BY_CLIENTS           |
+| DB-URL        | Database URL to connect to                              | root:password@tcp(127.0.0.1)/upb_motors |
+| HOST          | Listen address                                          | 127.0.0.1:8080                          |
+
+4. Execute the binary
+
+```shell
+./api.exe
+```
+
+### Build Web catalog
+
+1. Install Go > 1.18.
+2. Compile:
+
+```shell
+go build -buildvcs=false -ldflags="-s -w" -trimpath -mod vendor -o ./web.exe ./cmd/web
+```
+
+3. Set environment variables
+
+| Variable name | Description                                             | Example value                           |
+| ------------- | ------------------------------------------------------- | --------------------------------------- |
+| API-KEY       | API Key to be used by the clients connecting to the API | API_KEY_TO_BE_USED_BY_CLIENTS           |
+| DB-URL        | Database URL to connect to                              | root:password@tcp(127.0.0.1)/upb_motors |
+| HOST          | Listen address                                          | 127.0.0.1:8080                          |
+
+4. Execute the binary
+
+```shell
+./web.exe
 ```
 
 ### FTP(S)
