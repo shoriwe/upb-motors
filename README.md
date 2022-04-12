@@ -12,6 +12,14 @@
 
 <img src="preview/5.png" alt="5" style="zoom:50%;" />
 
+## Web catalog preview
+
+<img src="preview/6.png" alt="6" style="zoom:50%;" />
+
+<img src="preview/7.png" alt="7" style="zoom:50%;" />
+
+<img src="preview/8.png" alt="8" style="zoom:50%;" />
+
 ## Documentation
 
 - [API](https://github.com/shoriwe/upb-motors/blob/main/API.md)
