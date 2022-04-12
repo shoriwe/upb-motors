@@ -1,5 +1,20 @@
 # Network
 
+## Router ports redirect
+
+| Service/Application | Host (IPv4)    | Host (IPv6) | Protocol | Port | Router port |
+| ------------------- | -------------- | ----------- | -------- | ---- | ----------- |
+| Web catalog (HTTP)  | 192.168.101.18 | ?           | TCP      | 8000 | 80          |
+| Web catalog (HTTPS) | 192.168.101.18 | ?           | TCP      | 8443 | 443         |
+| SMTP                | 192.168.101.18 | ?           | TCP      | 25   | 25          |
+| SMTPS               | 192.168.101.18 | ?           | TCP      | 465  | 465         |
+| IMAP                | 192.168.101.18 | ?           | TCP      | 143  | 143         |
+| IMAP (TLS)          | 192.168.101.18 | >           | TCP      | 993  | 993         |
+| POP3                | 192.168.101.18 | ?           | TCP      | 110  | 110         |
+| POP3 (TLS)          | 192.168.101.18 | ?           | TCP      | 995  | 995         |
+| DNS                 | 192.168.101.19 | ?           | UDP?     | 53   | 53          |
+| HTTP Proxy          | 192.168.101.20 | ?           | TCP      | 8080 | 8080        |
+
 ## Primary zone domains
 
 | Domain                  | Type       | IPv4           | IPv6              |
