@@ -36,7 +36,7 @@ func (m *Memory) GetVehicle(id int) *objects.Inventory {
 	if len(m.inventory) < id {
 		return nil
 	}
-	return &m.inventory[id-1]
+	return &m.inventory[id]
 }
 
 func (m *Memory) QueryInventory(inventoryPage int) []objects.Inventory {
