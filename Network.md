@@ -66,6 +66,8 @@ exit
 interface GigabitEthernet0/0/1.100
 encapsulation dot1Q 100
 ip address 192.168.101.33 255.255.255.240
+ip nat inside
+ip access-group 102 in
 ipv6 address 2801:0:2E0:D:A::1/80
 ipv6 nd managed-config-flag
 ipv6 dhcp server vlan100ipv6
@@ -73,39 +75,54 @@ exit
 interface GigabitEthernet0/0/1.200
 encapsulation dot1Q 200
 ip address 192.168.101.17 255.255.255.240
+ip nat inside
+ip access-group 102 in
 ipv6 address 2801:0:2E0:D:B::1/80
 exit
 interface Serial0/1/0
-ip address 10.10.30.2 255.255.255.0
+ip address 10.10.30.2 255.255.255.252
+ip nat outside
 ip access-group 101 in
-ipv6 address 2801:0:2E0:1::5/126
+ipv6 address 2801:0:2E0:1:0::10/126
 ipv6 ospf 1 area 0
 no shutdown
 exit
 interface Serial0/1/1
-ip address 10.10.40.1 255.255.255.0
+ip address 10.10.40.1 255.255.255.252
 ip nat outside
-ipv6 address 2801:0:2E0:1::9/126
+ip access-group 101 in
+ipv6 address 2801:0:2E0:1:0::5/126
 ipv6 ospf 1 area 0
 no shutdown
 exit
 router ospf 1
-network 10.10.30.0 0.0.0.255 area 0
-network 10.10.40.0 0.0.0.255 area 0
+network 10.10.30.0 0.0.0.3 area 0
+network 10.10.40.0 0.0.0.3 area 0
 exit
+ip route 0.0.0.0 0.0.0.0 10.10.40.2
+ipv6 route ::/0 Serial0/1/1
 ipv6 router ospf 1
-router-id 1.1.1.1
 exit
-ip nat pool NAT_POOL_UPBMOTORS 10.10.30.3 10.10.30.254 netmask 255.255.255.0
-ip nat inside source list 1 pool NAT_POOL_UPBMOTORS
-access-list 1 permit 192.168.101.32 0.0.0.15
-access-list 1 permit 192.168.101.16 0.0.0.15
-access-list 101 permit tcp any host 192.168.101.18 eq 80
-access-list 101 permit tcp any host 192.168.101.18 eq 433
-access-list 101 permit tcp any host 192.168.101.19 eq 53
-access-list 101 permit icmp any 10.10.30.0 0.0.0.255
-exit
+ip nat inside source static tcp 192.168.101.18 80 10.10.30.1 80
+ip nat inside source static udp 192.168.101.18 443 192.168.101.18 443
+ip nat inside source static udp 192.168.101.19 53 192.168.101.19 53
+ip nat inside source static tcp 192.168.101.18 8080 192.168.101.18 8080
+ip nat inside source static udp 192.168.101.18 8080 192.168.101.18 8080
+access-list 101 permit ospf any any
+access-list 101 permit tcp any any eq 80
+access-list 101 permit tcp any any eq 443
+access-list 101 permit udp any any eq 53
+access-list 101 permit tcp any any eq pop3
+access-list 101 permit tcp any any eq smtp
+access-list 101 permit udp any any eq 110
+access-list 101 permit udp any any eq 25
+access-list 101 deny icmp any 192.168.101.0 0.0.0.255
+access-list 101 permit ip any any 
+access-list 102 deny icmp 192.168.101.0 0.0.0.255 192.168.101.32 0.0.0.15
+access-list 102 deny icmp 192.168.101.0 0.0.0.255 192.168.101.16 0.0.0.15
+access-list 102 permit ip any any
 copy running-config startup-config
+exit
 ```
 
 ### Switch
