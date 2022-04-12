@@ -31,6 +31,14 @@ type Memory struct {
 	inventory       []objects.Inventory
 }
 
+func (m *Memory) GetVehicle(id int) *objects.Inventory {
+	id--
+	if len(m.inventory) < id {
+		return nil
+	}
+	return &m.inventory[id-1]
+}
+
 func (m *Memory) QueryInventory(inventoryPage int) []objects.Inventory {
 	if inventoryPage <= 0 {
 		return nil

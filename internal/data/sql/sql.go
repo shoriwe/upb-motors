@@ -6,11 +6,12 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/shoriwe/upb-motors/internal/data"
-	"github.com/shoriwe/upb-motors/internal/data/memory"
 	"github.com/shoriwe/upb-motors/internal/data/objects"
 	"sync"
 	"time"
 )
+
+const PageLength = 10
 
 type SQL struct {
 	apiKey      string
@@ -37,7 +38,7 @@ func (s *SQL) Clients(page int) (result []objects.Client) {
 FROM
     clientes
 ORDER BY clientes.id ASC
-LIMIT ? OFFSET ?`, memory.PageLength, (page*memory.PageLength)-memory.PageLength)
+LIMIT ? OFFSET ?`, PageLength, (page*PageLength)-PageLength)
 	if queryError != nil {
 		fmt.Println(queryError)
 		return nil
@@ -124,7 +125,7 @@ FROM
 WHERE
 	dependencias.id = inventario.dependencia_id
 ORDER BY inventario.id ASC
-LIMIT ? OFFSET ?`, memory.PageLength, (inventoryPage*memory.PageLength)-memory.PageLength)
+LIMIT ? OFFSET ?`, PageLength, (inventoryPage*PageLength)-PageLength)
 	if queryError != nil {
 		return nil
 	}
@@ -149,6 +150,50 @@ LIMIT ? OFFSET ?`, memory.PageLength, (inventoryPage*memory.PageLength)-memory.P
 		result = append(result, row)
 	}
 	return result
+}
+
+func (s *SQL) GetVehicle(id int) *objects.Inventory {
+	rows, queryError := s.db.Query(
+		`SELECT
+	inventario.id AS Id,
+	inventario.cantidad AS Amount,
+	inventario.nombre AS Name,
+	inventario.descripcion AS Description,
+	inventario.precio AS Price,
+	inventario.activo AS Active,
+	dependencias.nombre AS Dependency,
+	inventario.imagen AS Image
+FROM
+    dependencias,
+	inventario
+WHERE
+	dependencias.id = inventario.dependencia_id
+	AND inventario.id = ?
+LIMIT 1`, id)
+	if queryError != nil {
+		return nil
+	}
+	if !rows.Next() {
+		return nil
+	}
+	var row objects.Inventory
+	var rowImage []byte
+	var rowPrice float64
+	scanError := rows.Scan(
+		&row.Id,
+		&row.Amount,
+		&row.Name,
+		&row.Description,
+		&rowPrice,
+		&row.Active,
+		&row.Dependency,
+		&rowImage)
+	if scanError != nil {
+		return nil
+	}
+	row.Price = int64(rowPrice)
+	row.Image = base64.StdEncoding.EncodeToString(rowImage)
+	return &row
 }
 
 func NewSQL(dataSourceName string) data.Database {
