@@ -52,8 +52,8 @@
 
 ## Router ports
 
-- serial 0/1/0 connects to serial 0/1/0 of COMPANY 
-- serial 0/1/1 connects to serial 0/1/1 of COMPANY
+- serial 0/1/0 is connected workshop company
+- serial 0/1/1 is connected dealer company 2
 - GigabitEthernet 0/0/1 connects to switch GigabitEthernet 0/1
 
 ## Scripts
