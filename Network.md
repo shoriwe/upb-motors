@@ -103,7 +103,7 @@ interface Serial0/1/0
 ip address 10.10.30.2 255.255.255.252
 ip nat outside
 ip access-group 101 in
-ipv6 address 2801:0:2E0:1:0::5/126
+ipv6 address 2801:0:2E0:1:0::A/126
 ipv6 ospf 1 area 0
 no shutdown
 exit
@@ -111,7 +111,7 @@ interface Serial0/1/1
 ip address 10.10.40.1 255.255.255.252
 ip nat outside
 ip access-group 101 in
-ipv6 address 2801:0:2E0:1:0::9/126
+ipv6 address 2801:0:2E0:1:0::5/126
 ipv6 ospf 1 area 0
 no shutdown
 exit
