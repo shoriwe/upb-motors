@@ -1,0 +1,73 @@
+networks:
+  upb-motors:
+    external: false
+
+services:
+  database:
+    image: mariadb:latest
+    container_name: upb-motors-database
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=upb_motors
+      - MYSQL_USER=upb_motors
+      - MYSQL_PASSWORD=upb_motors
+      - MYSQL_DATABASE=upb_motors
+    volumes:
+      - ./mysql:/var/lib/mysql
+      - ./database/:/docker-entrypoint-initdb.d/
+    networks:
+      - upb-motors
+
+  erp:
+    container_name: upb-motors-erp
+    user: 5000:5000
+    build:
+      context: .
+      dockerfile: erp.Dockerfile
+    image: upb-motors-erp
+    restart: unless-stopped
+    environment:
+      - DB_HOST=upb_motors
+      - DB_USERNAME=upb_motors
+      - DB_PASSWORD=upb_motors
+      - DB_DATABASE=upb_motors
+    depends_on:
+      - database
+    volumes:
+      - ./src:/opt/erp
+    networks:
+      - upb-motors
+    ports:
+      - 127.0.0.1:8000:8000
+
+  catalog:
+    container_name: upb-motors-catalog
+    build:
+      context: .
+      dockerfile: catalog.Dockerfile
+    image: upb-motors-catalog
+    restart: unless-stopped
+    environment:
+      - HOST=0.0.0.0:8080
+      - DB_URL=upb_motors:upb_motors@tcp(database)/upb_motors
+      - API_KEY=CHANGE_THIS_API_KEY
+    depends_on:
+      - database
+    ports:
+      - 127.0.0.1:8080:8080
+
+  api:
+    container_name: upb-motors-api
+    build:
+      context: .
+      dockerfile: api.Dockerfile
+    image: upb-motors-api
+    restart: unless-stopped
+    environment:
+      - HOST=0.0.0.0:5000
+      - DB_URL=upb_motors:upb_motors@tcp(database)/upb_motors
+      - API_KEY=CHANGE_THIS_API_KEY
+    depends_on:
+      - database
+    ports:
+      - 127.0.0.1:5000:5000
