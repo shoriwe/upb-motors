@@ -13,7 +13,7 @@ require 'menu.php';
     <div class="centered-container-for-input" style="margin-top: 10vh; width: 90vw; height: 70vh;">
         <div class="centered-container-for-input" style="text-align: left; width: 100%;">
             <?php
-            if (!connect()->database->is_ventas($_SESSION["user-id"])) {
+            if (!connect()->is_ventas($_SESSION["user-id"])) {
                 js_redirect("/dashboard.php");
             }
 
@@ -22,7 +22,7 @@ require 'menu.php';
                 if (isset($_POST["enabled"])) {
                     $is_enabled = true;
                 }
-                $succeed = connect()->database->update_client(
+                $succeed = connect()->update_client(
                     $_GET["id"],
                     $_POST["name"],
                     $_POST["personal_id"],
@@ -35,7 +35,7 @@ require 'menu.php';
                     echo "<h3 class='error-block'>No se pudo actualizar al cliente</h3>";
                 }
             }
-            $client = connect()->database->view_client($_GET["id"]);
+            $client = connect()->view_client($_GET["id"]);
             if ($client === null) {
                 js_redirect("/admin/home.php");
             }

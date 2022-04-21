@@ -7,6 +7,9 @@ const RecursosHumanos = 2;
 const Ventas = 3;
 const Inventario = 4;
 const Admin = 5;
+const AUTH = "AUTH";
+const ERROR = "ERROR";
+const LOG = "LOG";
 
 function get_permission_name(int $permission): string
 {
@@ -45,6 +48,8 @@ interface iDatabase
      */
     public function search_products(string $product_name): array;
 
+    public function log(string $level, string $message);
+
     public function get_dependency_id(string $dependency_name): int;
 
     public function get_dependency_name(int $dependency_id): string;
@@ -81,10 +86,6 @@ interface iDatabase
 
     public function update_password(int $user_id, string $old_password, string $new_password): ?string;
 
-    public function log_login_succeed(string $email);
-
-    public function log_login_failed(string $email);
-
     public function login(string $email, string $password): ?int;
 
     public function request_password_reset(string $email): ?string;
@@ -105,15 +106,15 @@ interface iDatabase
 
     public function registrar_orden_producto(int $producto, int $cantidad, int $id_orden, int $pagos): bool;
 
-    public function delete_erorr_orden(int $id): bool;
+    public function delete_orden(int $id): bool;
 
-    public function delete_erorr_detalles_orden(int $id): bool;
+    public function delete_detalles_orden(int $id): bool;
 
     public function buscar_orden_empleado(string $empleado): array;
 
-    public function get_name_employees(int $id): ?string;
+    public function get_employee_name(int $id): ?string;
 
-    public function get_name_clients(int $id): ?string;
+    public function get_client_name(int $id): ?string;
 
     public function view_orden(int $orden_id): ?Lista_ordenes;
 
@@ -131,9 +132,9 @@ interface iDatabase
 
     public function registrar_factura_producto(int $producto, int $cantidad, int $id_orden, int $pagos): bool;
 
-    public function delete_erorr_factura(int $id): bool;
+    public function delete_factura(int $id): bool;
 
-    public function delete_erorr_detalles_factura(int $id): bool;
+    public function delete_detalles_factura(int $id): bool;
 
     public function registrar_orden(int $empleado, int $cliente, string $hoy, float $descuento): bool;
 
@@ -164,423 +165,10 @@ interface iDatabase
     public function get_total_productos(): ?int;
 
     public function get_total_precio(): ?int;
-}
 
+    public function get_ventas_credito(): ?int;
 
-class TestDatabase implements iDatabase
-{
-    public ?Cache $users = null;
-    public ?Cache $cache = null;
-
-    public function __construct()
-    {
-        $this->users = new Cache("test-users.dump");
-        $this->cache = new Cache("cache.dump");
-        // TODO: FIX ME
-    }
-
-    public function login(string $email, string $password): ?int
-    {
-        $user = $this->users->get($email);
-        if ($user !== null) {
-            if (password_verify($password, $user->password)) {
-                return $user->id;
-            }
-        }
-        return null;
-    }
-
-    public function request_password_reset(string $email): ?string
-    {
-        $code = null;
-        $user = $this->users->get($email);
-        if ($user !== null) {
-            $code = generateRandomString(64);
-            $this->cache->set($code, $user->email);
-        }
-        return $code;
-    }
-
-    public function reset_password(string $code, string $new_password): bool
-    {
-        $email = $this->cache->get($code);
-        if ($email === null) {
-            return false;
-        }
-        $user = $this->users->get($email);
-        if ($user === null) {
-            return false;
-        }
-        $user->password = password_hash($new_password, PASSWORD_DEFAULT);
-        $this->users->set($user->email, $user);
-        $this->cache->delete($code);
-        return true;
-    }
-
-    public function log_login_succeed(string $email)
-    {
-        print_r("Login succeed for " . $email);
-    }
-
-    public function log_login_failed(string $email)
-    {
-        print_r("Login failed for " . $email);
-    }
-
-    public function update_password(int $user_id, string $old_password, string $new_password): ?string
-    {
-        // TODO: Implement update_password() method.
-        return "IMPLEMENT ME";
-    }
-
-    public function is_gerente(int $user_id): bool
-    {
-        // TODO: Implement is_gerente() method.
-        return false;
-    }
-
-    public function is_recursos_humanos(int $user_id): bool
-    {
-        // TODO: Implement is_recursos_humanos() method.
-        return false;
-    }
-
-    public function is_ventas(int $user_id): bool
-    {
-        // TODO: Implement is_ventas() method.
-        return false;
-    }
-
-    public function is_inventario(int $user_id): bool
-    {
-        // TODO: Implement is_inventario() method.
-        return false;
-    }
-
-    public function search_products(string $product_name): array
-    {
-        // TODO: Implement search_products() method.
-        return array();
-    }
-
-    public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file, int $dependencia): bool
-    {
-        // TODO: Implement add_inventory() method.
-        return false;
-    }
-
-    public function view_product(int $id): ?Product
-    {
-        // TODO: Implement view_product() method.
-        return null;
-    }
-
-    public function is_admin(int $user_id): bool
-    {
-        // TODO: Implement is_admin() method.
-        return false;
-    }
-
-    public function register_user(int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password): bool
-    {
-        // TODO: Implement register_user() method.
-        return false;
-    }
-
-    public function search_employees(string $employee_name, string $employee_personal_id): array
-    {
-        // TODO: Implement search_employees() method.
-        return array();
-    }
-
-    public function view_user(int $user_id): ?Employee
-    {
-        // TODO: Implement view_user() method.
-        return null;
-    }
-
-    public function update_user(int $id, int $permission, string $name, string $personal_id, string $address, string $phone, string $email, string $password, bool $enabled): bool
-    {
-        // TODO: Implement update_user() method.
-        return false;
-    }
-
-    public function update_product(int $id, int $amount, string $name, string $description, float $price, bool $active, int $dependencia): bool
-    {
-        // TODO: Implement update_product() method.
-        return false;
-    }
-
-    public function register_client(string $name, string $personal_id, string $address, string $phone, string $email): bool
-    {
-        // TODO: Implement register_client() method.
-        return false;
-    }
-
-    public function search_clients(string $client_name, string $employee_personal_id): array
-    {
-        // TODO: Implement search_clients() method.
-        return array();
-    }
-
-    public function view_client(int $client_id): ?Client
-    {
-        // TODO: Implement view_client() method.
-        return null;
-    }
-
-    public function update_client(int $id, string $name, string $personal_id, string $address, string $phone, string $email, bool $enabled): bool
-    {
-        // TODO: Implement update_client() method.
-        return false;
-    }
-
-    public function lista_productos(): array
-    {
-        // TODO: Implement lista_productos() method.
-        return array();
-    }
-
-    public function lista_clientes(): array
-    {
-        // TODO: Implement lista_productos() method.
-        return array();
-    }
-
-    public function lista_empleados(): array
-    {
-        // TODO: Implement lista_productos() method.
-        return array();
-    }
-
-    public function registrar_orden(int $empleado, int $cliente, string $hoy, float $descuento): bool
-    {
-        // TODO: Implement registrar_orden() method.
-        return false;
-    }
-
-    public function cancel_purchase(int $o_cliente_id, int $o_empleado_id, string $fecha, bool $o_enabled): bool
-    {
-        // TODO: Implement cancel_purchase() method.
-        return false;
-    }
-
-
-    public function get_price_history(int $product_id): ?array
-    {
-        // TODO: Implement get_price_history() method.
-        return null;
-    }
-
-    public function id_orden(int $empleado, int $cliente): ?int
-    {
-        // TODO: Implement id_orden() method.
-        return null;
-    }
-
-    public function lista_pagos(): array
-    {
-        // TODO: Implement lista_productos() method.
-        return array();
-    }
-
-    public function registrar_orden_producto(int $producto, int $cantidad, int $id_orden, int $pagos): bool
-    {
-        // TODO: Implement registrar_orden_producto() method.
-        return false;
-    }
-
-    public function delete_erorr_orden(int $id): bool
-    {
-        // TODO: Implement delete_erorr_orden() method.
-        return false;
-    }
-
-    public function delete_erorr_detalles_orden(int $id): bool
-    {
-        // TODO: Implement delete_erorr_detalles_orden() method.
-        return false;
-    }
-
-    public function buscar_orden_empleado(string $empleado): array
-    {
-        // TODO: Implement buscar_orden_empleado() method.
-        return array();
-    }
-
-    public function get_name_employees(int $id): ?string
-    {
-        // TODO: Implement get_name_employees() method.
-        return null;
-    }
-
-    public function get_name_clients(int $id): ?string
-    {
-        // TODO: Implement get_name_clients() method.
-        return null;
-    }
-
-    public function view_orden(int $orden_id): ?Lista_ordenes
-    {
-        // TODO: Implement view_orden() method.
-        return null;
-    }
-
-    public function details_view_orden(int $orden_id): array
-    {
-        // TODO: Implement details_view_orden() method.
-        return array();
-    }
-
-    public function get_product(int $id): ?Product
-    {
-        // TODO: Implement get_product() method.
-        return null;
-    }
-
-    public function get_tipo_pago(int $id): ?string
-    {
-        // TODO: Implement get_tipo_pago() method.
-        return null;
-    }
-
-    public function close_orden(int $id): bool
-    {
-        // TODO: Implement close_orden() method.
-        return false;
-    }
-
-    public function registrar_factura(int $empleado, int $cliente, string $hoy, float $descuento): bool
-    {
-        // TODO: Implement registrar_orden() method.
-        return false;
-    }
-
-    public function id_factura(int $empleado, int $cliente): ?int
-    {
-        // TODO: Implement id_factura() method.
-        return null;
-    }
-
-    public function registrar_factura_producto(int $producto, int $cantidad, int $id_orden, int $pagos): bool
-    {
-        // TODO: Implement registrar_factura_producto() method.
-        return false;
-    }
-
-    public function delete_erorr_factura(int $id): bool
-    {
-        // TODO: Implement delete_erorr_factura() method.
-        return false;
-    }
-
-    public function delete_erorr_detalles_factura(int $id): bool
-    {
-        // TODO: Implement delete_erorr_detalles_factura() method.
-        return false;
-    }
-
-    public function buscar_factura_empleado(string $empleado): array
-    {
-        // TODO: Implement buscar_factura_empleado() method.
-        return array();
-    }
-
-    public function view_factura(int $factura_id): ?Lista_facturas
-    {
-        // TODO: Implement view_factura() method.
-        return null;
-    }
-
-    public function details_view_factura(int $factura_id): array
-    {
-        // TODO: Implement details_view_factura() method.
-        return array();
-    }
-
-    public function close_factura(int $id): bool
-    {
-        // TODO: Implement close_factura() method.
-        return false;
-    }
-
-    public function get_dependency_id(string $dependency_name): int
-    {
-        // TODO: Implement get_dependency_id() method.
-        return 0;
-    }
-
-    public function get_dependency_name(int $dependency_id): string
-    {
-        // TODO: Implement get_dependency_name() method.
-        return "";
-    }
-
-    public function list_dependencies(): array
-    {
-        // TODO: Implement list_dependencies() method.
-        return array();
-    }
-
-    public function buscar_factura_cliente(string $cliente): array
-    {
-        // TODO: Implement buscar_factura_cliente() method.
-        return array();
-    }
-
-    public function registrar_gasto(int $valor, string $razon): bool
-    {
-        // TODO: Implement registrar_gasto() method.
-        return false;
-    }
-
-    public function lista_gastos(): array
-    {
-        // TODO: Implement lista_gastos() method.
-        return array();
-    }
-
-    public function get_ventas_caja(): ?int
-    {
-        // TODO: Implement get_ventas_caja() method.
-        return null;
-    }
-
-    public function get_ventas_bancos(): ?int
-    {
-        // TODO: Implement get_ventas_bancos() method.
-        return null;
-    }
-
-    public function get_costos_ventas(): ?int
-    {
-        // TODO: Implement get_costos_ventas() method.
-        return null;
-    }
-
-    public function get_gastos(): ?int
-    {
-        // TODO: Implement get_gastos() method.
-        return null;
-    }
-
-    public function get_informe_inventario(): array
-    {
-        // TODO: Implement get_informe_inventario() method.
-        return array();
-    }
-
-    public function get_total_productos(): ?int
-    {
-        // TODO: Implement get_total_productos() method.
-        return null;
-    }
-
-    public function get_total_precio(): ?int
-    {
-        // TODO: Implement get_total_precio() method.
-        return null;
-    }
+    public function get_cuentas_cobrar(): array;
 }
 
 class MySQL implements iDatabase
@@ -607,10 +195,24 @@ class MySQL implements iDatabase
         $results = $records->fetch(PDO::FETCH_ASSOC);
         if ($results) {
             if (count($results) > 0 && password_verify($password, $results['hash_contrasena'])) {
+                $this->log(AUTH, "Login succeed as " . $email);
                 return $results["id"];
             }
         }
+        $this->log(AUTH, "Login failed as " . $email);
         return null;
+    }
+
+    public function log(string $level, string $message)
+    {
+        if (headers_sent()) {
+            $user_id = $_SESSION["user-id"];
+            $message = "(Done by user identified by ID: $user_id) $message";
+        }
+        $records = $this->database->prepare('CALL log(:level, :message)');
+        $records->bindParam(':level', $level);
+        $records->bindParam(':message', $message);
+        $records->execute();
     }
 
     public function request_password_reset(string $email): ?string
@@ -623,9 +225,11 @@ class MySQL implements iDatabase
             if (count($results) > 0) {
                 $code = generateRandomString(64);
                 $this->cache->set($code, $results["id"]);
+                $this->log(AUTH, "Password reset code generated for " . $email);
                 return $code;
             }
         }
+        $this->log(AUTH, "Could not generate password reset code for " . $email);
         return "";
     }
 
@@ -644,20 +248,6 @@ class MySQL implements iDatabase
         return true;
     }
 
-    public function log_login_succeed(string $email)
-    {
-        $records = $this->database->prepare('CALL log_login_succeed(:email);');
-        $records->bindParam(':email', $email);
-        $records->execute();
-    }
-
-    public function log_login_failed(string $email)
-    {
-        $records = $this->database->prepare('CALL log_login_failed(:email);');
-        $records->bindParam(':email', $email);
-        $records->execute();
-    }
-
     public function update_password(int $user_id, string $old_password, string $new_password): ?string
     {
         $records = $this->database->prepare('SELECT hash_contrasena FROM empleados WHERE id = :id LIMIT 1;');
@@ -672,12 +262,15 @@ class MySQL implements iDatabase
                     $records->bindParam(':id', $user_id);
                     $records->bindParam(':new_password_hash', $new_password_hash);
                     $records->execute();
+                    $this->log(AUTH, "Successfully update password identified by $user_id");
                     return null;
                 } else {
+                    $this->log(AUTH, "Failed to update password for user identified by $user_id cause old password doesn't match");
                     return "contrasena antigua es incorrecta";
                 }
             }
         }
+        $this->log(AUTH, "Failed to update password for user identified by $user_id cause he is a thief");
         return "COMO LLEGASTE AQUI LADRON?";
     }
 
@@ -697,6 +290,7 @@ class MySQL implements iDatabase
                 return $results["permisos_id"];
             }
         }
+        $this->log(ERROR, "Failed to request permissions for user identified by $user_id");
         return 0;
     }
 
@@ -722,6 +316,7 @@ class MySQL implements iDatabase
 
     public function search_products(string $product_name): array
     {
+        $this->log(LOG, "Searching products with name similar to $product_name");
         $product_name = "%" . $product_name . "%";
         $records = $this->database->prepare('SELECT id, cantidad, nombre, descripcion, precio, activo, dependencia_id FROM inventario WHERE LOWER(nombre) LIKE :name;');
         $records->bindParam(':name', $product_name);
@@ -738,6 +333,7 @@ class MySQL implements iDatabase
 
     public function add_inventory(string $product_name, int $product_amount, string $product_description, int $product_price, string $image_file, int $dependencia): bool
     {
+        $this->log(LOG, "Adding $product_name to inventory");
         $file = fopen($image_file, 'rb');
         $records = $this->database->prepare('SELECT registrar_producto(:amount, :name, :description, :price, :image, :dependencia) AS exito;');
         $records->bindParam(':amount', $product_amount);
@@ -750,9 +346,11 @@ class MySQL implements iDatabase
         $results = $records->fetch(PDO::FETCH_ASSOC);
         if ($results) {
             if (count($results) > 0) {
+                $this->log(LOG, "Successfully added $product_name to inventory");
                 return $results["exito"];
             }
         }
+        $this->log(LOG, "Failed to add $product_name to inventory");
         return false;
     }
 
@@ -763,8 +361,10 @@ class MySQL implements iDatabase
         $records->execute();
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if (count($result) !== 0) {
+            $this->log(LOG, "View product identified by $id");
             return new Product($id, $result["cantidad"], $result["nombre"], $result["descripcion"], $result["precio"], $result["activo"], $result["imagen"], $result["dependencia_id"]);
         }
+        $this->log(ERROR, "Failed to view product identified by $id");
         return null;
     }
 
@@ -783,61 +383,19 @@ class MySQL implements iDatabase
             $records->execute();
             $result = $records->fetch(PDO::FETCH_ASSOC);
             if (count($result) !== 0) {
+                if ($result["result"]) {
+                    $this->log(LOG, "Successfully registered user $email");
+                } else {
+                    $this->log(ERROR, "Failed to register user $email");
+                }
                 return $result["result"];
             }
+            $this->log(ERROR, "Failed to register user $email");
             return false;
         } catch (Exception $e) {
+            $this->log(ERROR, "Failed to register user $email");
             return false;
         }
-    }
-
-    public function search_employees(string $employee_name, string $employee_personal_id): array
-    {
-        $employees = array();
-        if (strlen($employee_name) > 0) {
-            $employee_name = "%" . $employee_name . "%";
-            $records = $this->database->prepare('SELECT id, permisos_id, nombre_completo, cedula, direccion, telefono, correo, hash_contrasena, habilitado FROM empleados WHERE LOWER(nombre_completo) LIKE :name;');
-            $records->bindParam(':name', $employee_name);
-            $records->execute();
-            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
-                if (count($row) === 0) {
-                    break;
-                }
-                $employees[] = new Employee(
-                    $row["id"],
-                    $row["permisos_id"],
-                    $row["nombre_completo"],
-                    $row["cedula"],
-                    $row["direccion"],
-                    $row["telefono"],
-                    $row["correo"],
-                    $row["hash_contrasena"],
-                    $row["habilitado"]
-                );
-            }
-        } else if (strlen($employee_personal_id) > 0) {
-            $employee_personal_id = "%" . $employee_personal_id . "%";
-            $records = $this->database->prepare('SELECT id, permisos_id, nombre_completo, cedula, direccion, telefono, correo, hash_contrasena, habilitado FROM empleados WHERE LOWER(cedula) LIKE :personal_id;');
-            $records->bindParam(':personal_id', $employee_personal_id);
-            $records->execute();
-            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
-                if (count($row) === 0) {
-                    break;
-                }
-                $employees[] = new Employee(
-                    $row["id"],
-                    $row["permisos_id"],
-                    $row["nombre_completo"],
-                    $row["cedula"],
-                    $row["direccion"],
-                    $row["telefono"],
-                    $row["correo"],
-                    $row["hash_contrasena"],
-                    $row["habilitado"]
-                );
-            }
-        }
-        return $employees;
     }
 
     public function view_user(int $user_id): ?Employee
@@ -848,6 +406,7 @@ class MySQL implements iDatabase
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             if (count($result) !== 0) {
+                $this->log(LOG, "Successfully query information for user identified by $user_id");
                 return new Employee(
                     $user_id,
                     $result["permisos_id"],
@@ -861,6 +420,7 @@ class MySQL implements iDatabase
                 );
             }
         }
+        $this->log(ERROR, "Failed to query information for user identified by $user_id");
         return null;
     }
 
@@ -884,9 +444,13 @@ class MySQL implements iDatabase
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             if (count($result) !== 0) {
-                return $result["result"];
+                if ($result["result"]) {
+                    $this->log(LOG, "Successfully updated information for user identified by $id");
+                    return $result["result"];
+                }
             }
         }
+        $this->log(ERROR, "Failed to update information for user identified by $id");
         return false;
     }
 
@@ -904,9 +468,13 @@ class MySQL implements iDatabase
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             if (count($result) !== 0) {
-                return $result["result"];
+                if ($result["result"]) {
+                    $this->log(LOG, "Successfully updated information for product identified by $id");
+                    return $result["result"];
+                }
             }
         }
+        $this->log(ERROR, "Failed to update information for product identified by $id");
         return false;
     }
 
@@ -922,57 +490,15 @@ class MySQL implements iDatabase
             $records->execute();
             $result = $records->fetch(PDO::FETCH_ASSOC);
             if (count($result) !== 0) {
-                return $result["result"];
+                if ($result["result"]) {
+                    $this->log(LOG, "Successfully registered client $personal_id");
+                    return $result["result"];
+                }
             }
-            return false;
         } catch (Exception $e) {
-            return false;
         }
-    }
-
-    public function search_clients(string $client_name, string $employee_personal_id): array
-    {
-        $employees = array();
-        if (strlen($client_name) > 0) {
-            $client_name = "%" . $client_name . "%";
-            $records = $this->database->prepare('SELECT id, nombre_completo, cedula, direccion, telefono, correo, habilitado FROM clientes WHERE LOWER(nombre_completo) LIKE :name;');
-            $records->bindParam(':name', $client_name);
-            $records->execute();
-            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
-                if (count($row) === 0) {
-                    break;
-                }
-                $employees[] = new Client(
-                    $row["id"],
-                    $row["nombre_completo"],
-                    $row["cedula"],
-                    $row["direccion"],
-                    $row["telefono"],
-                    $row["correo"],
-                    $row["habilitado"]
-                );
-            }
-        } else if (strlen($employee_personal_id) > 0) {
-            $employee_personal_id = "%" . $employee_personal_id . "%";
-            $records = $this->database->prepare('SELECT id, nombre_completo, cedula, direccion, telefono, correo, habilitado FROM clientes WHERE LOWER(cedula) LIKE :personal_id;');
-            $records->bindParam(':personal_id', $employee_personal_id);
-            $records->execute();
-            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
-                if (count($row) === 0) {
-                    break;
-                }
-                $employees[] = new Client(
-                    $row["id"],
-                    $row["nombre_completo"],
-                    $row["cedula"],
-                    $row["direccion"],
-                    $row["telefono"],
-                    $row["correo"],
-                    $row["habilitado"]
-                );
-            }
-        }
-        return $employees;
+        $this->log(ERROR, "Failed to register client $personal_id");
+        return false;
     }
 
     public function view_client(int $client_id): ?Client
@@ -983,6 +509,7 @@ class MySQL implements iDatabase
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             if (count($result) !== 0) {
+                $this->log(LOG, "Successfully view client $client_id");
                 return new Client(
                     $client_id,
                     $result["nombre_completo"],
@@ -994,6 +521,7 @@ class MySQL implements iDatabase
                 );
             }
         }
+        $this->log(ERROR, "Failed to view client $client_id");
         return null;
     }
 
@@ -1011,9 +539,13 @@ class MySQL implements iDatabase
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             if (count($result) !== 0) {
-                return $result["result"];
+                if ($result["result"]) {
+                    $this->log(LOG, "Successfully updated client $id");
+                    return $result["result"];
+                }
             }
         }
+        $this->log(ERROR, "Failed to update client $id");
         return false;
     }
 
@@ -1070,12 +602,17 @@ class MySQL implements iDatabase
             $records->execute();
             $result = $records->fetch(PDO::FETCH_ASSOC);
             if (count($result) !== 0) {
-                return $result["result"];
+                if ($result["result"]) {
+                    $this->log(LOG, "Successfully registered order for client $cliente by employee $empleado");
+                    return $result["result"];
+                }
             }
-            return false;
+
         } catch (Exception $e) {
-            return false;
+            $this->log(ERROR, "System error $e");
         }
+        $this->log(ERROR, "Failed to register order for client $cliente by employee $empleado");
+        return false;
     }
 
     public function cancel_purchase(int $o_cliente_id, int $o_empleado_id, string $fecha, bool $o_enabled): bool
@@ -1090,11 +627,16 @@ class MySQL implements iDatabase
             $records->execute();
             $result = $records->fetch(PDO::FETCH_ASSOC);
             if (count($result) !== 0) {
-                return $result;
+                if ($result["result"]) {
+                    $this->log(LOG, "Successfully canceled order identified by $o_cliente_id");
+                    return $result["result"];
+                }
             }
+
         } catch (Exception $e) {
-            return false;
+            $this->log(ERROR, "System error $e");
         }
+        $this->log(ERROR, "Failed to cancel order identified by $o_cliente_id");
         return false;
     }
 
@@ -1146,34 +688,39 @@ class MySQL implements iDatabase
                     $insertar->execute();
                     $result = $insertar->fetch(PDO::FETCH_ASSOC);
                     if (count($result) !== 0) {
-                        return $result["result"];
+                        if ($result["result"]) {
+                            $this->log(LOG, "Successfully registered product in order");
+                            return $result["result"];
+                        }
                     }
-                    return false;
+
                 } catch (Exception $e) {
-                    return false;
+                    $this->log(ERROR, "System error $e");
                 }
             }
         }
+        $this->log(ERROR, "Failed to register product in order");
         return false;
     }
 
-    public function delete_erorr_orden(int $id): bool
+    public function delete_orden(int $id): bool
     {
         $records = $this->database->prepare('DELETE FROM ordenes_compra WHERE id = :id;');
         $records->bindParam(':id', $id);
         $records->execute();
         try {
             $records->execute();
-
-            return false;
+            $this->log(LOG, "Successfully delete order identified by $id");
+            return true;
         } catch (Exception $e) {
-            return false;
+            $this->log(ERROR, "System error $e");
         }
-
+        return false;
     }
 
     public function get_price_history(int $product_id): ?array
     {
+        $this->log(LOG, "Get price history for product identified by $product_id");
         $records = $this->database->prepare('SELECT id, modification_date, inventario_id, precio FROM historial_precios WHERE inventario_id = :product_id ORDER BY id DESC;');
         $records->bindParam(':product_id', $product_id);
         $records->execute();
@@ -1187,81 +734,132 @@ class MySQL implements iDatabase
         return $precios;
     }
 
-    public function delete_erorr_detalles_orden(int $id): bool
+    public function delete_detalles_orden(int $id): bool
     {
         $records = $this->database->prepare('DELETE FROM detalles_ordenes_compra WHERE orden_compra_id = :id;');
         $records->bindParam(':id', $id);
         $records->execute();
         try {
             $records->execute();
-            return false;
+            $this->log(LOG, "Successfully deleted details for order identified by $id");
+            return true;
         } catch (Exception $e) {
-            return false;
+            $this->log(ERROR, "System error $e");
         }
         return false;
     }
 
     public function buscar_orden_empleado(string $empleado): array
     {
+        $this->log(LOG, "Searching for orders by employee $empleado");
         $empleados = $this->search_employees($empleado, "");
         $ordenes = array();
         foreach ($empleados as $empleado) {
-            $orden = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM ordenes_compra WHERE empleados_id LIKE :empleados_id;');
+            $orden = $this->database->prepare('SELECT id,fecha,empleados_id,clientes_id,decuento,abierta FROM ordenes_compra WHERE empleados_id LIKE :empleados_id;');
             $orden->bindParam(':empleados_id', $empleado->id);
             $orden->execute();
             while ($rowOrd = $orden->fetch(PDO::FETCH_ASSOC)) {
                 if (count($rowOrd) === 0) {
                     break;
                 }
-                $ordenes[] = new Lista_ordenes($rowOrd["id"], $rowOrd["fehca"], $rowOrd["empleados_id"], $rowOrd["clientes_id"], $rowOrd["decuento"], $rowOrd["abierta"]);;
+                $ordenes[] = new Lista_ordenes($rowOrd["id"], $rowOrd["fecha"], $rowOrd["empleados_id"], $rowOrd["clientes_id"], $rowOrd["decuento"], $rowOrd["abierta"]);;
             }
         }
         return $ordenes;
     }
 
-    public function get_name_employees(int $id): ?string
+    public function search_employees(string $employee_name, string $employee_personal_id): array
     {
+        $this->log(LOG, "Searching employees");
+        $employees = array();
+        if (strlen($employee_name) > 0) {
+            $employee_name = "%" . $employee_name . "%";
+            $records = $this->database->prepare('SELECT id, permisos_id, nombre_completo, cedula, direccion, telefono, correo, hash_contrasena, habilitado FROM empleados WHERE LOWER(nombre_completo) LIKE :name;');
+            $records->bindParam(':name', $employee_name);
+            $records->execute();
+            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $employees[] = new Employee(
+                    $row["id"],
+                    $row["permisos_id"],
+                    $row["nombre_completo"],
+                    $row["cedula"],
+                    $row["direccion"],
+                    $row["telefono"],
+                    $row["correo"],
+                    $row["hash_contrasena"],
+                    $row["habilitado"]
+                );
+            }
+        } else if (strlen($employee_personal_id) > 0) {
+            $employee_personal_id = "%" . $employee_personal_id . "%";
+            $records = $this->database->prepare('SELECT id, permisos_id, nombre_completo, cedula, direccion, telefono, correo, hash_contrasena, habilitado FROM empleados WHERE LOWER(cedula) LIKE :personal_id;');
+            $records->bindParam(':personal_id', $employee_personal_id);
+            $records->execute();
+            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $employees[] = new Employee(
+                    $row["id"],
+                    $row["permisos_id"],
+                    $row["nombre_completo"],
+                    $row["cedula"],
+                    $row["direccion"],
+                    $row["telefono"],
+                    $row["correo"],
+                    $row["hash_contrasena"],
+                    $row["habilitado"]
+                );
+            }
+        }
+        return $employees;
+    }
 
+    public function get_employee_name(int $id): ?string
+    {
+        $this->log(LOG, "Getting name of employee identified by $id");
         $empleado = $this->database->prepare('SELECT nombre_completo FROM empleados WHERE id = :id;');
         $empleado->bindParam(':id', $id);
         $empleado->execute();
-        $nombre_empleado = 0;
-        while ($row = $empleado->fetch(PDO::FETCH_ASSOC)) {
-            if (count($row) === 0) {
-                break;
-            }
-            $nombre_empleado = $row["nombre_completo"];
+        $row = $empleado->fetch(PDO::FETCH_ASSOC);
+        if (count($row) !== 0) {
+            $this->log(LOG, "Successfully get name of employee identified by $id");
+            return $row["nombre_completo"];
         }
-        return $nombre_empleado;
+        $this->log(ERROR, "Failed to get name of employee identified by $id");
+        return null;
     }
 
-    public function get_name_clients(int $id): ?string
+    public function get_client_name(int $id): ?string
     {
-
+        $this->log(LOG, "Getting name of client identified by $id");
         $cliente = $this->database->prepare('SELECT nombre_completo FROM clientes WHERE id = :id;');
         $cliente->bindParam(':id', $id);
         $cliente->execute();
-        $nombre_cliente = 0;
-        while ($row = $cliente->fetch(PDO::FETCH_ASSOC)) {
-            if (count($row) === 0) {
-                break;
-            }
-            $nombre_cliente = $row["nombre_completo"];
+        $row = $cliente->fetch(PDO::FETCH_ASSOC);
+        if (count($row) !== 0) {
+            $this->log(LOG, "Successfully get name of client identified by $id");
+            return $row["nombre_completo"];
         }
-        return $nombre_cliente;
+        $this->log(ERROR, "Failed to get name of client identified by $id");
+        return null;
     }
 
     public function view_orden(int $orden_id): ?Lista_ordenes
     {
-        $records = $this->database->prepare('SELECT fehca,empleados_id,clientes_id,decuento,abierta FROM ordenes_compra WHERE id = :id;');
+        $records = $this->database->prepare('SELECT fecha,empleados_id,clientes_id,decuento,abierta FROM ordenes_compra WHERE id = :id;');
         $records->bindParam(':id', $orden_id);
         $records->execute();
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             if (count($result) !== 0) {
+                $this->log(LOG, "Successfully view order identified by $orden_id");
                 return new Lista_ordenes(
                     $orden_id,
-                    $result["fehca"],
+                    $result["fecha"],
                     $result["empleados_id"],
                     $result["clientes_id"],
                     $result["decuento"],
@@ -1269,11 +867,13 @@ class MySQL implements iDatabase
                 );
             }
         }
+        $this->log(ERROR, "Failed to view order identified by $orden_id");
         return null;
     }
 
     public function details_view_orden(int $orden_id): array
     {
+        $this->log(LOG, "Query details for order identified by $orden_id");
         $records = $this->database->prepare('SELECT cantidad,valor_total,productos_id,tipo_pago_id FROM detalles_ordenes_compra WHERE orden_compra_id = :id;');
         $records->bindParam(':id', $orden_id);
         $records->execute();
@@ -1301,6 +901,7 @@ class MySQL implements iDatabase
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             if (count($result) !== 0) {
+                $this->log(LOG, "Successfully view product identified by $id");
                 return new Product($id,
                     $result["cantidad"],
                     $result["nombre"],
@@ -1312,6 +913,7 @@ class MySQL implements iDatabase
                 );
             }
         }
+        $this->log(ERROR, "Failed to view product identified by $id");
         return null;
     }
 
@@ -1320,43 +922,93 @@ class MySQL implements iDatabase
         $tipo_pago = $this->database->prepare('SELECT pago FROM tipo_pago_orden WHERE id = :id;');
         $tipo_pago->bindParam(':id', $id);
         $tipo_pago->execute();
-        $nombre_pago = "";
-        while ($row = $tipo_pago->fetch(PDO::FETCH_ASSOC)) {
-            if (count($row) === 0) {
-                break;
-            }
-            $nombre_pago = $row["pago"];
+        $row = $tipo_pago->fetch(PDO::FETCH_ASSOC);
+        $this->log(LOG, "Successfully get payment type name identified by $id");
+        if (count($row) !== 0) {
+            return $row["pago"];
         }
-        return $nombre_pago;
+        $this->log(ERROR, "Failed to get payment type name identified by $id");
+        return null;
     }
 
     public function close_orden(int $id): bool
     {
-        $records = $this->database->prepare('SELECT close_orden(:id)');
+        $records = $this->database->prepare('SELECT close_orden(:id) AS result');
         $records->bindParam(':id', $id);
         $records->execute();
-        if ($records) {
-            return true;
+        $row = $records->fetch(PDO::FETCH_ASSOC);
+        if (count($row) > 0) {
+            if ($row["result"]) {
+                $this->log(LOG, "Successfully closed order identified by $id");
+                return $row["result"];
+            }
         }
+        $this->log(ERROR, "Failed to close order identified by $id");
         return false;
     }
 
     public function buscar_orden_cliente(string $cliente): array
     {
+        $this->log(LOG, "Searching orders by client $cliente");
         $clientes = $this->search_clients($cliente, "");
         $ordenes = array();
         foreach ($clientes as $cliente) {
-            $orden = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM ordenes_compra WHERE clientes_id LIKE :clientes_id;');
+            $orden = $this->database->prepare('SELECT id,fecha,empleados_id,clientes_id,decuento,abierta FROM ordenes_compra WHERE clientes_id LIKE :clientes_id;');
             $orden->bindParam(':clientes_id', $cliente->id);
             $orden->execute();
             while ($rowOrd = $orden->fetch(PDO::FETCH_ASSOC)) {
                 if (count($rowOrd) === 0) {
                     break;
                 }
-                $ordenes[] = new Lista_ordenes($rowOrd["id"], $rowOrd["fehca"], $rowOrd["empleados_id"], $rowOrd["clientes_id"], $rowOrd["decuento"], $rowOrd["abierta"]);;
+                $ordenes[] = new Lista_ordenes($rowOrd["id"], $rowOrd["fecha"], $rowOrd["empleados_id"], $rowOrd["clientes_id"], $rowOrd["decuento"], $rowOrd["abierta"]);;
             }
         }
         return $ordenes;
+    }
+
+    public function search_clients(string $client_name, string $employee_personal_id): array
+    {
+        $employees = array();
+        if (strlen($client_name) > 0) {
+            $client_name = "%" . $client_name . "%";
+            $records = $this->database->prepare('SELECT id, nombre_completo, cedula, direccion, telefono, correo, habilitado FROM clientes WHERE LOWER(nombre_completo) LIKE :name;');
+            $records->bindParam(':name', $client_name);
+            $records->execute();
+            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $employees[] = new Client(
+                    $row["id"],
+                    $row["nombre_completo"],
+                    $row["cedula"],
+                    $row["direccion"],
+                    $row["telefono"],
+                    $row["correo"],
+                    $row["habilitado"]
+                );
+            }
+        } else if (strlen($employee_personal_id) > 0) {
+            $employee_personal_id = "%" . $employee_personal_id . "%";
+            $records = $this->database->prepare('SELECT id, nombre_completo, cedula, direccion, telefono, correo, habilitado FROM clientes WHERE LOWER(cedula) LIKE :personal_id;');
+            $records->bindParam(':personal_id', $employee_personal_id);
+            $records->execute();
+            while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+                if (count($row) === 0) {
+                    break;
+                }
+                $employees[] = new Client(
+                    $row["id"],
+                    $row["nombre_completo"],
+                    $row["cedula"],
+                    $row["direccion"],
+                    $row["telefono"],
+                    $row["correo"],
+                    $row["habilitado"]
+                );
+            }
+        }
+        return $employees;
     }
 
     public function registrar_factura(int $empleado, int $cliente, string $hoy, float $descuento): bool
@@ -1416,60 +1068,67 @@ class MySQL implements iDatabase
                     $insertar_factura->execute();
                     $result = $insertar_factura->fetch(PDO::FETCH_ASSOC);
                     if (count($result) !== 0) {
+                        if ($result["result"]) {
+                            $this->log(LOG, "Successfully registered product in receipt");
+                        }
                         return $result["result"];
                     }
-                    return false;
+
                 } catch (Exception $e) {
-                    return false;
+                    $this->log(ERROR, "System error $e");
                 }
             }
         }
+        $this->log(ERROR, "Failed to register product in receipt");
         return false;
     }
 
-    public function delete_erorr_factura(int $id): bool
+    public function delete_factura(int $id): bool
     {
         $records = $this->database->prepare('DELETE FROM facturas WHERE id = :id;');
         $records->bindParam(':id', $id);
         $records->execute();
         try {
             $records->execute();
-
-            return false;
+            $this->log(LOG, "Successfully deleted receipt identified by $id");
+            return true;
         } catch (Exception $e) {
-            return false;
+            $this->log(ERROR, "System error $e");
         }
-
+        $this->log(ERROR, "Failed to delete receipt identified by $id");
+        return false;
     }
 
-
-    public function delete_erorr_detalles_factura(int $id): bool
+    public function delete_detalles_factura(int $id): bool
     {
         $records = $this->database->prepare('DELETE FROM detalles_facturas WHERE facturas_id = :id;');
         $records->bindParam(':id', $id);
         $records->execute();
         try {
             $records->execute();
-            return false;
+            $this->log(LOG, "Successfully deleted receipt details identified by $id");
+            return true;
         } catch (Exception $e) {
-            return false;
+            $this->log(ERROR, "System error $e");
         }
+        $this->log(ERROR, "Failed to delete receipt details identified by $id");
         return false;
     }
 
     public function buscar_factura_empleado(string $empleado): array
     {
+        $this->log(LOG, "Search for receipts by employee $empleado");
         $empleados = $this->search_employees($empleado, "");
         $facturas = array();
         foreach ($empleados as $empleado) {
-            $factura = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE empleados_id LIKE :empleados_id;');
+            $factura = $this->database->prepare('SELECT id,fecha,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE empleados_id LIKE :empleados_id;');
             $factura->bindParam(':empleados_id', $empleado->id);
             $factura->execute();
             while ($rowOrd = $factura->fetch(PDO::FETCH_ASSOC)) {
                 if (count($rowOrd) === 0) {
                     break;
                 }
-                $facturas[] = new Lista_facturas($rowOrd["id"], $rowOrd["fehca"], $rowOrd["empleados_id"], $rowOrd["clientes_id"], $rowOrd["decuento"], $rowOrd["abierta"]);;
+                $facturas[] = new Lista_facturas($rowOrd["id"], $rowOrd["fecha"], $rowOrd["empleados_id"], $rowOrd["clientes_id"], $rowOrd["decuento"], $rowOrd["abierta"]);;
             }
         }
         return $facturas;
@@ -1477,15 +1136,16 @@ class MySQL implements iDatabase
 
     public function view_factura(int $factura_id): ?Lista_facturas
     {
-        $records = $this->database->prepare('SELECT fehca,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE id = :id;');
+        $records = $this->database->prepare('SELECT fecha,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE id = :id;');
         $records->bindParam(':id', $factura_id);
         $records->execute();
         $result = $records->fetch(PDO::FETCH_ASSOC);
         if ($result) {
             if (count($result) !== 0) {
+                $this->log(LOG, "Successfully view receipt identified by $factura_id");
                 return new Lista_facturas(
                     $factura_id,
-                    $result["fehca"],
+                    $result["fecha"],
                     $result["empleados_id"],
                     $result["clientes_id"],
                     $result["decuento"],
@@ -1493,11 +1153,13 @@ class MySQL implements iDatabase
                 );
             }
         }
+        $this->log(LOG, "Failed to view receipt identified by $factura_id");
         return null;
     }
 
     public function details_view_factura(int $factura_id): array
     {
+        $this->log(LOG, "Querying details of receipt identified by $factura_id");
         $records = $this->database->prepare('SELECT cantidad,valor_total,productos_id,tipo_pago_id FROM detalles_facturas WHERE facturas_id = :id;');
         $records->bindParam(':id', $factura_id);
         $records->execute();
@@ -1519,28 +1181,34 @@ class MySQL implements iDatabase
 
     public function close_factura(int $id): bool
     {
-        $records = $this->database->prepare('SELECT close_factura(:id)');
+        $records = $this->database->prepare('SELECT close_factura(:id) AS result');
         $records->bindParam(':id', $id);
         $records->execute();
-        if ($records) {
-            return true;
+        $row = $records->fetch(PDO::FETCH_ASSOC);
+        if (count($row) !== 0) {
+            if ($row["result"]) {
+                $this->log(LOG, "Successfully closed receipt identified by $id");
+                return $row["result"];
+            }
         }
+        $this->log(LOG, "Failed to close receipt identified by $id");
         return false;
     }
 
     public function buscar_factura_cliente(string $cliente): array
     {
+        $this->log(LOG, "Searching for receipts by client $cliente");
         $clientes = $this->search_clients($cliente, "");
         $facturas = array();
         foreach ($clientes as $cliente) {
-            $factura = $this->database->prepare('SELECT id,fehca,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE clientes_id LIKE :clientes_id;');
+            $factura = $this->database->prepare('SELECT id,fecha,empleados_id,clientes_id,decuento,abierta FROM facturas WHERE clientes_id LIKE :clientes_id;');
             $factura->bindParam(':clientes_id', $cliente->id);
             $factura->execute();
             while ($row = $factura->fetch(PDO::FETCH_ASSOC)) {
                 if (count($row) === 0) {
                     break;
                 }
-                $facturas[] = new Lista_facturas($row["id"], $row["fehca"], $row["empleados_id"], $row["clientes_id"], $row["decuento"], $row["abierta"]);;
+                $facturas[] = new Lista_facturas($row["id"], $row["fecha"], $row["empleados_id"], $row["clientes_id"], $row["decuento"], $row["abierta"]);;
             }
         }
         return $facturas;
@@ -1593,17 +1261,21 @@ class MySQL implements iDatabase
             $records->execute();
             $result = $records->fetch(PDO::FETCH_ASSOC);
             if (count($result) !== 0) {
-                return $result["result"];
+                if ($result["result"]) {
+                    $this->log(LOG, "Successfully registered spend $valor");
+                    return $result["result"];
+                }
             }
-            return false;
         } catch (Exception $e) {
-            return false;
+            $this->log(ERROR, "System error $e");
         }
+        $this->log(ERROR, "Failed to register spend $valor");
+        return false;
     }
 
     public function lista_gastos(): array
     {
-
+        $this->log(LOG, "List spends");
         $gastos = $this->database->prepare('SELECT id,valor,razon FROM gastos;');
         $gastos->execute();
         $lista = array();
@@ -1619,6 +1291,7 @@ class MySQL implements iDatabase
 
     public function get_ventas_caja(): ?int
     {
+        $this->log(LOG, "List sells");
         $records = $this->database->prepare('SELECT SUM(detalles_facturas.valor_total) AS valor
                                                     FROM detalles_facturas,facturas
                                                     WHERE facturas.id = detalles_facturas.facturas_id
@@ -1637,6 +1310,7 @@ class MySQL implements iDatabase
 
     public function get_ventas_bancos(): ?int
     {
+        $this->log(LOG, "List sells in bank");
         $records = $this->database->prepare('SELECT SUM(detalles_facturas.valor_total) AS valor
                                                     FROM detalles_facturas,facturas
                                                     WHERE facturas.id = detalles_facturas.facturas_id
@@ -1655,6 +1329,7 @@ class MySQL implements iDatabase
 
     public function get_costos_ventas(): ?int
     {
+        $this->log(LOG, "Get spends and sells");
         $records = $this->database->prepare('SELECT SUM(costo*cantidad) AS valor FROM costos_inventario;');
         $records->execute();
         $valor = 0;
@@ -1669,6 +1344,7 @@ class MySQL implements iDatabase
 
     public function get_gastos(): ?int
     {
+        $this->log(LOG, "Get spends");
         $records = $this->database->prepare('SELECT SUM(valor) AS valor FROM gastos;');
         $records->execute();
         $valor = 0;
@@ -1683,6 +1359,7 @@ class MySQL implements iDatabase
 
     public function get_informe_inventario(): array
     {
+        $this->log(LOG, "Get resume of inventory");
         $informe_inventario = array();
         $records = $this->database->prepare('SELECT inventario.id AS id,inventario.nombre AS nombre,dependencias.nombre AS dependencia,
                                                     inventario.cantidad AS cantidad,costos_inventario.costo AS costo_unitario,
@@ -1746,5 +1423,28 @@ class MySQL implements iDatabase
             $valor = $row["valor"];
         }
         return $valor;
+    }
+
+    public function get_cuentas_cobrar(): array
+    {
+        $cuentas_cobrar = array();
+        $records = $this->database->prepare('SELECT clientes.nombre_completo AS nombre, clientes.cedula AS cedula , clientes.direccion AS direccion, 
+                                                    clientes.telefono AS telefono, clientes.correo AS correo, facturas.id AS numero, facturas.fecha AS fecha,
+                                                    SUM(detalles_facturas.valor_total) AS valor
+                                                    FROM facturas, clientes, detalles_facturas
+                                                    WHERE facturas.clientes_id = clientes.id
+                                                    AND detalles_facturas.facturas_id = facturas.id
+                                                    AND detalles_facturas.tipo_pago_id = 3
+                                                    AND facturas.abierta = 1
+                                                    GROUP BY facturas.id;');
+        $records->execute();
+        while ($row = $records->fetch(PDO::FETCH_ASSOC)) {
+            if (count($row) === 0) {
+                break;
+            }
+            $cuentas_cobrar[] = new cuentas_cobrar($row["nombre"], $row["cedula"], $row["direccion"], $row["telefono"], $row["correo"],
+                $row["numero"], $row["fecha"], $row["valor"]);;
+        }
+        return $cuentas_cobrar;
     }
 }

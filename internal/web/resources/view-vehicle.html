@@ -1,0 +1,26 @@
+<title>{{.Name}}</title>
+
+<div style="text-align: center;">
+    <div class="container">
+        <img alt="{{.Id}}" src="data:image;base64, {{.Image}}" style="width: 500px; height: 350px;">
+        <h2 style="text-align: left;">{{.Name}}</h2>
+        <table style="width: 100%;">
+            <tr>
+                <td><h5><strong>Amount:</strong></h5></td>
+                <td><h5>{{.Amount}}</h5></td>
+            </tr>
+            <tr>
+                <td><h5><strong>Price:</strong></h5></td>
+                <td><h5>{{.Price}}</h5></td>
+            </tr>
+            <tr>
+                <td><h5><strong>Dependency:</strong></h5></td>
+                <td><h5>{{.Dependency}}</h5></td>
+            </tr>
+            <tr>
+                <td><h5><strong>Description:</strong></h5></td>
+                <td><h5>{{.Description}}</h5></td>
+            </tr>
+        </table>
+    </div>
+</div>

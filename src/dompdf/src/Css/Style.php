@@ -1115,6 +1115,65 @@ class Style
     }
 
     /**
+     * Convert a length declaration to pt.
+     *
+     * @param string $l The length declaration.
+     * @param float $ref_size Reference size for percentage declarations.
+     * @param float|null $font_size Font size for resolving font-size relative units.
+     *
+     * @return float|null The length in pt, or `null` for invalid declarations.
+     */
+    protected function single_length_in_pt(string $l, float $ref_size = 0, ?float $font_size = null): ?float
+    {
+        static $cache = [];
+
+        $font_size = $font_size ?? $this->__get("font_size");
+
+        $key = "$l/$ref_size/$font_size";
+
+        if (isset($cache[$key])) {
+            return $cache[$key];
+        }
+
+        if (is_numeric($l)) {
+            // Legacy support for unitless values, not covered by spec. Might
+            // want to restrict this to unitless `0` in the future
+            $value = (float)$l;
+        } elseif (($i = mb_stripos($l, "%")) !== false) {
+            $value = (float)mb_substr($l, 0, $i) / 100 * $ref_size;
+        } elseif (($i = mb_stripos($l, "px")) !== false) {
+            $dpi = $this->_stylesheet->get_dompdf()->getOptions()->getDpi();
+            $value = ((float)mb_substr($l, 0, $i) * 72) / $dpi;
+        } elseif (($i = mb_stripos($l, "pt")) !== false) {
+            $value = (float)mb_substr($l, 0, $i);
+        } elseif (($i = mb_stripos($l, "rem")) !== false) {
+            $root_style = $this->_stylesheet->get_dompdf()->getTree()->get_root()->get_style();
+            $root_font_size = $root_style === null || $root_style === $this
+                ? $font_size
+                : $root_style->font_size;
+            $value = (float)mb_substr($l, 0, $i) * $root_font_size;
+        } elseif (($i = mb_stripos($l, "em")) !== false) {
+            $value = (float)mb_substr($l, 0, $i) * $font_size;
+        } elseif (($i = mb_stripos($l, "cm")) !== false) {
+            $value = (float)mb_substr($l, 0, $i) * 72 / 2.54;
+        } elseif (($i = mb_stripos($l, "mm")) !== false) {
+            $value = (float)mb_substr($l, 0, $i) * 72 / 25.4;
+        } elseif (($i = mb_stripos($l, "ex")) !== false) {
+            // FIXME: em:ex ratio?
+            $value = (float)mb_substr($l, 0, $i) * $font_size / 2;
+        } elseif (($i = mb_stripos($l, "in")) !== false) {
+            $value = (float)mb_substr($l, 0, $i) * 72;
+        } elseif (($i = mb_stripos($l, "pc")) !== false) {
+            $value = (float)mb_substr($l, 0, $i) * 12;
+        } else {
+            // Invalid or unsupported declaration
+            $value = null;
+        }
+
+        return $cache[$key] = $value;
+    }
+
+    /**
      * Set the specified value of a property.
      *
      * Setting `$clear_dependencies` to `false` is useful for saving a bit of
@@ -1217,65 +1276,6 @@ class Style
                 $this->compute_prop($prop, $val);
             }
         }
-    }
-
-    /**
-     * Convert a length declaration to pt.
-     *
-     * @param string $l The length declaration.
-     * @param float $ref_size Reference size for percentage declarations.
-     * @param float|null $font_size Font size for resolving font-size relative units.
-     *
-     * @return float|null The length in pt, or `null` for invalid declarations.
-     */
-    protected function single_length_in_pt(string $l, float $ref_size = 0, ?float $font_size = null): ?float
-    {
-        static $cache = [];
-
-        $font_size = $font_size ?? $this->__get("font_size");
-
-        $key = "$l/$ref_size/$font_size";
-
-        if (isset($cache[$key])) {
-            return $cache[$key];
-        }
-
-        if (is_numeric($l)) {
-            // Legacy support for unitless values, not covered by spec. Might
-            // want to restrict this to unitless `0` in the future
-            $value = (float)$l;
-        } elseif (($i = mb_stripos($l, "%")) !== false) {
-            $value = (float)mb_substr($l, 0, $i) / 100 * $ref_size;
-        } elseif (($i = mb_stripos($l, "px")) !== false) {
-            $dpi = $this->_stylesheet->get_dompdf()->getOptions()->getDpi();
-            $value = ((float)mb_substr($l, 0, $i) * 72) / $dpi;
-        } elseif (($i = mb_stripos($l, "pt")) !== false) {
-            $value = (float)mb_substr($l, 0, $i);
-        } elseif (($i = mb_stripos($l, "rem")) !== false) {
-            $root_style = $this->_stylesheet->get_dompdf()->getTree()->get_root()->get_style();
-            $root_font_size = $root_style === null || $root_style === $this
-                ? $font_size
-                : $root_style->font_size;
-            $value = (float)mb_substr($l, 0, $i) * $root_font_size;
-        } elseif (($i = mb_stripos($l, "em")) !== false) {
-            $value = (float)mb_substr($l, 0, $i) * $font_size;
-        } elseif (($i = mb_stripos($l, "cm")) !== false) {
-            $value = (float)mb_substr($l, 0, $i) * 72 / 2.54;
-        } elseif (($i = mb_stripos($l, "mm")) !== false) {
-            $value = (float)mb_substr($l, 0, $i) * 72 / 25.4;
-        } elseif (($i = mb_stripos($l, "ex")) !== false) {
-            // FIXME: em:ex ratio?
-            $value = (float)mb_substr($l, 0, $i) * $font_size / 2;
-        } elseif (($i = mb_stripos($l, "in")) !== false) {
-            $value = (float)mb_substr($l, 0, $i) * 72;
-        } elseif (($i = mb_stripos($l, "pc")) !== false) {
-            $value = (float)mb_substr($l, 0, $i) * 12;
-        } else {
-            // Invalid or unsupported declaration
-            $value = null;
-        }
-
-        return $cache[$key] = $value;
     }
 
     /**
@@ -2165,6 +2165,35 @@ class Style
                 }
             }
         }
+    }
+
+    /**
+     * Parse a property value into its components.
+     *
+     * @param string $value
+     *
+     * @return string[]
+     */
+    protected function parse_property_value(string $value): array
+    {
+        $ident = self::CSS_IDENTIFIER;
+        $number = self::CSS_NUMBER;
+
+        $pattern = "/\n" .
+            "\s* \" ( (?:[^\"]|\\\\[\"])* ) (?<!\\\\)\" |\n" . // String ""
+            "\s* '  ( (?:[^']|\\\\['])* )   (?<!\\\\)'  |\n" . // String ''
+            "\s* ($ident \\([^)]*\\) )                  |\n" . // Functional
+            "\s* ($ident)                               |\n" . // Keyword
+            "\s* (\#[0-9a-fA-F]*)                       |\n" . // Hex value
+            "\s* ($number [a-zA-Z%]*)                   |\n" . // Number (+ unit/percentage)
+            "\s* ([\/,;])                                \n" . // Delimiter
+            "/Sx";
+
+        if (!preg_match_all($pattern, $value, $matches)) {
+            return [];
+        }
+
+        return array_map("trim", $matches[0]);
     }
 
     protected function is_color_value(string $val): bool
@@ -3407,7 +3436,6 @@ class Style
         $this->_props_computed["z_index"] = $val;
     }
 
-
     function __toString()
     {
         $parent_font_size = $this->parent_style
@@ -3476,35 +3504,6 @@ class Style
         }
 
         return $this->parse_property_value($val);
-    }
-
-    /**
-     * Parse a property value into its components.
-     *
-     * @param string $value
-     *
-     * @return string[]
-     */
-    protected function parse_property_value(string $value): array
-    {
-        $ident = self::CSS_IDENTIFIER;
-        $number = self::CSS_NUMBER;
-
-        $pattern = "/\n" .
-            "\s* \" ( (?:[^\"]|\\\\[\"])* ) (?<!\\\\)\" |\n" . // String ""
-            "\s* '  ( (?:[^']|\\\\['])* )   (?<!\\\\)'  |\n" . // String ''
-            "\s* ($ident \\([^)]*\\) )                  |\n" . // Functional
-            "\s* ($ident)                               |\n" . // Keyword
-            "\s* (\#[0-9a-fA-F]*)                       |\n" . // Hex value
-            "\s* ($number [a-zA-Z%]*)                   |\n" . // Number (+ unit/percentage)
-            "\s* ([\/,;])                                \n" . // Delimiter
-            "/Sx";
-
-        if (!preg_match_all($pattern, $value, $matches)) {
-            return [];
-        }
-
-        return array_map("trim", $matches[0]);
     }
 
     /**

@@ -11,11 +11,13 @@ require_once '../navbar.php';
 </head>
 <div class="centered-container" style="margin-top: 10vh">
     <div class="centered-container-for-input">
-            <h1 class="purple-text">Informes</h1>
+        <h1 class="purple-text">Informes</h1>
         <div class="centered-flex-container">
             <a class="blue-button" href="/manager/perdidas-ganancias.php">Informe de Perdidas y Ganancias</a>
             <pre style="width: 1vw;"></pre>
             <a class="blue-button" href="/manager/informe-inventario.php">Informe de Inventario</a>
+            <pre style="width: 1vw;"></pre>
+            <a class="blue-button" href="/manager/cuentas-cobrar.php">Reporte Cuentas por Cobrar</a>
         </div>
     </div>
 </div>

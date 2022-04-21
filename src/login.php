@@ -12,14 +12,12 @@ if (isset($_SESSION["user-id"])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user_id = connect()->database->login($_POST["email"], $_POST["password"]);
+    $user_id = connect()->login($_POST["email"], $_POST["password"]);
     if ($user_id !== null) {
-        connect()->database->log_login_succeed($_POST["email"]);
         $_SESSION['user-id'] = $user_id;
         header('Location: /dashboard.php', true, 307);
         exit;
     } else {
-        connect()->database->log_login_failed($_POST["email"]);
         ?>
         <!DOCTYPE html>
         <html lang="html5">
@@ -50,8 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <br>
                     <button class="blue-button" type="submit" style="margin-top: 0.5%; width: 75%;">Ingresar</button>
                 </form>
-                <br>
-                <a href="/request-reset.php" class="blue-text" style="font-size: 15px;">¿Olvidaste tu contraseña?</a>
             </div>
         </div>
         </body>
@@ -86,8 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <br>
                 <button class="blue-button" type="submit" style="margin-top: 0.5%; width: 75%;">Ingresar</button>
             </form>
-            <br>
-            <a href="/request-reset.php" class="blue-text" style="font-size: 15px;">¿Olvidaste tu contraseña?</a>
         </div>
     </div>
     </body>

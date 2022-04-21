@@ -280,7 +280,7 @@ class informe_inventario
     public ?int $precio_total = null;
     public ?int $habilitado = null;
 
-    public function __construct(int $id, string $nombre, string $dependencia,int $cantidad,int $costo_unitario,int $costo_total,int $precio,int $precio_total,int $habilitado)
+    public function __construct(int $id, string $nombre, string $dependencia, int $cantidad, int $costo_unitario, int $costo_total, int $precio, int $precio_total, int $habilitado)
     {
         $this->id = $id;
         $this->nombre = $nombre;
@@ -291,5 +291,29 @@ class informe_inventario
         $this->precio = $precio;
         $this->precio_total = $precio_total;
         $this->habilitado = $habilitado;
+    }
+}
+
+class cuentas_cobrar
+{
+    public ?string $nombre = null;
+    public ?int $cedula = null;
+    public ?string $direccion = null;
+    public ?int $telefono = null;
+    public ?string $correo = null;
+    public ?int $numero = null;
+    public ?string $fecha = null;
+    public ?int $valor = null;
+
+    public function __construct(string $nombre, int $cedula, string $direccion, int $telefono, string $correo, int $numero, string $fecha, int $valor)
+    {
+        $this->nombre = $nombre;
+        $this->cedula = $cedula;
+        $this->direccion = $direccion;
+        $this->telefono = $telefono;
+        $this->correo = $correo;
+        $this->numero = $numero;
+        $this->fecha = $fecha;
+        $this->valor = $valor;
     }
 }

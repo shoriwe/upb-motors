@@ -13,7 +13,7 @@ require 'menu.php';
     <div class="centered-container-for-input" style="margin-top: 10vh; width: 90vw; height: 70vh;">
         <div class="centered-container-for-input" style="text-align: left; width: 100%;">
             <?php
-            if (!connect()->database->is_admin($_SESSION["user-id"])) {
+            if (!connect()->is_admin($_SESSION["user-id"])) {
                 js_redirect("/dashboard.php");
             }
 
@@ -22,7 +22,7 @@ require 'menu.php';
                 if (isset($_POST["enabled"])) {
                     $is_enabled = true;
                 }
-                $succeed = connect()->database->update_user(
+                $succeed = connect()->update_user(
                     $_GET["id"],
                     $_POST["permission"],
                     $_POST["name"],
@@ -37,7 +37,7 @@ require 'menu.php';
                     echo "<h3 class='error-block'>No se pudo actualizar al usuario</h3>";
                 }
             }
-            $employee = connect()->database->view_user($_GET["id"]);
+            $employee = connect()->view_user($_GET["id"]);
             if ($employee === null) {
                 js_redirect("/admin/home.php");
             }

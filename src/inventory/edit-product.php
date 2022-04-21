@@ -13,7 +13,7 @@ require 'menu.php';
     <div class="centered-container-for-input" style="margin-top: 10vh; width: 90vw; height: 70vh;">
         <div class="centered-container-for-input" style="text-align: left; width: 100%;">
             <?php
-            if (!connect()->database->is_inventario($_SESSION["user-id"])) {
+            if (!connect()->is_inventario($_SESSION["user-id"])) {
                 js_redirect("/dashboard.php");
             }
 
@@ -23,7 +23,7 @@ require 'menu.php';
                     $is_enabled = true;
                 }
 
-                $succeed = connect()->database->update_product(
+                $succeed = connect()->update_product(
                     $_GET["id"],
                     $_POST["amount"],
                     $_POST["name"],
@@ -36,7 +36,7 @@ require 'menu.php';
                     echo "<h3 class='error-block'>No se pudo actualizar al usuario</h3>";
                 }
             }
-            $product = connect()->database->view_product($_GET["id"]);
+            $product = connect()->view_product($_GET["id"]);
             if ($product === null) {
                 js_redirect("/inventory/home.php");
             }
@@ -49,7 +49,7 @@ require 'menu.php';
                 <label class="black-text" for="dependency">Dependencia</label>
                 <select name="dependency" id="dependency">
                     <?php
-                    foreach (connect()->database->list_dependencies() as $dependency) {
+                    foreach (connect()->list_dependencies() as $dependency) {
                         if ($dependency->id == $product->dependencia) {
                             echo "<option value='$dependency->id' selected='selected'>$dependency->name</option>";
                         } else {

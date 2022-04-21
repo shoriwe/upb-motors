@@ -8,13 +8,13 @@ require_once '../connection.php';
 require_once '../ensure_login.php';
 require 'menu.php';
 
-if (!connect()->database->is_ventas($_SESSION["user-id"]) &&
-    !connect()->database->is_inventario($_SESSION["user-id"])) {
+if (!connect()->is_ventas($_SESSION["user-id"]) &&
+    !connect()->is_inventario($_SESSION["user-id"])) {
     js_redirect("/dashboard.php");
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $products = connect()->database->search_products($_POST["product"]);
+    $products = connect()->search_products($_POST["product"]);
     ?>
     <div class="list-container">
         <?php

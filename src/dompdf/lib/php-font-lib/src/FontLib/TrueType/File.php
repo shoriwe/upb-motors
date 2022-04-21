@@ -94,7 +94,7 @@ class File extends BinaryStream
     protected $directory = array();
     protected $data = array();
     protected $glyph_subset = array();
-private $tableOffset = 0;
+    private $tableOffset = 0;
 
     function getTable()
     {

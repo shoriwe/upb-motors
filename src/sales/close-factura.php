@@ -6,7 +6,7 @@ require_once '../connection.php';
 
 $id = $_GET["id"];
 
-$succeed = connect()->database->close_factura(
+$succeed = connect()->close_factura(
     $id
 );
 if ($succeed) {

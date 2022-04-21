@@ -7,8 +7,8 @@ require_once '../connection.php';
 require_once '../ensure_login.php';
 require 'menu.php';
 
-$orden = connect()->database->view_orden($_GET["id"]);
-$productos = connect()->database->details_view_orden($_GET["id"]);
+$orden = connect()->view_orden($_GET["id"]);
+$productos = connect()->details_view_orden($_GET["id"]);
 $total_sin_decuento = 0;
 
 ?>
@@ -22,14 +22,14 @@ $total_sin_decuento = 0;
             } else {
                 $activo = "No";
             }
-            $empleado_nombre = connect()->database->get_name_employees($orden->empleado);
-            $cliente_nombre = connect()->database->get_name_clients($orden->cliente);
-            $pago = connect()->database->get_tipo_pago($productos[0]->tipo_pago_id);
-            $descuento_porciento = $orden->descuento*100;
+            $empleado_nombre = connect()->get_employee_name($orden->empleado);
+            $cliente_nombre = connect()->get_client_name($orden->cliente);
+            $pago = connect()->get_tipo_pago($productos[0]->tipo_pago_id);
+            $descuento_porciento = $orden->descuento * 100;
             foreach ($productos as $producto) {
                 $total_sin_decuento = $total_sin_decuento + $producto->valor_total;
             }
-            $total_con_descuento = $total_sin_decuento - $total_sin_decuento*$orden->descuento;
+            $total_con_descuento = $total_sin_decuento - $total_sin_decuento * $orden->descuento;
             echo "<h1 class='purple-text' style='margin-top: 0.5%;'>Orden Numero: $orden->id</h1>";
             echo "<h3 class='black-text' style='margin-top: 0.5%;'>Empleado: $empleado_nombre</h3>";
             echo "<h3 class='black-text' style='margin-top: 0.5%;'>Cliente: $cliente_nombre</h3>";
@@ -46,8 +46,8 @@ $total_sin_decuento = 0;
             <?php
 
             foreach ($productos as $producto) {
-                    $inventario = connect()->database->get_product($producto->productos_id);
-                    echo "<div class='list-entry'>
+                $inventario = connect()->get_product($producto->productos_id);
+                echo "<div class='list-entry'>
                                 <h3 class='black-text'>Nombre: $inventario->nombre</h3>
                                 <pre style='min-width: 5vw;'></pre>
                                 <h3 class='black-text'>Valor Unitario: $inventario->precio</h3>

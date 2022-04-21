@@ -1,44 +1,139 @@
 package web
 
 import (
+	"bytes"
 	"github.com/gin-gonic/gin"
 	"github.com/shoriwe/upb-motors/internal/data"
 	"github.com/shoriwe/upb-motors/internal/data/objects"
-	"github.com/shoriwe/upb-motors/internal/web/values"
+	"html/template"
+	"io"
+	"mime"
+	"net/http"
+	"os"
+	"path"
+	"path/filepath"
 	"strconv"
+	"strings"
 )
 
-type Response struct {
-	Succeed bool                `json:"succeed"`
-	Message string              `json:"message"`
-	Body    []objects.Inventory `json:"body"`
+func init() {
+	_ = mime.AddExtensionType(".js", "application/javascript")
+	_ = mime.AddExtensionType(".min.js", "application/javascript")
+	_ = mime.AddExtensionType(".bundle.js", "application/javascript")
+	_ = mime.AddExtensionType(".js.map", "application/octet-stream")
+	_ = mime.AddExtensionType(".css", "text/css")
+	_ = mime.AddExtensionType(".min.css", "text/css")
+	_ = mime.AddExtensionType(".css.map", "application/json")
 }
 
-func inventory(database data.Database) gin.HandlerFunc {
+type NavigationBar struct {
+	Body template.HTML
+}
+
+var resources = os.DirFS("internal/web/resources")
+
+const prefix = ""
+
+/*
+//go:embed resources/*
+var resources embed.FS
+const prefix = "resources"
+*/
+
+func build(context *gin.Context, t string, object interface{}) string {
+	file, openError := resources.Open(filepath.Join(prefix, t))
+	if openError != nil {
+		panic(openError)
+	}
+	defer file.Close()
+	fileContents, readError := io.ReadAll(file)
+	if readError != nil {
+		panic(readError)
+	}
+
+	var executeError error
+	var s string
+	if context != nil {
+		context.Header("Content-Type", "text/html")
+		executeError = template.Must(template.New(t).Parse(string(fileContents))).Execute(context.Writer, object)
+	} else {
+		buffer := &bytes.Buffer{}
+		executeError = template.Must(template.New(t).Parse(string(fileContents))).Execute(buffer, object)
+		s = buffer.String()
+	}
+	if executeError != nil {
+		panic(executeError)
+	}
+	return s
+}
+
+func static(p string) gin.HandlerFunc {
 	return func(context *gin.Context) {
-		rawPage := context.Param("page")
+		f := context.Param("filepath")
+		context.Header("Content-Type", mime.TypeByExtension(f[strings.Index(f, "."):]))
+		context.FileFromFS(path.Join(prefix, p, f), http.FS(resources))
+	}
+}
+
+func index(context *gin.Context) {
+	build(context, "nav-bar.html", NavigationBar{
+		Body: template.HTML(build(nil, "index.html", nil)),
+	})
+}
+
+type VehiclesList struct {
+	BeforePage int
+	NextPage   int
+	Vehicles   []objects.Inventory
+}
+
+func vehicles(database data.Database) gin.HandlerFunc {
+	return func(context *gin.Context) {
+		rawPage := context.Param(PageParam)
 		page, parseError := strconv.Atoi(rawPage)
 		if parseError != nil {
-			context.JSON(403,
-				Response{
-					Succeed: false,
-					Message: "Invalid page",
-				},
-			)
+			_ = context.AbortWithError(http.StatusForbidden, parseError)
 			return
 		}
-		context.JSON(200,
-			Response{
-				Succeed: true,
-				Body:    database.QueryInventory(page),
-			},
-		)
+		build(context, "nav-bar.html", NavigationBar{
+			Body: template.HTML(build(nil, "vehicles.html", VehiclesList{
+				BeforePage: page - 1,
+				NextPage:   page + 1,
+				Vehicles:   database.QueryInventory(page),
+			})),
+		})
+	}
+}
+
+func viewVehicle(database data.Database) gin.HandlerFunc {
+	return func(context *gin.Context) {
+		rawPage := context.Param(IdParam)
+		page, parseError := strconv.Atoi(rawPage)
+		if parseError != nil {
+			_ = context.AbortWithError(http.StatusForbidden, parseError)
+			return
+		}
+		vehicle := database.GetVehicle(page)
+		if vehicle == nil {
+			context.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+		build(context, "nav-bar.html", NavigationBar{
+			Body: template.HTML(build(nil, "view-vehicle.html", vehicle)),
+		})
 	}
 }
 
 func NewEngine(database data.Database) *gin.Engine {
-	router := gin.Default()
-	router.Use(gin.Logger())
-	router.GET(values.InventoryLocation, inventory(database))
-	return router
+	engine := gin.Default()
+	engine.GET(RootLocation, func(context *gin.Context) {
+		context.Redirect(http.StatusFound, IndexLocation)
+	})
+	engine.GET("/css/*filepath", static("css"))
+	engine.GET("/js/*filepath", static("js"))
+	engine.GET("/static-vendor/*filepath", static("static-vendor"))
+	engine.GET(IndexLocation, index)
+	engine.GET(ListVehiclesLocation, vehicles(database))
+	engine.GET(ViewVehicleLocation, viewVehicle(database))
+	return engine
 }

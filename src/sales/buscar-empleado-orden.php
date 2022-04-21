@@ -3,17 +3,17 @@ require_once '../navbar.php';
 require 'menu.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $ordenes = connect()->database->buscar_orden_empleado($_POST["empleado"]);
+    $ordenes = connect()->buscar_orden_empleado($_POST["empleado"]);
     ?>
     <div class="list-container">
 
         <?php
 
         foreach ($ordenes as $orden) {
-            if ($orden->estado == 1){
-                $empleado_nombre = connect()->database->get_name_employees($orden->empleado);
-                $cliente_nombre = connect()->database->get_name_clients($orden->cliente);
-                $descuento_porciento = $orden->descuento*100;
+            if ($orden->estado == 1) {
+                $empleado_nombre = connect()->get_employee_name($orden->empleado);
+                $cliente_nombre = connect()->get_client_name($orden->cliente);
+                $descuento_porciento = $orden->descuento * 100;
                 echo "
 <div class='list-entry'>
     <h3 class='black-text'>Empleado: $empleado_nombre</h3>

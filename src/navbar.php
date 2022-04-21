@@ -14,20 +14,20 @@ if (session_status() === PHP_SESSION_NONE) {
     <pre style="width: 1vw;"></pre>
     <?php
 
-    if (connect()->database->is_inventario($_SESSION["user-id"])) {
+    if (connect()->is_inventario($_SESSION["user-id"])) {
         echo '<a class="blue-button" href="/inventory/home.php">Inventario</a><pre style="width: 1vw;"></pre>';
         echo '<a class="blue-button" href="/sales/home.php">Ventas</a><pre style="width: 1vw;"></pre>';
-    } else if (connect()->database->is_recursos_humanos($_SESSION["user-id"])) {
+    } else if (connect()->is_recursos_humanos($_SESSION["user-id"])) {
         echo '<a class="blue-button" href="/human-resources/home.php">Empleados</a><pre style="width: 1vw;"></pre>';
-    } else if (connect()->database->is_ventas($_SESSION["user-id"])) {
+    } else if (connect()->is_ventas($_SESSION["user-id"])) {
         echo '<a class="blue-button" href="/inventory/home.php">Inventario</a><pre style="width: 1vw;"></pre>';
         echo '<a class="blue-button" href="/sales/home.php">Ventas</a><pre style="width: 1vw;"></pre>';
         echo '<a class="blue-button" href="/clients/home.php">Clientes</a><pre style="width: 1vw;"></pre>';
-    } else if (connect()->database->is_gerente($_SESSION["user-id"])) {
+    } else if (connect()->is_gerente($_SESSION["user-id"])) {
         echo '<a class="blue-button" href="/manager/home.php">Inventario</a><pre style="width: 1vw;"></pre>';
         echo '<a class="blue-button" href="/manager/informes.php">Informes</a><pre style="width: 1vw;"></pre>';
         echo '<a class="blue-button" href="/manager/gastos.php">Gastos</a><pre style="width: 1vw;"></pre>';
-    } else if (connect()->database->is_admin($_SESSION["user-id"])) {
+    } else if (connect()->is_admin($_SESSION["user-id"])) {
         echo '<a class="blue-button" href="/admin/home.php">Admin</a><pre style="width: 1vw;"></pre>';
     }
     ?>

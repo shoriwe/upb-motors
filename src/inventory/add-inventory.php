@@ -2,7 +2,7 @@
 
 require 'menu.php';
 
-if (!connect()->database->is_inventario($_SESSION["user-id"])) {
+if (!connect()->is_inventario($_SESSION["user-id"])) {
     js_redirect("/dashboard.php");
 }
 
@@ -13,7 +13,7 @@ if (!connect()->database->is_inventario($_SESSION["user-id"])) {
         <h1 class="purple-text" style="margin-top: 0.5%;">Añadir al inventario</h1>
         <?php
         if (isset($_POST['add_inventory'])) {
-            $succeed = connect()->database->add_inventory(
+            $succeed = connect()->add_inventory(
                 $_POST["product_name"],
                 $_POST["product_amount"],
                 $_POST["product_description"],
@@ -36,7 +36,7 @@ if (!connect()->database->is_inventario($_SESSION["user-id"])) {
                 <br><label class="black-text" for="dependency">Dependencia</label>
                 <select name="dependency" id="dependency">
                     <?php
-                    foreach (connect()->database->list_dependencies() as $dependency) {
+                    foreach (connect()->list_dependencies() as $dependency) {
                         echo "<option value='$dependency->id'>$dependency->name</option>";
                     }
                     ?>

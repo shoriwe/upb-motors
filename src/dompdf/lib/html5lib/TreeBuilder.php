@@ -76,7 +76,7 @@ class HTML5_TreeBuilder
     const QUIRKS_MODE = 201;
     const LIMITED_QUIRKS_MODE = 202;
     const MARKER = 300;
-const NS_HTML = null;
+    const NS_HTML = null;
     const NS_MATHML = 'http://www.w3.org/1998/Math/MathML';
     const NS_SVG = 'http://www.w3.org/2000/svg';
     const NS_XLINK = 'http://www.w3.org/1999/xlink';
@@ -107,7 +107,7 @@ const NS_HTML = null;
     private $quirks_mode = null;
 
     // Namespaces for foreign content
-        private $ignore_lf_token = 0; // to prevent DOM from requiring NS on everything
+    private $ignore_lf_token = 0; // to prevent DOM from requiring NS on everything
     private $fragment = false;
     private $root;
     private $scoping = ['applet', 'button', 'caption', 'html', 'marquee', 'object', 'table', 'td', 'th', 'svg:foreignObject'];

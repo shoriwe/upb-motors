@@ -186,40 +186,6 @@ class OutputFormat
     }
 
     /**
-     * Creates an instance of this class with a preset for pretty formatting.
-     *
-     * @return self
-     */
-    public static function createPretty()
-    {
-        $format = self::create();
-        $format->set('Space*Rules', "\n")->set('Space*Blocks', "\n")
-            ->setSpaceBetweenBlocks("\n\n")->set('SpaceAfterListArgumentSeparator', ['default' => '', ',' => ' ']);
-        return $format;
-    }
-
-    /**
-     * @param string $sMethodName
-     * @param array<array-key, mixed> $aArguments
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
-    public function __call($sMethodName, array $aArguments)
-    {
-        if (strpos($sMethodName, 'set') === 0) {
-            return $this->set(substr($sMethodName, 3), $aArguments[0]);
-        } elseif (strpos($sMethodName, 'get') === 0) {
-            return $this->get(substr($sMethodName, 3));
-        } elseif (method_exists(OutputFormatter::class, $sMethodName)) {
-            return call_user_func_array([$this->getFormatter(), $sMethodName], $aArguments);
-        } else {
-            throw new \Exception('Unknown OutputFormat method called: ' . $sMethodName);
-        }
-    }
-
-    /**
      * @param array<array-key, string>|string $aNames
      * @param mixed $mValue
      *
@@ -253,6 +219,40 @@ class OutputFormat
         }
         // Break the chain so the user knows this option is invalid
         return false;
+    }
+
+    /**
+     * Creates an instance of this class with a preset for pretty formatting.
+     *
+     * @return self
+     */
+    public static function createPretty()
+    {
+        $format = self::create();
+        $format->set('Space*Rules', "\n")->set('Space*Blocks', "\n")
+            ->setSpaceBetweenBlocks("\n\n")->set('SpaceAfterListArgumentSeparator', ['default' => '', ',' => ' ']);
+        return $format;
+    }
+
+    /**
+     * @param string $sMethodName
+     * @param array<array-key, mixed> $aArguments
+     *
+     * @return mixed
+     *
+     * @throws \Exception
+     */
+    public function __call($sMethodName, array $aArguments)
+    {
+        if (strpos($sMethodName, 'set') === 0) {
+            return $this->set(substr($sMethodName, 3), $aArguments[0]);
+        } elseif (strpos($sMethodName, 'get') === 0) {
+            return $this->get(substr($sMethodName, 3));
+        } elseif (method_exists(OutputFormatter::class, $sMethodName)) {
+            return call_user_func_array([$this->getFormatter(), $sMethodName], $aArguments);
+        } else {
+            throw new \Exception('Unknown OutputFormat method called: ' . $sMethodName);
+        }
     }
 
     /**

@@ -6,8 +6,7 @@ require_once '../ensure_login.php';
 require 'menu.php';
 
 
-
-$product = connect()->database->view_product($_GET["id"]);
+$product = connect()->view_product($_GET["id"]);
 if ($product === null) {
     js_redirect("/inventory/home.php");
 }
@@ -33,7 +32,7 @@ if ($product === null) {
             if (strlen($product->descripcion) === 0) {
                 $product->descripcion = "Producto sin descripcion";
             }
-            $dependencia = connect()->database->get_dependency_name($product->dependencia);
+            $dependencia = connect()->get_dependency_name($product->dependencia);
             echo "<h1 class='purple-text' style='margin-top: 0.5%;'>$product->nombre ($dependencia)</h1>";
             echo "<h3 class='black-text' style='margin-top: 0.5%;'>Precio $$product->precio</h3>";
             echo "<h3 class='black-text' style='margin-top: 0.5%;'>Activo: $activo</h3>";
@@ -44,7 +43,7 @@ if ($product === null) {
         <h3 class="purple-text">Historial de precios</h3>
         <div class="list-container">
             <?php
-            $old_prices = connect()->database->get_price_history($product->id);
+            $old_prices = connect()->get_price_history($product->id);
             foreach ($old_prices as $price) {
                 $price_date = date('Y-m-d H:i:s', $price->modification_date);
                 echo "
