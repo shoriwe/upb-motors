@@ -72,7 +72,7 @@ services:
     environment:
       - DB_URL=upb_motors:upb_motors@tcp(upb-motors-database)/upb_motors
       - API_KEY=_CHANGE_THIS_WITH_THE_API_KEY
-      - HOST=0.0.0.0:8080
+      - HOST=0.0.0.0:5000
     networks:
       - upb-motors
     ports:
