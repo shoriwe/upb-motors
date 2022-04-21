@@ -5,7 +5,7 @@ require_once 'navbar.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($_POST["new-password"] === $_POST["new-confirm-password"]) {
-        $updatePasswordResult = connect()->database->update_password($_SESSION["user-id"], $_POST["old-password"], $_POST["new-password"]);
+        $updatePasswordResult = connect()->update_password($_SESSION["user-id"], $_POST["old-password"], $_POST["new-password"]);
         if ($updatePasswordResult === null) {
             ?>
             <!DOCTYPE html>

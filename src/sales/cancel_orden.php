@@ -7,7 +7,7 @@ $o_empleado_id = $_POST['o_empleado_id'];
 $fecha = $_POST['fecha'];
 $o_enabled = $_POST['o_enabled'];
 
-$succeed = connect()->database->cancel_purchase(
+$succeed = connect()->cancel_purchase(
     $o_empleado_id,
     $o_cliente_id,
     $fecha,
@@ -32,7 +32,7 @@ if ($succeed) {
     <div class="centered-container-for-input" style="margin-top: 10vh; width: 90vw; height: 70vh;">
         <div class="centered-container-for-input" style="text-align: left; width: 100%;">
             <?php
-            if (!connect()->database->is_ventas($_SESSION["user-id"])) {
+            if (!connect()->is_ventas($_SESSION["user-id"])) {
                 js_redirect("/dashboard.php");
             }
 
@@ -41,7 +41,7 @@ if ($succeed) {
                 if (isset($_POST["o_enabled"])) {
                     $is_enabled = true;
                 }
-                $succeed = connect()->database->cancel_purchase(
+                $succeed = connect()->cancel_purchase(
                     $_GET["o_cliente_id"],
                     $_GET["o_empleado_id"],
                     $_GET["fecha"],
@@ -51,7 +51,7 @@ if ($succeed) {
                     echo "<h3 class='error-block'>No se pudo cancelar esta orden de compra</h3>";
                 }
             }
-            $orden = connect()->database->ver_orden($_GET["o_cliente_id"], $_GET["o_empleado_id"]);
+            $orden = connect()->ver_orden($_GET["o_cliente_id"], $_GET["o_empleado_id"]);
             if ($orden === null) {
                 js_redirect("/sales/home.php");
             }

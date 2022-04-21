@@ -3,7 +3,7 @@ require_once '../ensure_login.php';
 require_once '../navbar.php';
 require_once 'menu-informes.php';
 
-$cuentas = connect()->database->get_cuentas_cobrar();
+$cuentas = connect()->get_cuentas_cobrar();
 ?>
 
 <head>
@@ -52,7 +52,7 @@ $cuentas = connect()->database->get_cuentas_cobrar();
     <div class="centered-container-for-input" style="margin-top: 10vh; width: 70vw; height: 70vh;">
         <h2 class="purple-text" style="margin-top: 0.5%;">Información General</h2>
         <?php
-        $credito = 0 + connect()->database->get_ventas_credito();
+        $credito = 0 + connect()->get_ventas_credito();
         echo "<h3 class='black-text' style='margin-top: 0.5%;'>Total cuentas por cobrar: $credito</h3>";
         ?>
     </div>

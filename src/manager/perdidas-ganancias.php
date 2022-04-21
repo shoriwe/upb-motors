@@ -3,11 +3,11 @@ require_once '../ensure_login.php';
 require_once '../navbar.php';
 require_once 'menu-informes.php';
 
-$caja = 0 + connect()->database->get_ventas_caja();
-$banco = 0 + connect()->database->get_ventas_bancos();
-$credito = 0 + connect()->database->get_ventas_credito();
-$costos = 0 + connect()->database->get_costos_ventas();
-$gastos = 0 + connect()->database->get_gastos();
+$caja = 0 + connect()->get_ventas_caja();
+$banco = 0 + connect()->get_ventas_bancos();
+$credito = 0 + connect()->get_ventas_credito();
+$costos = 0 + connect()->get_costos_ventas();
+$gastos = 0 + connect()->get_gastos();
 
 ?>
 

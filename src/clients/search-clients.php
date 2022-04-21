@@ -8,12 +8,12 @@ require_once '../connection.php';
 require_once '../ensure_login.php';
 require 'menu.php';
 
-if (!connect()->database->is_ventas($_SESSION["user-id"])) {
+if (!connect()->is_ventas($_SESSION["user-id"])) {
     js_redirect("/dashboard.php");
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $clients = connect()->database->search_clients($_POST["name"], $_POST["personal_id"]);
+    $clients = connect()->search_clients($_POST["name"], $_POST["personal_id"]);
     ?>
     <div class="list-container">
         <?php

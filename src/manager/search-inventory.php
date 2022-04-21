@@ -10,7 +10,7 @@ require 'menu.php';
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $products = connect()->database->search_products($_POST["product"]);
+    $products = connect()->search_products($_POST["product"]);
     ?>
     <div class="list-container">
         <?php

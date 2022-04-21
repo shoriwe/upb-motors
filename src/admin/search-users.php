@@ -8,12 +8,12 @@ require_once '../connection.php';
 require_once '../ensure_login.php';
 require 'menu.php';
 
-if (!connect()->database->is_admin($_SESSION["user-id"])) {
+if (!connect()->is_admin($_SESSION["user-id"])) {
     js_redirect("/dashboard.php");
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $employees = connect()->database->search_employees($_POST["name"], $_POST["personal_id"]);
+    $employees = connect()->search_employees($_POST["name"], $_POST["personal_id"]);
     ?>
     <div class="list-container">
         <?php

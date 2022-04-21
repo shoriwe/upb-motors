@@ -6,7 +6,7 @@ require_once '../connection.php';
 
 $id = $_GET["id"];
 
-$succeed = connect()->database->close_orden(
+$succeed = connect()->close_orden(
     $id
 );
 if ($succeed) {

@@ -8,7 +8,7 @@ $empleado = $_POST['empleado'];
 $cliente = $_POST['cliente'];
 $descuento = $_POST['descuento'] / 100;
 
-$succeed = connect()->database->registrar_orden(
+$succeed = connect()->registrar_orden(
     $empleado,
     $cliente,
     $hoy,

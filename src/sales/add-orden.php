@@ -23,7 +23,7 @@ require 'menu.php';
 </div>
 <div class="centered-container" style="margin-top: 10vh" id="empleados">
     <?php
-    $empleados = connect()->database->lista_empleados();
+    $empleados = connect()->lista_empleados();
     echo "<select id='empleados' name='empleados' class='select-menu'>";
     echo "<option value=null selected='selected'>Seleccionar Empleado</option>";
     foreach ($empleados as $empleado) {
@@ -35,7 +35,7 @@ require 'menu.php';
 
 <div class="centered-container" style="margin-top: 10vh" id="clientes">
     <?php
-    $clientes = connect()->database->lista_clientes();
+    $clientes = connect()->lista_clientes();
     echo "<select id='clientes' class='select-menu'>";
     echo "<option value=null selected='selected'>Seleccionar cliente</option>";
     foreach ($clientes as $cliente) {
@@ -47,7 +47,7 @@ require 'menu.php';
 
 <div class="centered-container" style="margin-top: 10vh" id="pagos">
     <?php
-    $pagos = connect()->database->lista_pagos();
+    $pagos = connect()->lista_pagos();
     echo "<select id = 'pagos' class='select-menu'>";
     echo "<option value='' selected='selected'>Seleccionar Tipo de pago</option>";
     foreach ($pagos as $pago) {
@@ -78,7 +78,7 @@ require 'menu.php';
             </td>
             <td class="itemRow">
                 <?php
-                $products = connect()->database->lista_productos();
+                $products = connect()->lista_productos();
                 echo "<select id = 'productos' class='select-menu'>";
                 echo "<option value=null selected='selected '>Seleccionar Producto</option>";
                 foreach ($products as $product) {

@@ -7,11 +7,11 @@ require_once '../connection.php';
 require_once '../ensure_login.php';
 require 'menu.php';
 
-if (!connect()->database->is_recursos_humanos($_SESSION["user-id"])) {
+if (!connect()->is_recursos_humanos($_SESSION["user-id"])) {
     js_redirect("/dashboard.php");
 }
 
-$employee = connect()->database->view_user($_GET["id"]);
+$employee = connect()->view_user($_GET["id"]);
 if ($employee === null) {
     js_redirect("/human-resources/home.php");
 } else if ($employee->permission === Admin) {

@@ -4,7 +4,7 @@ require_once '../navbar.php';
 require_once 'menu-gastos.php';
 
 
-$gastos = connect()->database->lista_gastos();
+$gastos = connect()->lista_gastos();
 ?>
 
 <div class="list-container">

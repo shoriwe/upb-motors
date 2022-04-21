@@ -2,7 +2,7 @@
 
 require 'menu.php';
 
-if (!connect()->database->is_admin($_SESSION["user-id"])) {
+if (!connect()->is_admin($_SESSION["user-id"])) {
     js_redirect("/dashboard.php");
 }
 
@@ -14,7 +14,7 @@ if (!connect()->database->is_admin($_SESSION["user-id"])) {
         <h1 class="purple-text" style="margin-top: 0.5%;">Crear usuario</h1>
         <?php
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $succeed = connect()->database->register_user(
+            $succeed = connect()->register_user(
                 intval($_POST["permission"]),
                 $_POST["name"],
                 $_POST["personal_id"],

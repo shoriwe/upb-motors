@@ -9,7 +9,7 @@ require_once 'menu-gastos.php';
         <h1 class="purple-text" style="margin-top: 0.5%;">Añadir Gasto</h1>
         <?php
         if (isset($_POST['add_gasto'])) {
-            $succeed = connect()->database->registrar_gasto(
+            $succeed = connect()->registrar_gasto(
                 $_POST["gasto_valor"],
                 $_POST["gasto_razon"]
             );

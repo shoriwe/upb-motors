@@ -7,11 +7,11 @@ require_once '../connection.php';
 require_once '../ensure_login.php';
 require 'menu.php';
 
-if (!connect()->database->is_ventas($_SESSION["user-id"])) {
+if (!connect()->is_ventas($_SESSION["user-id"])) {
     js_redirect("/dashboard.php");
 }
 
-$client = connect()->database->view_client($_GET["id"]);
+$client = connect()->view_client($_GET["id"]);
 if ($client === null) {
     js_redirect("/admin/home.php");
 }
