@@ -20,6 +20,8 @@ services:
 
   erp:
     container_name: upb-motors-erp
+    depends_on:
+      - database
     user: 5000:5000
     build:
       context: .
@@ -27,12 +29,10 @@ services:
     image: upb-motors-erp
     restart: unless-stopped
     environment:
-      - DB_HOST=upb_motors
+      - DB_HOST=upb-motors-database
       - DB_USERNAME=upb_motors
       - DB_PASSWORD=upb_motors
       - DB_DATABASE=upb_motors
-    depends_on:
-      - database
     volumes:
       - ./src:/opt/erp
     networks:
@@ -42,32 +42,39 @@ services:
 
   catalog:
     container_name: upb-motors-catalog
+    depends_on:
+      - database
+    user: 5000:5000
     build:
       context: .
       dockerfile: catalog.Dockerfile
     image: upb-motors-catalog
     restart: unless-stopped
     environment:
+      - DB_URL=upb_motors:upb_motors@tcp(upb-motors-database)/upb_motors
+      - API_KEY=_CHANGE_THIS_WITH_THE_API_KEY
       - HOST=0.0.0.0:8080
-      - DB_URL=upb_motors:upb_motors@tcp(database)/upb_motors
-      - API_KEY=CHANGE_THIS_API_KEY
-    depends_on:
-      - database
+    networks:
+      - upb-motors
     ports:
       - 127.0.0.1:8080:8080
 
   api:
     container_name: upb-motors-api
+    depends_on:
+      - database
+    user: 5000:5000
     build:
       context: .
       dockerfile: api.Dockerfile
     image: upb-motors-api
     restart: unless-stopped
     environment:
-      - HOST=0.0.0.0:5000
-      - DB_URL=upb_motors:upb_motors@tcp(database)/upb_motors
-      - API_KEY=CHANGE_THIS_API_KEY
-    depends_on:
-      - database
+      - DB_URL=upb_motors:upb_motors@tcp(upb-motors-database)/upb_motors
+      - API_KEY=_CHANGE_THIS_WITH_THE_API_KEY
+      - HOST=0.0.0.0:8080
+    networks:
+      - upb-motors
     ports:
       - 127.0.0.1:5000:5000
+
