@@ -1,0 +1,32 @@
+[wearcar_local]
+exten => 700,1,Dial(SIP/partes_asterisk/700,120,Tt)
+exten => 701,1,Dial(SIP/partes_asterisk/701,120,Tt)
+exten => 702,1,Dial(SIP/partes_asterisk/702,120,Tt)
+
+[trap_local]
+exten => 600,1,Dial(SIP/partes_asterisk/601,120,Tt)
+exten => 601,1,Dial(SIP/partes_asterisk/602,120,Tt)
+
+[conbin_local]
+exten => 800,1,Dial(SIP/partes_asterisk/801,120,Tt)
+exten => 801,1,Dial(SIP/partes_asterisk/802,120,Tt)
+
+[local]
+exten => 101,1,Dial(SIP/ext101)
+exten => 102,1,Dial(SIP/ext102)
+exten => 103,1,Dial(SIP/ext103)
+
+[upbmotors]
+include => local
+include => wearcar_local
+include => trap_local
+include => conbin_local
+
+[wearcar_in]
+include => local
+
+[trap_in]
+include => local
+
+[conbin_in]
+include => local

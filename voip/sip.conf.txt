@@ -1,0 +1,91 @@
+[general]
+context=public                  ; Default context for incoming calls. Defaults to 'default'
+allowoverlap=no                 ; Disable overlap dialing support. (Default is yes)
+udpbindaddr=0.0.0.0             ; IP address to bind UDP listen socket to (0.0.0.0 binds to all)
+tcpenable=no                    ; Enable server for incoming TCP connections (default is no)
+tcpbindaddr=0.0.0.0             ; IP address for TCP server to bind to (0.0.0.0 binds to all interfaces)
+transport=udp                   ; Set the default transports.  The order determines the primary default transport.
+srvlookup=yes                   ; Enable DNS SRV lookups on outbound calls
+
+register => upbmotors:1234@(ip)/wearcar
+register => upbmotors:1234@192.168.50.11/trap
+register => upbmotors:1234@192.168.80.3/conbin
+
+qualify=yes
+language=es
+disallow=all
+allow=alaw,ulaw
+
+[authentication]
+[basic-options](!)                ; a template
+        dtmfmode=rfc2833
+        context=from-office
+        type=friend
+[natted-phone](!,basic-options)   ; another template inheriting basic-options
+        directmedia=no
+        host=dynamic
+[public-phone](!,basic-options)   ; another template inheriting basic-options
+        directmedia=yes
+[my-codecs](!)                    ; a template for my preferred codecs
+        disallow=all
+        allow=ilbc
+        allow=g729
+        allow=gsm
+        allow=g723
+        allow=ulaw
+[ulaw-phone](!)                   ; and another one for ulaw-only
+        disallow=all
+        allow=ulaw
+
+[usuario](!)
+type=friend
+host=dynamic
+context=upbmotors
+
+Extension 101
+[ext101](usuario)
+username=delfin
+secret=s1234
+;port=5061
+
+Extension 102
+[ext102](usuario)
+username=tortuga
+secret=s1234
+port=5061
+
+Extension 103
+[ext103](usuario)
+username=elefante
+secret=s1234
+;port=5061
+
+[wearcar]
+type=friend
+secret=1234
+context=wearcar_in
+host=dynamic
+qualify=yes
+dtmfmode=rfc2833
+disallow=all
+allow=ulaw
+
+[trap]
+type=friend
+secret=1234
+context=trap_in
+host=dynamic
+qualify=yes
+dtmfmode=rfc2833
+disallow=all
+allow=ulaw
+
+[conbin]
+type=friend
+secret=1234
+context=conbin_in
+host=dynamic
+qualify=yes
+dtmfmode=rfc2833
+disallow=all
+allow=ulaw
