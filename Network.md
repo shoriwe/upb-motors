@@ -100,34 +100,30 @@ ipv6 address 2801:0:2E0:D2::1/64
 ipv6 ospf 1 area 0
 exit
 interface Serial0/1/0
-ip address 10.10.30.2 255.255.255.252
-ip nat outside
-ip access-group 101 in
+ip address 10.10.30.2 255.255.255.0
 ipv6 address 2801:0:2E0:1:0::A/126
 ipv6 ospf 1 area 0
 no shutdown
 exit
 interface Serial0/1/1
-ip address 10.10.40.1 255.255.255.252
-ip nat outside
-ip access-group 101 in
+ip address 10.10.40.1 255.255.255.0
 ipv6 address 2801:0:2E0:1:0::5/126
 ipv6 ospf 1 area 0
 no shutdown
 exit
 router ospf 1
-network 10.10.30.0 0.0.0.3 area 0
-network 10.10.40.0 0.0.0.3 area 0
+network 10.10.30.0 0.0.0.255 area 0
+network 10.10.40.0 0.0.0.255 area 0
 exit
 ip route 0.0.0.0 0.0.0.0 10.10.40.2
 ipv6 route ::/0 Serial0/1/1
 ipv6 router ospf 1
 exit
-ip nat inside source static tcp 192.168.101.18 80 10.10.40.1 80
-ip nat inside source static udp 192.168.101.18 443 10.10.40.1 443
-ip nat inside source static udp 192.168.101.19 53 10.10.40.1 53
-ip nat inside source static tcp 192.168.101.18 8080 10.10.40.1 8080
-ip nat inside source static udp 192.168.101.18 8080 10.10.40.1 8080
+ip nat inside source static tcp 192.168.101.18 80 10.10.40.3 80
+ip nat inside source static udp 192.168.101.18 443 10.10.40.3 443
+ip nat inside source static udp 192.168.101.19 53 10.10.40.3 53
+ip nat inside source static tcp 192.168.101.18 8080 10.10.40.3 8080
+ip nat inside source static udp 192.168.101.18 8080 10.10.40.3 8080
 access-list 101 permit ospf any any
 access-list 101 permit tcp any any eq 80
 access-list 101 permit tcp any any eq 443
