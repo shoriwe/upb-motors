@@ -9,3 +9,4 @@ openssl req -x509 -newkey rsa:4096 -keyout /opt/certs/key.pem -out /opt/certs/ce
 cp nginx.conf /etc/nginx/sites-available/upb-motors
 cd /etc/nginx/sites-enabled/
 ln -s /etc/nginx/sites-enabled/upb-motors upb-motors
+systemctl restart nginx
