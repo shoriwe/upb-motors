@@ -64,6 +64,7 @@
 enable
 configure terminal
 ip host www.matriz.autoupb.com 192.168.101.19
+ipv6 host www.matriz.autoupb.com 2801:0:2E0:D2::3
 ip name-server 192.168.101.19
 ip domain name matriz.autoupb.com
 ip dhcp pool vlan100ipv4
@@ -79,6 +80,7 @@ exit
 interface GigabitEthernet0/0/1
 ip address 192.168.101.1 255.255.255.240
 ip nat inside
+ip access-group 102 in
 no shutdown
 exit
 interface GigabitEthernet0/0/1.100
@@ -90,6 +92,7 @@ ipv6 address 2801:0:2E0:D1::1/64
 ipv6 nd managed-config-flag
 ipv6 ospf 1 area 0
 ipv6 dhcp server vlan100ipv6
+no shutdown
 exit
 interface GigabitEthernet0/0/1.200
 encapsulation dot1Q 200
@@ -98,15 +101,20 @@ ip nat inside
 ip access-group 102 in
 ipv6 address 2801:0:2E0:D2::1/64
 ipv6 ospf 1 area 0
+no shutdown
 exit
 interface Serial0/1/0
 ip address 10.10.30.2 255.255.255.0
+ip access-group 101 in
+ip nat inside
 ipv6 address 2801:0:2E0:1:0::A/126
 ipv6 ospf 1 area 0
 no shutdown
 exit
 interface Serial0/1/1
 ip address 10.10.40.1 255.255.255.0
+ip access-group 101 in
+ip nat outside
 ipv6 address 2801:0:2E0:1:0::5/126
 ipv6 ospf 1 area 0
 no shutdown
@@ -114,8 +122,9 @@ exit
 router ospf 1
 network 10.10.30.0 0.0.0.255 area 0
 network 10.10.40.0 0.0.0.255 area 0
+network 192.168.101.16 0.0.0.15 area 0
 exit
-ip route 0.0.0.0 0.0.0.0 10.10.40.2
+ip route 0.0.0.0 0.0.0.0 Serial0/1/1
 ipv6 route ::/0 Serial0/1/1
 ipv6 router ospf 1
 exit
@@ -132,10 +141,7 @@ access-list 101 permit tcp any any eq pop3
 access-list 101 permit tcp any any eq smtp
 access-list 101 permit udp any any eq 110
 access-list 101 permit udp any any eq 25
-access-list 101 deny icmp any 192.168.101.0 0.0.0.255
 access-list 101 permit ip any any 
-access-list 102 deny icmp 192.168.101.0 0.0.0.255 192.168.101.32 0.0.0.15
-access-list 102 deny icmp 192.168.101.0 0.0.0.255 192.168.101.16 0.0.0.15
 access-list 102 permit ip any any
 exit
 copy running-config startup-config
