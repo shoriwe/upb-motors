@@ -3,7 +3,7 @@
 ## Router ports redirect
 
 | Service/Application | Host (IPv4)    | Host (IPv6)      | Protocol | Port | Router port |
-| ------------------- | -------------- |------------------| -------- | ---- | ----------- |
+|---------------------|----------------|------------------|----------|------|-------------|
 | Web catalog (HTTP)  | 192.168.101.18 | 2801:0:2E0:D2::2 | TCP      | 8000 | 80          |
 | Web catalog (HTTPS) | 192.168.101.18 | 2801:0:2E0:D2::2 | TCP      | 8443 | 443         |
 | SMTP                | 192.168.101.18 | 2801:0:2E0:D2::2 | TCP      | 25   | 25          |
@@ -18,7 +18,7 @@
 ## Primary zone domains
 
 | Domain                  | Type       | IPv4           | IPv6             |
-| ----------------------- | ---------- |----------------|------------------|
+|-------------------------|------------|----------------|------------------|
 | www.matriz.autoupb.com  | A and AAAA | 192.168.101.19 | 2801:0:2E0:D2::3 |
 | ftp.matriz.autoupb.com  | A and AAAA | 192.168.101.19 | 2801:0:2E0:D2::3 |
 | mail.matriz.autoupb.com | A and AAAA | 192.168.101.18 | 2801:0:2E0:D2::2 |
@@ -27,7 +27,7 @@
 ## Secondary zone
 
 | Company           | Domain             | DNS server IP  |
-| ----------------- | ------------------ | -------------- |
+|-------------------|--------------------|----------------|
 | Matriz            | matriz.autoupb.com | 192.168.101.19 |
 | Concesionario - 1 | ?                  | ?              |
 | Concesionario - 2 | ?                  | ?              |
@@ -36,12 +36,12 @@
 
 ## Topology
 
-| Computer         | Services                      | VLAN  | IPv6             | IPv6 mask | IPv6 Default Gateway     | DNS server IPV6  | IPv4           | IPv4 mask | IPv4 Default Gateway | DNS server IPV4 |
-| ---------------- |-------------------------------|-------|------------------|-----------|--------------------------|------------------|----------------| --------- | -------------------- |-----------------|
-| Debian           | HTTP, HTTPS, POP3, IMAP, SMTP | 200   | 2801:0:2E0:D2::2 | 64        | 2801:0:2E0:D2::1         | 2801:0:2E0:D2::3 | 192.168.101.18 | 28        | 192.168.101.17       | 192.168.101.19  |
-| Windows server 1 | FTP, FTPS, Primary DNS        | 200   | 2801:0:2E0:D2::3 | 64        | 2801:0:2E0:D2::1         | 2801:0:2E0:D2::3 | 192.168.101.19 | 28        | 192.168.101.17       | 192.168.101.19  |
-| Mint             | Proxy and IPTables            | 200   | 2801:0:2E0:D2::4 | 64        | 2801:0:2E0:D2::1         | 2801:0:2E0:D2::3 | 192.168.101.20 | 28        | 192.168.101.17       | 192.168.101.19  |
-| Employees        | Internet                      | 100   | DHCP             | 64        | FE80::20A:F3FF:FE97:3A02 | 2801:0:2E0:D2::3 | DHCP           | 28        | 192.168.101.33       | 192.168.101.19  |
+| Computer         | Services                      | VLAN | IPv6             | IPv6 mask | IPv6 Default Gateway     | DNS server IPV6  | IPv4           | IPv4 mask | IPv4 Default Gateway | DNS server IPV4 |
+|------------------|-------------------------------|------|------------------|-----------|--------------------------|------------------|----------------|-----------|----------------------|-----------------|
+| Debian           | HTTP, HTTPS, POP3, IMAP, SMTP | 200  | 2801:0:2E0:D2::2 | 64        | 2801:0:2E0:D2::1         | 2801:0:2E0:D2::3 | 192.168.101.18 | 28        | 192.168.101.17       | 192.168.101.19  |
+| Windows server 1 | FTP, FTPS, Primary DNS        | 200  | 2801:0:2E0:D2::3 | 64        | 2801:0:2E0:D2::1         | 2801:0:2E0:D2::3 | 192.168.101.19 | 28        | 192.168.101.17       | 192.168.101.19  |
+| Ubuntu           | Proxy and IPTables            | 200  | 2801:0:2E0:D2::4 | 64        | 2801:0:2E0:D2::1         | 2801:0:2E0:D2::3 | 192.168.101.20 | 28        | 192.168.101.17       | 192.168.101.19  |
+| Employees        | Internet                      | 100  | DHCP             | 64        | FE80::20A:F3FF:FE97:3A02 | 2801:0:2E0:D2::3 | DHCP           | 28        | 192.168.101.33       | 192.168.101.19  |
 
 
 ## Switch ports
@@ -55,6 +55,7 @@
 - serial 0/1/0 is connected workshop company
 - serial 0/1/1 is connected dealer company 2
 - GigabitEthernet 0/0/1 connects to switch GigabitEthernet 0/1
+- GigabitEthernet 0/0/0 connects to PC (IPTABLES)
 
 ## Scripts
 
